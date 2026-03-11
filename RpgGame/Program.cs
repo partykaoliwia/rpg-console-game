@@ -17,6 +17,7 @@ namespace RpgGame
             board.GetTile(5, 3).Items.Add(new Stick());
             board.GetTile(8, 2).Items.Add(new Sword());
             board.GetTile(8, 2).Items.Add(new Dagger());
+            board.GetTile(8, 2).Items.Add(new Dagger());
             board.GetTile(9, 4).Items.Add(new Rock());
             board.GetTile(15, 3).Items.Add(new Gold(100));
             board.GetTile(15, 3).Items.Add(new Coin(50));

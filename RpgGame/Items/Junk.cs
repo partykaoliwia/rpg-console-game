@@ -10,9 +10,9 @@ namespace RpgGame.Items
     {
         public abstract char Symbol { get; }
         public abstract string Name { get; }
-        public virtual void PickUp(Player.Player player)
+        public virtual bool PickUp(Player.Player player)
         {
-            player.Inventory.Add(this);
+            return player.TryAddToInventory(this); // Zwróci false, jeśli nie ma miejsca!
         }
         public virtual void EquipToLeftHand(Player.Player player) { }
         public virtual void EquipToRightHand(Player.Player player) { }

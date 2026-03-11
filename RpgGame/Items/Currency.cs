@@ -16,7 +16,7 @@ namespace RpgGame.Items
         {
             Value = value;
         }
-        public abstract void PickUp(Player.Player player);
+        public abstract bool PickUp(Player.Player player);
         public void EquipToLeftHand(Player.Player player) { }
         public void EquipToRightHand(Player.Player player) { }
     }

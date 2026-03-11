@@ -11,7 +11,7 @@ namespace RpgGame.Items
     {
         char Symbol { get; }
         string Name { get; }
-        void PickUp(Player.Player player);
+        bool PickUp(Player.Player player);
         void EquipToLeftHand(Player.Player player);
         void EquipToRightHand(Player.Player player);
         //void Unequip(Player.Player player);

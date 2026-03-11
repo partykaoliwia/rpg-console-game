@@ -18,7 +18,7 @@ namespace RpgGame.Engine
             _startX = startX;
             _startY = startY;
         }
-        public void Draw(Player.Player player, ITile currentTile, bool isInventoryMode, int cursorIndex)
+        public void Draw(Player.Player player, ITile currentTile, bool isInventoryMode, int inventCursorIndex, bool isLootMode, int lootCursorIndex)
         {
             int currentY = _startY;
             WriteAt(_startX, currentY++, "—————————————————");
@@ -34,7 +34,8 @@ namespace RpgGame.Engine
             WriteAt(_startX, currentY++, $"Left Hand:   {(player.LeftHand != null ? player.LeftHand.Name : " ")}");
             WriteAt(_startX, currentY++, $"Right Hand:  {(player.RightHand != null ? player.RightHand.Name : " ")}");
             WriteAt(_startX, currentY++, "—————————————————");
-            WriteAt(_startX, currentY++, "INVENTORY");
+            string status = player.Inventory.Count >= player.MaxInventorySize ? "(FULL)" : $"({player.Inventory.Count}/{player.MaxInventorySize})";
+            WriteAt(_startX, currentY++, $"INVENTORY {status}");
             if (player.Inventory.Count == 0)
             {
                 WriteAt(_startX, currentY++, " ");
@@ -43,44 +44,98 @@ namespace RpgGame.Engine
             {
                 for (int i = 0; i < player.Inventory.Count; i++)
                 {
-                    string prefix = (isInventoryMode && i == cursorIndex) ? "> " : "  ";
+                    string prefix = (isInventoryMode && i == inventCursorIndex) ? "> " : "  ";
                     WriteAt(_startX, currentY++, $"{prefix}{i + 1}. {player.Inventory[i].Name}");
                 }
             }
-            WriteAt(_startX, currentY++, "—————————————————");
-            WriteAt(_startX, currentY++, "ITEMS TO PICK UP");
             if (currentTile.Items.Count > 0)
             {
-                int i = 0;
-                foreach (var item in currentTile.Items)
+                WriteAt(_startX, currentY++, "—————————————————");
+                WriteAt(_startX, currentY++, "ITEMS TO PICK UP");
+                for (int i = 0; i < currentTile.Items.Count; i++)
                 {
-                    WriteAt(_startX, currentY++, $"{i++}. {item.Name}");
+                    // NOWOŚĆ: Kursor dla łupów
+                    string prefix = (isLootMode && i == lootCursorIndex) ? "> " : "  ";
+                    WriteAt(_startX, currentY++, $"{prefix}{i + 1}. {currentTile.Items[i].Name}");
                 }
             }
             else
             {
                 WriteAt(_startX, currentY++, "");
             }
-            WriteAt(_startX, currentY++, "—————————————————");
-            if (isInventoryMode)
-            {
-                WriteAt(_startX, currentY++, "INVENTORY MENU");
-                WriteAt(_startX, currentY++, "[W/S] Up/Down  | [L] Left hand");
-                WriteAt(_startX, currentY++, "[Q] Throw away | [R] Right hand");
-                WriteAt(_startX, currentY++, "[I] Close inventory");
-            }
-            else
-            {
-                WriteAt(_startX, currentY++, "[I] Open inventory menu");
-                WriteAt(_startX, currentY++, "[E] Pick item up");
-                WriteAt(_startX, currentY++, "");
-                WriteAt(_startX, currentY++, "");
-                WriteAt(_startX, currentY++, "");
-            }
+            //WriteAt(_startX, currentY++, "—————————————————");
+            //if (isInventoryMode)
+            //{
+            //    WriteAt(_startX, currentY++, "INVENTORY MENU");
+            //    WriteAt(_startX, currentY++, "[W/S] Up/Down  | [L] Left hand");
+            //    WriteAt(_startX, currentY++, "[Q] Throw away | [R] Right hand");
+            //    WriteAt(_startX, currentY++, "[I] Close inventory");
+            //}
+            //else if (isLootMode) // Instrukcje do zbierania!
+            //{
+            //    WriteAt(_startX, currentY++, "LOOTING MENU");
+            //    WriteAt(_startX, currentY++, "[W/S] Up/Down");
+            //    WriteAt(_startX, currentY++, "[E] Pick up selected");
+            //    WriteAt(_startX, currentY++, "[Q] Cancel");
+            //}
+            //else
+            //{
+            //    WriteAt(_startX, currentY++, "[I] Open inventory menu");
+            //    if (currentTile.Items.Count > 0) WriteAt(_startX, currentY++, "[E] Pick item up");
+            //    else WriteAt(_startX, currentY++, "");
+            //    WriteAt(_startX, currentY++, "");
+            //    WriteAt(_startX, currentY++, "");
+            //}
 
             for (int y = currentY; y < HeightUI; y++)
             {
                 WriteAt(_startX, y, "");
+            }
+            int bottomX = 0;  // Rysujemy od lewej krawędzi (pod planszą)
+            int bottomY = 21; // Plansza zajmuje 0-19. Zostawiamy linię 20 pustą, zaczynamy od 21
+
+            if (isInventoryMode)
+            {
+                WriteAt(bottomX, bottomY++, "INVENTORY MENU");
+                WriteAt(bottomX, bottomY++, "[W/S] Up/Down");
+                WriteAt(bottomX, bottomY++, "[L] Equip Left Hand");
+                WriteAt(bottomX, bottomY++, "[R] Equip Right Hand");
+                WriteAt(bottomX, bottomY++, "[Q] Throw Away");
+                WriteAt(bottomX, bottomY++, "[I] Close Inventory");
+            }
+            else if (isLootMode)
+            {
+                WriteAt(bottomX, bottomY++, "LOOTING MENU");
+                WriteAt(bottomX, bottomY++, "[W/S] Up/Down");
+                WriteAt(bottomX, bottomY++, "[E] Pick Up Selected");
+                WriteAt(bottomX, bottomY++, "[ESC] Cancel");
+            }
+            else
+            {
+                WriteAt(bottomX, bottomY++, "CONTROLS");
+                WriteAt(bottomX, bottomY++, "[W/A/S/D] Move");
+                WriteAt(bottomX, bottomY++, "[I] Open Inventory");
+
+                // Dynamiczna podpowiedź dla przycisku E
+                if (currentTile.Items.Count == 1)
+                {
+                    WriteAt(bottomX, bottomY++, $"[E] Pick up {currentTile.Items[0].Name}");
+                }
+                else if (currentTile.Items.Count > 1)
+                {
+                    WriteAt(bottomX, bottomY++, "[E] Open Loot Menu");
+                }
+                else
+                {
+                    WriteAt(bottomX, bottomY++, ""); // Pusta linia, by uniknąć ghostingu
+                }
+                WriteAt(bottomX, bottomY++, "");
+            }
+
+            // Czyszczenie reszty DOLNEGO panelu (żeby stare instrukcje zniknęły po zmianie trybu)
+            for (int y = bottomY; y < HeightUI; y++)
+            {
+                WriteAt(bottomX, y, "");
             }
         }
         private void WriteAt(int x, int y, string text)

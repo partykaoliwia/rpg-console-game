@@ -15,6 +15,8 @@ namespace RpgGame.Engine
         private readonly GameUI _ui;
         private bool _isRunning;
         private bool _isInventoryMode = false;
+        private bool _isLootMode = false;
+        private int _lootCursor = 0;
         private int _inventoryCursor = 0;
 
         public GameEngine(Board board, Player.Player player)
@@ -29,7 +31,7 @@ namespace RpgGame.Engine
                 { ConsoleKey.A, () => _player.Move(-1, 0, _board) },
                 { ConsoleKey.S, () => _player.Move(0, 1, _board) },
                 { ConsoleKey.D, () => _player.Move(1, 0, _board) },
-                { ConsoleKey.E, () => _player.Collect(_board) },
+                { ConsoleKey.E, () => OpenLootMenu() },
                 { ConsoleKey.Escape, () => _isRunning = false },
                 { ConsoleKey.I, () => OpenInventory() }
             };
@@ -42,11 +44,30 @@ namespace RpgGame.Engine
                 _inventoryCursor = 0;
             }
         }
+        private void OpenLootMenu()
+        {
+            var currentTile = _board.GetTile(_player.X, _player.Y);
+
+            // Jeśli na polu nie ma niczego lub mamy otwarty plecak - przerywamy akcję
+            if (currentTile.Items.Count == 0 || _isInventoryMode) return;
+
+            // Jeśli jest dokładnie JEDEN przedmiot, podnosimy go od razu bez otwierania menu
+            if (currentTile.Items.Count == 1)
+            {
+                _player.CollectSpecific(0, _board);
+            }
+            // Jeśli jest WIECEJ niż jeden, odpalamy Menu Łupów
+            else
+            {
+                _isLootMode = true;
+                _lootCursor = 0;
+            }
+        }
         public void RunGame()
         {
             Console.CursorVisible = false;
             _board.DrawBoard();
-            while(_isRunning)
+            while (_isRunning)
             {
                 RenderFrame();
                 HandleInput();
@@ -61,6 +82,10 @@ namespace RpgGame.Engine
             {
                 HandleInventoryInput(keyInfo.Key);
             }
+            else if (_isLootMode) // NOWOŚĆ: Jeśli przeszukujemy łupy
+            {
+                HandleLootInput(keyInfo.Key);
+            }
             else
             {
                 // Normalne chodzenie
@@ -68,6 +93,40 @@ namespace RpgGame.Engine
                 {
                     action.Invoke();
                 }
+            }
+        }
+        private void HandleLootInput(ConsoleKey key)
+        {
+            var currentTile = _board.GetTile(_player.X, _player.Y);
+            switch (key)
+            {
+                case ConsoleKey.W: // W górę
+                    _lootCursor--;
+                    if (_lootCursor < 0) _lootCursor = currentTile.Items.Count - 1;
+                    break;
+
+                case ConsoleKey.S: // W dół
+                    _lootCursor++;
+                    if (_lootCursor >= currentTile.Items.Count) _lootCursor = 0;
+                    break;
+
+                case ConsoleKey.E: // Podnieś!
+                    _player.CollectSpecific(_lootCursor, _board);
+
+                    // Zabezpieczenie kursora po zniknięciu przedmiotu
+                    if (currentTile.Items.Count == 0)
+                    {
+                        _isLootMode = false; // Zamykamy, bo nie ma już co zbierać
+                    }
+                    else if (_lootCursor >= currentTile.Items.Count)
+                    {
+                        _lootCursor = currentTile.Items.Count - 1;
+                    }
+                    break;
+
+                case ConsoleKey.Q: // Anuluj zbieranie
+                    _isLootMode = false;
+                    break;
             }
         }
         private void ValidateCursor()
@@ -142,7 +201,7 @@ namespace RpgGame.Engine
 
             // Wywołanie rysowania UI
             var currentTile = _board.GetTile(_player.X, _player.Y);
-            _ui.Draw(_player, currentTile,_isInventoryMode,_inventoryCursor);
+            _ui.Draw(_player, currentTile, _isInventoryMode, _inventoryCursor, _isLootMode, _lootCursor);
         }
     }
 }

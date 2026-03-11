@@ -13,9 +13,10 @@ namespace RpgGame.Items
 
         public Gold(int value) : base(value) { }
 
-        public override void PickUp(Player.Player player)
+        public override bool PickUp(Player.Player player)
         {
             player.AddGold(Value);
+            return true; // Zawsze można wziąć złoto
         }
     }
 }

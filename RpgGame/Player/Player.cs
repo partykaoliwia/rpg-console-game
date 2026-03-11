@@ -31,6 +31,7 @@ namespace RpgGame.Player
         public List<IItem> Inventory { get;  } = new List<IItem>();
         public IItem? LeftHand { get; private set; }
         public IItem? RightHand { get; private set; }
+        public int MaxInventorySize { get; } = 7;
 
         // konstruktor
         public Player(int startX = 0, int startY = 0)
@@ -78,15 +79,20 @@ namespace RpgGame.Player
             LeftHand = null;
             RightHand = null;
         }
-        public void Collect(Board board)
+        public void CollectSpecific(int index, Board board)
         {
             ITile currentTile = board.GetTile(X, Y);
-            if (currentTile.Items.Count == 0) return;
-            var itemsToPickUp = currentTile.Items.ToList();
-            foreach (var item in itemsToPickUp)
+            if (index < 0 || index >= currentTile.Items.Count) return;
+
+            var item = currentTile.Items[index];
+
+            // Zlecamy przedmiotowi próbę podniesienia. 
+            // Złoto zwróci true, ale miecz zwróci false, jeśli masz już 7 przedmiotów!
+            bool success = item.PickUp(this);
+
+            if (success)
             {
-                item.PickUp(this);
-                currentTile.Items.Remove(item);
+                currentTile.Items.RemoveAt(index); // Usuwamy z ziemi TYLKO jeśli się udało zebrać
             }
         }
         public void DropItem(int index, Board board)
@@ -96,6 +102,13 @@ namespace RpgGame.Player
             Inventory.RemoveAt(index);
             board.GetTile(X, Y).Items.Add(item);
         }
+        public bool TryAddToInventory(IItem item)
+        {
+            if (Inventory.Count >= MaxInventorySize) return false; // Plecak pełny!
+            Inventory.Add(item);
+            return true; // Sukces
+        }
+
 
     }
 }

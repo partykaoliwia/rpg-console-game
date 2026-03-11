@@ -15,9 +15,9 @@ namespace RpgGame.Items
         {
             Damage = damage;
         }
-        public virtual void PickUp(Player.Player player)
+        public virtual bool PickUp(Player.Player player)
         {
-            player.Inventory.Add(this);
+            return player.TryAddToInventory(this); // Zwróci false, jeśli nie ma miejsca!
         }
         public virtual void EquipToLeftHand(Player.Player player)
         {
