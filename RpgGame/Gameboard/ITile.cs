@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using RpgGame.Items;
+
+namespace RpgGame.Gameboard
+{
+    public interface ITile
+    {
+        char Symbol { get; }
+        bool IsWalkable { get; }
+        List<IItem> Items { get; }
+    }
+}
