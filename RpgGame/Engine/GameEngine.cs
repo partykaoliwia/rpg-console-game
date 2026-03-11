@@ -156,15 +156,21 @@ namespace RpgGame.Engine
 
                 case ConsoleKey.L: // Wyposaż w lewą rękę
                     // Magia polimorfizmu - broń sama zadecyduje, czy zajmie jedną czy obie ręce!
-                    _player.ClearHands(); // Ściągamy stare bronie do plecaka
                     _player.Inventory[_inventoryCursor].EquipToLeftHand(_player);
                     ValidateCursor();
                     break;
 
                 case ConsoleKey.R: // Wyposaż w prawą rękę
-                    _player.ClearHands();
                     _player.Inventory[_inventoryCursor].EquipToRightHand(_player);
                     ValidateCursor();
+                    break;
+                // --- NOWE KLAWISZE DO ZWALNIANIA RĄK ---
+                case ConsoleKey.D1: // Klawisz "1" (nad Q/W)
+                    _player.UnequipLeft();
+                    break;
+
+                case ConsoleKey.D2: // Klawisz "2"
+                    _player.UnequipRight();
                     break;
 
                 case ConsoleKey.Q: // Wyrzuć na ziemię

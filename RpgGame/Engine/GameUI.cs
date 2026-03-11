@@ -100,6 +100,8 @@ namespace RpgGame.Engine
                 WriteAt(bottomX, bottomY++, "[W/S] Up/Down");
                 WriteAt(bottomX, bottomY++, "[L] Equip Left Hand");
                 WriteAt(bottomX, bottomY++, "[R] Equip Right Hand");
+                WriteAt(bottomX, bottomY++, "[1] Empty Left");
+                WriteAt(bottomX, bottomY++, "[2] Empty Right");
                 WriteAt(bottomX, bottomY++, "[Q] Throw Away");
                 WriteAt(bottomX, bottomY++, "[I] Close Inventory");
             }

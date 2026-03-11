@@ -57,19 +57,64 @@ namespace RpgGame.Player
         public void AddGold(int amount) => Gold += amount;
         public void EquipToBothHands(IItem item)
         {
+            ClearHands();
             LeftHand = item;
             RightHand = item;
             Inventory.Remove(item);
         }
         public void EquipToLeftHand(IItem item)
         {
+            // Jeśli trzymamy broń dwuręczną, założenie czegoś do jednej ręki zdejmuje ją z obu!
+            if (LeftHand != null && LeftHand == RightHand)
+            {
+                ClearHands();
+            }
+            // W przeciwnym razie zdejmujemy tylko to, co było w lewej ręce
+            else if (LeftHand != null)
+            {
+                Inventory.Add(LeftHand);
+            }
+
             LeftHand = item;
             Inventory.Remove(item);
         }
         public void EquipToRightHand(IItem item)
         {
+            if (RightHand != null && RightHand == LeftHand)
+            {
+                ClearHands();
+            }
+            else if (RightHand != null)
+            {
+                Inventory.Add(RightHand);
+            }
+
             RightHand = item;
             Inventory.Remove(item);
+        }
+        public void UnequipLeft()
+        {
+            if (LeftHand != null)
+            {
+                if (LeftHand == RightHand) ClearHands(); // Ściągnięcie dwuręcznej
+                else
+                {
+                    Inventory.Add(LeftHand);
+                    LeftHand = null;
+                }
+            }
+        }
+        public void UnequipRight()
+        {
+            if (RightHand != null)
+            {
+                if (RightHand == LeftHand) ClearHands(); // Ściągnięcie dwuręcznej
+                else
+                {
+                    Inventory.Add(RightHand);
+                    RightHand = null;
+                }
+            }
         }
         public void ClearHands()
         {
