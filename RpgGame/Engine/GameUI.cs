@@ -12,61 +12,75 @@ namespace RpgGame.Engine
         private readonly int _startX;
         private readonly int _startY;
         private int WidthUI = 40;
+        private int HeightUI = 30;
         public GameUI(int startX, int startY)
         {
             _startX = startX;
             _startY = startY;
         }
-        public void Draw(Player.Player player, ITile currentTile)
+        public void Draw(Player.Player player, ITile currentTile, bool isInventoryMode, int cursorIndex)
         {
             int currentY = _startY;
-            // ATRYBUTY
-            WriteAt(_startX, currentY++, "=== STATYSTYKI ===");
-            WriteAt(_startX, currentY++, $"Zdrowie:   {player.Health}");
-            WriteAt(_startX, currentY++, $"Siła:      {player.Strength}");
-            WriteAt(_startX, currentY++, $"Inteligencja:   {player.Intelligence}  | Agresja:   {player.Aggression}");
-            WriteAt(_startX, currentY++, $"Szczęście: {player.Luck}");
-            WriteAt(_startX, currentY++, "");
-            // WALUTA
-            WriteAt(_startX, currentY++, "=== PORTFEL ===");
-            WriteAt(_startX, currentY++, $"Monety: {player.Coins}");
-            WriteAt(_startX, currentY++, $"Złoto:  {player.Gold}");
-            WriteAt(_startX, currentY++, "");
-            // RĘCE
-            WriteAt(_startX, currentY++, "=== WYPOSAŻENIE ===");
-            WriteAt(_startX, currentY++, $"Lewa Ręka:  {(player.LeftHand != null ? player.LeftHand.Name : "Pusta")}");
-            WriteAt(_startX, currentY++, $"Prawa Ręka: {(player.RightHand != null ? player.RightHand.Name : "Pusta")}");
-            WriteAt(_startX, currentY++, "");
-            // EKWIPUNEK
-            WriteAt(_startX, currentY++, "=== PLECAK ===");
+            WriteAt(_startX, currentY++, "—————————————————");
+            WriteAt(_startX, currentY++, "ATTRIBUTES");
+            WriteAt(_startX, currentY++, $"Health: {player.Health}");
+            WriteAt(_startX, currentY++, $"Strength: {player.Strength}");
+            WriteAt(_startX, currentY++, $"Wisdom: {player.Wisdom}");
+            WriteAt(_startX, currentY++, $"Luck: {player.Luck}");
+            WriteAt(_startX, currentY++, $"Aggression: {player.Aggression}");
+            WriteAt(_startX, currentY++, "—————————————————");
+            WriteAt(_startX, currentY++, $"Coins: {player.Coins} Gold: {player.Gold}"); 
+            WriteAt(_startX, currentY++, "—————————————————");
+            WriteAt(_startX, currentY++, $"Left Hand:   {(player.LeftHand != null ? player.LeftHand.Name : " ")}");
+            WriteAt(_startX, currentY++, $"Right Hand:  {(player.RightHand != null ? player.RightHand.Name : " ")}");
+            WriteAt(_startX, currentY++, "—————————————————");
+            WriteAt(_startX, currentY++, "INVENTORY");
             if (player.Inventory.Count == 0)
             {
-                WriteAt(_startX, currentY++, "Pusty");
+                WriteAt(_startX, currentY++, " ");
             }
             else
             {
                 for (int i = 0; i < player.Inventory.Count; i++)
                 {
-                    WriteAt(_startX, currentY++, $"{i + 1}. {player.Inventory[i].Name}");
+                    string prefix = (isInventoryMode && i == cursorIndex) ? "> " : "  ";
+                    WriteAt(_startX, currentY++, $"{prefix}{i + 1}. {player.Inventory[i].Name}");
                 }
             }
-            // Czyszczenie ewentualnych starych linii z dłuższego plecaka
-            WriteAt(_startX, currentY++, "");
-            WriteAt(_startX, currentY++, "");
-            // Informacje o otoczeniu (Przedmioty na polu)
-            WriteAt(_startX, currentY++, "=== OTOCZENIE ===");
+            WriteAt(_startX, currentY++, "—————————————————");
+            WriteAt(_startX, currentY++, "ITEMS TO PICK UP");
             if (currentTile.Items.Count > 0)
             {
-                WriteAt(_startX, currentY++, "Na ziemi leży:");
+                int i = 0;
                 foreach (var item in currentTile.Items)
                 {
-                    WriteAt(_startX, currentY++, $"- {item.Name} (Wciśnij 'E' by podnieść)");
+                    WriteAt(_startX, currentY++, $"{i++}. {item.Name}");
                 }
             }
             else
             {
-                WriteAt(_startX, currentY++, "Nic tu nie ma.                        ");
-                WriteAt(_startX, currentY++, "                                      "); // Nadpisanie resztek
+                WriteAt(_startX, currentY++, "");
+            }
+            WriteAt(_startX, currentY++, "—————————————————");
+            if (isInventoryMode)
+            {
+                WriteAt(_startX, currentY++, "INVENTORY MENU");
+                WriteAt(_startX, currentY++, "[W/S] Up/Down  | [L] Left hand");
+                WriteAt(_startX, currentY++, "[Q] Throw away | [R] Right hand");
+                WriteAt(_startX, currentY++, "[I] Close inventory");
+            }
+            else
+            {
+                WriteAt(_startX, currentY++, "[I] Open inventory menu");
+                WriteAt(_startX, currentY++, "[E] Pick item up");
+                WriteAt(_startX, currentY++, "");
+                WriteAt(_startX, currentY++, "");
+                WriteAt(_startX, currentY++, "");
+            }
+
+            for (int y = currentY; y < HeightUI; y++)
+            {
+                WriteAt(_startX, y, "");
             }
         }
         private void WriteAt(int x, int y, string text)
@@ -74,5 +88,6 @@ namespace RpgGame.Engine
             Console.SetCursorPosition(x, y);
             Console.Write(text.PadRight(WidthUI));
         }
+
     }
 }

@@ -21,7 +21,7 @@ namespace RpgGame.Player
         public int Health { get; private set; } = 20;
         public int Luck { get; private set; } = 30;
         public int Aggression { get; private set; } = 40;
-        public int Intelligence { get; private set; } = 50;
+        public int Wisdom { get; private set; } = 50;
 
         // waluta
         public int Coins { get; private set; } = 0;
@@ -52,7 +52,6 @@ namespace RpgGame.Player
                 Y = newY;
             }    
         }
-
         public void AddCoins(int amount) => Coins += amount;
         public void AddGold(int amount) => Gold += amount;
         public void EquipToBothHands(IItem item)
@@ -74,7 +73,8 @@ namespace RpgGame.Player
         public void ClearHands()
         {
             if (LeftHand != null) Inventory.Add(LeftHand);
-            if (RightHand != null) Inventory.Add(RightHand);
+            if (RightHand != null && RightHand != LeftHand) Inventory.Add(RightHand);
+
             LeftHand = null;
             RightHand = null;
         }
@@ -89,5 +89,13 @@ namespace RpgGame.Player
                 currentTile.Items.Remove(item);
             }
         }
+        public void DropItem(int index, Board board)
+        {
+            if (index < 0 || index >= Inventory.Count) return;
+            var item = Inventory[index];
+            Inventory.RemoveAt(index);
+            board.GetTile(X, Y).Items.Add(item);
+        }
+
     }
 }

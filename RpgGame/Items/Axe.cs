@@ -9,7 +9,7 @@ namespace RpgGame.Items
     public class Axe : Weapon
     {
         public override char Symbol => 'T';
-        public override string Name => "Potężny Topór Dwuręczny";
+        public override string Name => "Two Handed Axe";
         public Axe() : base(35) { }
         public override void EquipToLeftHand(Player.Player player)
         {

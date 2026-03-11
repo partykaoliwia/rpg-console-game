@@ -6,18 +6,16 @@ using System.Threading.Tasks;
 
 namespace RpgGame.Items
 {
-    public class Coin : IItem
+    public class Coin : Currency
     {
-        public char Symbol => 'o';
-        public string Name => "Coin";
+        public override char Symbol => 'o';
+        public override string Name => "Coin";
         private readonly int _value;
-        public Coin(int value) { _value = value;}
-        public void PickUp(Player.Player player)
+        public Coin(int value) : base(value) { }
+        public override void PickUp(Player.Player player)
         {
-            player.AddCoins(_value);
+            player.AddCoins(Value);
         }
-        public void EquipToLeftHand(Player.Player player) { }
-        public void EquipToRightHand(Player.Player player) { }
 
     }
 }
