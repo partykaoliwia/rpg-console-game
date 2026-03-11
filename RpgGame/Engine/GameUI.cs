@@ -54,7 +54,6 @@ namespace RpgGame.Engine
                 WriteAt(_startX, currentY++, "ITEMS TO PICK UP");
                 for (int i = 0; i < currentTile.Items.Count; i++)
                 {
-                    // NOWOŚĆ: Kursor dla łupów
                     string prefix = (isLootMode && i == lootCursorIndex) ? "> " : "  ";
                     WriteAt(_startX, currentY++, $"{prefix}{i + 1}. {currentTile.Items[i].Name}");
                 }
@@ -63,37 +62,13 @@ namespace RpgGame.Engine
             {
                 WriteAt(_startX, currentY++, "");
             }
-            //WriteAt(_startX, currentY++, "—————————————————");
-            //if (isInventoryMode)
-            //{
-            //    WriteAt(_startX, currentY++, "INVENTORY MENU");
-            //    WriteAt(_startX, currentY++, "[W/S] Up/Down  | [L] Left hand");
-            //    WriteAt(_startX, currentY++, "[Q] Throw away | [R] Right hand");
-            //    WriteAt(_startX, currentY++, "[I] Close inventory");
-            //}
-            //else if (isLootMode) // Instrukcje do zbierania!
-            //{
-            //    WriteAt(_startX, currentY++, "LOOTING MENU");
-            //    WriteAt(_startX, currentY++, "[W/S] Up/Down");
-            //    WriteAt(_startX, currentY++, "[E] Pick up selected");
-            //    WriteAt(_startX, currentY++, "[Q] Cancel");
-            //}
-            //else
-            //{
-            //    WriteAt(_startX, currentY++, "[I] Open inventory menu");
-            //    if (currentTile.Items.Count > 0) WriteAt(_startX, currentY++, "[E] Pick item up");
-            //    else WriteAt(_startX, currentY++, "");
-            //    WriteAt(_startX, currentY++, "");
-            //    WriteAt(_startX, currentY++, "");
-            //}
-
             for (int y = currentY; y < HeightUI; y++)
             {
                 WriteAt(_startX, y, "");
             }
-            int bottomX = 0;  // Rysujemy od lewej krawędzi (pod planszą)
-            int bottomY = 21; // Plansza zajmuje 0-19. Zostawiamy linię 20 pustą, zaczynamy od 21
-
+            // pod plansza:
+            int bottomX = 0;
+            int bottomY = 21;
             if (isInventoryMode)
             {
                 WriteAt(bottomX, bottomY++, "INVENTORY MENU");
@@ -110,15 +85,13 @@ namespace RpgGame.Engine
                 WriteAt(bottomX, bottomY++, "LOOTING MENU");
                 WriteAt(bottomX, bottomY++, "[W/S] Up/Down");
                 WriteAt(bottomX, bottomY++, "[E] Pick Up Selected");
-                WriteAt(bottomX, bottomY++, "[ESC] Cancel");
+                WriteAt(bottomX, bottomY++, "[Q] Cancel");
             }
             else
             {
                 WriteAt(bottomX, bottomY++, "CONTROLS");
                 WriteAt(bottomX, bottomY++, "[W/A/S/D] Move");
                 WriteAt(bottomX, bottomY++, "[I] Open Inventory");
-
-                // Dynamiczna podpowiedź dla przycisku E
                 if (currentTile.Items.Count == 1)
                 {
                     WriteAt(bottomX, bottomY++, $"[E] Pick up {currentTile.Items[0].Name}");
@@ -129,12 +102,10 @@ namespace RpgGame.Engine
                 }
                 else
                 {
-                    WriteAt(bottomX, bottomY++, ""); // Pusta linia, by uniknąć ghostingu
+                    WriteAt(bottomX, bottomY++, "");
                 }
                 WriteAt(bottomX, bottomY++, "");
             }
-
-            // Czyszczenie reszty DOLNEGO panelu (żeby stare instrukcje zniknęły po zmianie trybu)
             for (int y = bottomY; y < HeightUI; y++)
             {
                 WriteAt(bottomX, y, "");
@@ -145,6 +116,5 @@ namespace RpgGame.Engine
             Console.SetCursorPosition(x, y);
             Console.Write(text.PadRight(WidthUI));
         }
-
     }
 }

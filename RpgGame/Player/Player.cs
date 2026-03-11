@@ -31,7 +31,7 @@ namespace RpgGame.Player
         public List<IItem> Inventory { get;  } = new List<IItem>();
         public IItem? LeftHand { get; private set; }
         public IItem? RightHand { get; private set; }
-        public int MaxInventorySize { get; } = 7;
+        public int MaxInventorySize { get; } = 6;
 
         // konstruktor
         public Player(int startX = 0, int startY = 0)
@@ -64,12 +64,10 @@ namespace RpgGame.Player
         }
         public void EquipToLeftHand(IItem item)
         {
-            // Jeśli trzymamy broń dwuręczną, założenie czegoś do jednej ręki zdejmuje ją z obu!
             if (LeftHand != null && LeftHand == RightHand)
             {
                 ClearHands();
             }
-            // W przeciwnym razie zdejmujemy tylko to, co było w lewej ręce
             else if (LeftHand != null)
             {
                 Inventory.Add(LeftHand);
@@ -96,7 +94,7 @@ namespace RpgGame.Player
         {
             if (LeftHand != null)
             {
-                if (LeftHand == RightHand) ClearHands(); // Ściągnięcie dwuręcznej
+                if (LeftHand == RightHand) ClearHands();
                 else
                 {
                     Inventory.Add(LeftHand);
@@ -108,7 +106,7 @@ namespace RpgGame.Player
         {
             if (RightHand != null)
             {
-                if (RightHand == LeftHand) ClearHands(); // Ściągnięcie dwuręcznej
+                if (RightHand == LeftHand) ClearHands();
                 else
                 {
                     Inventory.Add(RightHand);
@@ -128,16 +126,11 @@ namespace RpgGame.Player
         {
             ITile currentTile = board.GetTile(X, Y);
             if (index < 0 || index >= currentTile.Items.Count) return;
-
             var item = currentTile.Items[index];
-
-            // Zlecamy przedmiotowi próbę podniesienia. 
-            // Złoto zwróci true, ale miecz zwróci false, jeśli masz już 7 przedmiotów!
             bool success = item.PickUp(this);
-
             if (success)
             {
-                currentTile.Items.RemoveAt(index); // Usuwamy z ziemi TYLKO jeśli się udało zebrać
+                currentTile.Items.RemoveAt(index);
             }
         }
         public void DropItem(int index, Board board)
@@ -149,11 +142,9 @@ namespace RpgGame.Player
         }
         public bool TryAddToInventory(IItem item)
         {
-            if (Inventory.Count >= MaxInventorySize) return false; // Plecak pełny!
+            if (Inventory.Count >= MaxInventorySize) return false;
             Inventory.Add(item);
-            return true; // Sukces
+            return true;
         }
-
-
     }
 }

@@ -47,16 +47,11 @@ namespace RpgGame.Engine
         private void OpenLootMenu()
         {
             var currentTile = _board.GetTile(_player.X, _player.Y);
-
-            // Jeśli na polu nie ma niczego lub mamy otwarty plecak - przerywamy akcję
             if (currentTile.Items.Count == 0 || _isInventoryMode) return;
-
-            // Jeśli jest dokładnie JEDEN przedmiot, podnosimy go od razu bez otwierania menu
             if (currentTile.Items.Count == 1)
             {
                 _player.CollectSpecific(0, _board);
             }
-            // Jeśli jest WIECEJ niż jeden, odpalamy Menu Łupów
             else
             {
                 _isLootMode = true;
@@ -76,19 +71,16 @@ namespace RpgGame.Engine
         public void HandleInput()
         {
             var keyInfo = Console.ReadKey(intercept: true);
-
-            // Jeśli plecak jest otwarty, przejmujemy kontrolę nad klawiszami
             if (_isInventoryMode)
             {
                 HandleInventoryInput(keyInfo.Key);
             }
-            else if (_isLootMode) // NOWOŚĆ: Jeśli przeszukujemy łupy
+            else if (_isLootMode)
             {
                 HandleLootInput(keyInfo.Key);
             }
             else
             {
-                // Normalne chodzenie
                 if (_keyBindings.TryGetValue(keyInfo.Key, out Action action))
                 {
                     action.Invoke();
@@ -100,31 +92,28 @@ namespace RpgGame.Engine
             var currentTile = _board.GetTile(_player.X, _player.Y);
             switch (key)
             {
-                case ConsoleKey.W: // W górę
+                case ConsoleKey.W:
                     _lootCursor--;
                     if (_lootCursor < 0) _lootCursor = currentTile.Items.Count - 1;
                     break;
 
-                case ConsoleKey.S: // W dół
+                case ConsoleKey.S:
                     _lootCursor++;
                     if (_lootCursor >= currentTile.Items.Count) _lootCursor = 0;
                     break;
 
-                case ConsoleKey.E: // Podnieś!
+                case ConsoleKey.E:
                     _player.CollectSpecific(_lootCursor, _board);
-
-                    // Zabezpieczenie kursora po zniknięciu przedmiotu
                     if (currentTile.Items.Count == 0)
                     {
-                        _isLootMode = false; // Zamykamy, bo nie ma już co zbierać
+                        _isLootMode = false;
                     }
                     else if (_lootCursor >= currentTile.Items.Count)
                     {
                         _lootCursor = currentTile.Items.Count - 1;
                     }
                     break;
-
-                case ConsoleKey.Q: // Anuluj zbieranie
+                case ConsoleKey.Q:
                     _isLootMode = false;
                     break;
             }
@@ -133,7 +122,7 @@ namespace RpgGame.Engine
         {
             if (_player.Inventory.Count == 0)
             {
-                _isInventoryMode = false; // Zamykamy plecak, jeśli jest pusty
+                _isInventoryMode = false;
             }
             else if (_inventoryCursor >= _player.Inventory.Count)
             {
@@ -144,42 +133,34 @@ namespace RpgGame.Engine
         {
             switch (key)
             {
-                case ConsoleKey.W: // W górę
+                case ConsoleKey.W:
                     _inventoryCursor--;
                     if (_inventoryCursor < 0) _inventoryCursor = _player.Inventory.Count - 1;
                     break;
-
-                case ConsoleKey.S: // W dół
+                case ConsoleKey.S:
                     _inventoryCursor++;
                     if (_inventoryCursor >= _player.Inventory.Count) _inventoryCursor = 0;
                     break;
-
-                case ConsoleKey.L: // Wyposaż w lewą rękę
-                    // Magia polimorfizmu - broń sama zadecyduje, czy zajmie jedną czy obie ręce!
+                case ConsoleKey.L:
                     _player.Inventory[_inventoryCursor].EquipToLeftHand(_player);
                     ValidateCursor();
                     break;
-
-                case ConsoleKey.R: // Wyposaż w prawą rękę
+                case ConsoleKey.R:
                     _player.Inventory[_inventoryCursor].EquipToRightHand(_player);
                     ValidateCursor();
                     break;
-                // --- NOWE KLAWISZE DO ZWALNIANIA RĄK ---
-                case ConsoleKey.D1: // Klawisz "1" (nad Q/W)
+                case ConsoleKey.D1:
                     _player.UnequipLeft();
                     break;
-
-                case ConsoleKey.D2: // Klawisz "2"
+                case ConsoleKey.D2:
                     _player.UnequipRight();
                     break;
-
-                case ConsoleKey.Q: // Wyrzuć na ziemię
+                case ConsoleKey.Q:
                     _player.DropItem(_inventoryCursor, _board);
                     ValidateCursor();
                     break;
-
                 case ConsoleKey.I:
-                case ConsoleKey.Escape: // Wyjście z menu
+                case ConsoleKey.Escape:
                     _isInventoryMode = false;
                     break;
             }
@@ -191,7 +172,7 @@ namespace RpgGame.Engine
             {
                 for (int x = 0; x < _board.Width; x++)
                 {
-                    Console.SetCursorPosition(x, y); // Ustawiamy precyzyjnie znak po znaku
+                    Console.SetCursorPosition(x, y);
                     if (_player.X == x && _player.Y == y)
                     {
                         Console.Write(_player.Symbol);
@@ -204,8 +185,6 @@ namespace RpgGame.Engine
                     }
                 }
             }
-
-            // Wywołanie rysowania UI
             var currentTile = _board.GetTile(_player.X, _player.Y);
             _ui.Draw(_player, currentTile, _isInventoryMode, _inventoryCursor, _isLootMode, _lootCursor);
         }

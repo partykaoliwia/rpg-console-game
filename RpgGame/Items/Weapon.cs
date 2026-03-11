@@ -17,7 +17,7 @@ namespace RpgGame.Items
         }
         public virtual bool PickUp(Player.Player player)
         {
-            return player.TryAddToInventory(this); // Zwróci false, jeśli nie ma miejsca!
+            return player.TryAddToInventory(this);
         }
         public virtual void EquipToLeftHand(Player.Player player)
         {

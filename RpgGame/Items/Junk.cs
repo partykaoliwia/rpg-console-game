@@ -12,7 +12,7 @@ namespace RpgGame.Items
         public abstract string Name { get; }
         public virtual bool PickUp(Player.Player player)
         {
-            return player.TryAddToInventory(this); // Zwróci false, jeśli nie ma miejsca!
+            return player.TryAddToInventory(this);
         }
         public virtual void EquipToLeftHand(Player.Player player) { }
         public virtual void EquipToRightHand(Player.Player player) { }

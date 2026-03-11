@@ -15,7 +15,7 @@ namespace RpgGame.Items
         public override bool PickUp(Player.Player player)
         {
             player.AddCoins(Value);
-            return true; // Zawsze można wziąć pieniądze
+            return true;
         }
 
     }

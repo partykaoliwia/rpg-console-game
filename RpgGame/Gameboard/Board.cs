@@ -62,7 +62,6 @@ namespace RpgGame.Gameboard
         {
             // jesli wyjdziemy poza mape
             if (x < 0 || x >= Width || y < 0 || y >= Height) return new Wall();
-
             return _tiles[x, y];
         }
         public void DrawBoard()
@@ -77,6 +76,5 @@ namespace RpgGame.Gameboard
                 Console.WriteLine();
             }
         }
-
     }
 }
