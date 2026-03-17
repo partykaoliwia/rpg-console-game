@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RpgGame.Characters;
 
 namespace RpgGame.Items
 {
@@ -15,15 +16,15 @@ namespace RpgGame.Items
         {
             Damage = damage;
         }
-        public virtual bool PickUp(Player.Player player)
+        public virtual bool PickUp(Player player)
         {
             return player.TryAddToInventory(this);
         }
-        public virtual void EquipToLeftHand(Player.Player player)
+        public virtual void EquipToLeftHand(Player player)
         {
             player.EquipToLeftHand(this);
         }
-        public virtual void EquipToRightHand(Player.Player player)
+        public virtual void EquipToRightHand(Player player)
         {
             player.EquipToRightHand(this);
         }

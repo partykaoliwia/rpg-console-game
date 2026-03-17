@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RpgGame.Common;
 using RpgGame.Gameboard;
 using RpgGame.Items;
 
-namespace RpgGame.Player
+namespace RpgGame.Characters
 {
-    public class Player
+    public class Player : IDrawable
     {
         public char Symbol => '¶';
 

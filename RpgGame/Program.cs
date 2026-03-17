@@ -1,17 +1,17 @@
 ﻿using RpgGame.Engine;
 using RpgGame.Gameboard;
 using RpgGame.Items;
-using RpgGame.Player;
+using RpgGame.Characters;
 
 namespace RpgGame
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-            Board board = new Board();
-            var player = new Player.Player(0, 0);
+            var board = new Board();
+            var player = new Player(0, 0);
 
             board.GetTile(3, 3).Items.Add(new Coin(10));
             board.GetTile(5, 3).Items.Add(new Paper());
@@ -26,7 +26,7 @@ namespace RpgGame
             board.GetTile(15, 3).Items.Add(new Axe());
             board.GetTile(20, 5).Items.Add(new Gold(25));
 
-            GameEngine engine = new GameEngine(board, player);
+            var engine = new GameEngine(board, player);
             engine.RunGame();
         }
     }

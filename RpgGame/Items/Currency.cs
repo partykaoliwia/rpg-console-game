@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RpgGame.Characters;
 
 namespace RpgGame.Items
 {
@@ -16,8 +17,8 @@ namespace RpgGame.Items
         {
             Value = value;
         }
-        public abstract bool PickUp(Player.Player player);
-        public void EquipToLeftHand(Player.Player player) { }
-        public void EquipToRightHand(Player.Player player) { }
+        public abstract bool PickUp(Player player);
+        public void EquipToLeftHand(Player player) { }
+        public void EquipToRightHand(Player player) { }
     }
 }

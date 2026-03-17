@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RpgGame.Player;
+using RpgGame.Characters;
+using RpgGame.Common;
 
 namespace RpgGame.Items
 {
-    public interface IItem
+    public interface IItem : IDrawable
     {
-        char Symbol { get; }
         string Name { get; }
-        bool PickUp(Player.Player player);
-        void EquipToLeftHand(Player.Player player);
-        void EquipToRightHand(Player.Player player);
+        bool PickUp(Player player);
+        void EquipToLeftHand(Player player);
+        void EquipToRightHand(Player player);
     }
 }
