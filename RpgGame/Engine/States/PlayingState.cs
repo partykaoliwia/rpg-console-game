@@ -50,18 +50,12 @@ namespace RpgGame.Engine.States
             // Przekazujemy żądanie wzdłuż łańcucha
             _inputChainHead.Handle(key, out _errorMessage);
         }
-        public void Draw(ConsoleRenderer renderer)
+       public void Draw(ConsoleRenderer renderer)
         {
             renderer.DrawBoard(_board, _player);
-            if(!string.IsNullOrEmpty(_errorMessage))
-            {
-                renderer.DrawMessage(_errorMessage);
-                renderer.DrawPlayerStats(_player);
-            }
-            else
-            {
-                renderer.DrawTutorial(_board, _player);
-            }
+            // Przekazujemy pusty błąd lub rzeczywisty komunikat. 
+            // DrawPlayingView zajmie się narysowaniem wszystkiego!
+            renderer.DrawPlayingView(_board, _player, _errorMessage); 
         }
     }
 }

@@ -61,7 +61,7 @@ namespace RpgGame.Engine
         }
 
         // 2. RYSOWANIE STATYSTYK GRACZA DO BUFORA
-        public void DrawPlayerStats(Player player)
+        public int DrawPlayerStats(Player player, int inventoryCursorIndex =-1)
         {
             int currentY = StatY;
             WriteToBuffer(StatX, currentY++, "—————————————————");
@@ -77,14 +77,8 @@ namespace RpgGame.Engine
             WriteToBuffer(StatX, currentY++, $"Left Hand:   {(player.LeftHand != null ? player.LeftHand.Name : "Empty")}");
             WriteToBuffer(StatX, currentY++, $"Right Hand:  {(player.RightHand != null ? player.RightHand.Name : "Empty")}");
             WriteToBuffer(StatX, currentY++, "—————————————————");
-        }
 
-        // 3. RYSOWANIE MENU EKWIPUNKU
-        public void DrawInventoryMenu(Player player, int cursorIndex, string errorMessage)
-        {
-            DrawPlayerStats(player); // Statystyki u góry, lista na dole
-
-            int currentY = StatY + 14;
+            // Rysujemy ekwipunek ZAWSZE obok planszy
             string status = player.Inventory.Count >= player.MaxInventorySize ? "(FULL)" : $"({player.Inventory.Count}/{player.MaxInventorySize})";
             WriteToBuffer(StatX, currentY++, $"INVENTORY {status}");
 
@@ -96,10 +90,36 @@ namespace RpgGame.Engine
             {
                 for (int i = 0; i < player.Inventory.Count; i++)
                 {
-                    string prefix = (i == cursorIndex) ? "> " : "  ";
+                    // Jeśli jesteśmy w InventoryState, inventoryCursorIndex narysuje strzałkę
+                    string prefix = (i == inventoryCursorIndex) ? "> " : "  ";
                     WriteToBuffer(StatX, currentY++, $"{prefix}{i + 1}. {player.Inventory[i].Name}");
                 }
             }
+
+            return currentY; // Zwracamy pozycję Y!
+        }
+
+        // NOWA METODA: Zawsze wyświetla informację, czy stoimy na przedmiocie
+        public void DrawGroundItems(ITile tile, int currentY, int lootCursorIndex = -1)
+        {
+            if (tile.Items.Count > 0)
+            {
+                currentY++; // Pusta linia odstępu
+                WriteToBuffer(StatX, currentY++, "ON THE GROUND:");
+                for (int i = 0; i < tile.Items.Count; i++)
+                {
+                    // Jeśli jesteśmy w LootingState, lootCursorIndex narysuje strzałkę
+                    string prefix = (i == lootCursorIndex) ? "> " : "  ";
+                    WriteToBuffer(StatX, currentY++, $"{prefix}{i + 1}. {tile.Items[i].Name}");
+                }
+            }
+        }
+        // 3. RYSOWANIE MENU EKWIPUNKU
+        // 4. RYSOWANIE MENU EKWIPUNKU (Tylko nakładka sterowania)
+        public void DrawInventoryMenu(Player player, int cursorIndex, string errorMessage)
+        {
+            // Przekazujemy kursor! Ekwipunek narysuje się ze wskaźnikiem
+            DrawPlayerStats(player, cursorIndex);
 
             int bY = BottomY;
             WriteToBuffer(BottomX, bY++, "INVENTORY MENU");
@@ -109,22 +129,14 @@ namespace RpgGame.Engine
             WriteToBuffer(BottomX, bY++, "[Q] Drop");
             WriteToBuffer(BottomX, bY++, "[I] Close");
 
-            DrawMessage(errorMessage, bY + 1); // Rysowanie ewentualnego błędu
+            DrawMessage(errorMessage, bY + 1);
         }
 
         // 4. RYSOWANIE MENU PODNOSZENIA (Looting)
         public void DrawLootingMenu(Player player, ITile currentTile, int cursorIndex, string errorMessage)
         {
-            DrawPlayerStats(player);
-
-            int currentY = StatY + 14;
-            WriteToBuffer(StatX, currentY++, "ITEMS TO PICK UP:");
-
-            for (int i = 0; i < currentTile.Items.Count; i++)
-            {
-                string prefix = (i == cursorIndex) ? "> " : "  ";
-                WriteToBuffer(StatX, currentY++, $"{prefix}{i + 1}. {currentTile.Items[i].Name}");
-            }
+            int nextY = DrawPlayerStats(player); // Ekwipunek bez kursora
+            DrawGroundItems(currentTile, nextY, cursorIndex); // Ziemia z kursoerm!
 
             int bY = BottomY;
             WriteToBuffer(BottomX, bY++, "LOOTING MENU");
@@ -132,28 +144,32 @@ namespace RpgGame.Engine
             WriteToBuffer(BottomX, bY++, "[E] Pick Up Selected");
             WriteToBuffer(BottomX, bY++, "[Q] Cancel");
 
-            DrawMessage(errorMessage, bY + 1); // Rysowanie ewentualnego błędu
+            DrawMessage(errorMessage, bY + 1);
         }
 
         // 5. DYNAMICZNY TUTORIAL (Zwykła gra)
-        public void DrawTutorial(Board board, Player player)
+        // 3. RYSOWANIE WIDOKU GRY (Zastępuje dawne DrawTutorial)
+        public void DrawPlayingView(Board board, Player player, string errorMessage = "")
         {
-            DrawPlayerStats(player);
+            int nextY = DrawPlayerStats(player); // Rysuje statystyki i ekwipunek (bez kursora)
+            var tile = board.GetTile(player.X, player.Y);
+            DrawGroundItems(tile, nextY);        // Rysuje przedmioty na ziemi (bez kursora)
 
             int bY = BottomY;
             WriteToBuffer(BottomX, bY++, "CONTROLS:");
             WriteToBuffer(BottomX, bY++, "[W/A/S/D] Move");
             WriteToBuffer(BottomX, bY++, "[I] Inventory");
 
-            var tile = board.GetTile(player.X, player.Y);
             if (tile.Items.Count == 1)
                 WriteToBuffer(BottomX, bY++, $"[E] Pick up {tile.Items[0].Name}");
             else if (tile.Items.Count > 1)
                 WriteToBuffer(BottomX, bY++, "[E] Open Loot Menu");
+
+            DrawMessage(errorMessage, bY + 1);
         }
 
         // 6. RYSOWANIE KOMUNIKATÓW
-        public void DrawMessage(string message, int line = BottomY + 4)
+        public void DrawMessage(string message, int line)
         {
             if (!string.IsNullOrEmpty(message))
             {
