@@ -4,23 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RpgGame.Characters;
+using RpgGame.Engine.Commands;
+using RpgGame.Engine.Input;
 using RpgGame.Gameboard;
 using RpgGame.Items;
 
 namespace RpgGame.Engine.States
 {
-    public class LootingState : IGameState
+    public class LootingState : IGameState, IMenuState
     {
         private readonly GameEngine _engine;
         private readonly Player _player;
         private readonly Board _board;
-        private readonly Dictionary<ConsoleKey, Action> _keyBindings;
-        private int _cursorIndex = 0;
         private string _errorMessage = string.Empty;
+        private readonly InputHandler _inputChainHead;
 
         private ITile CurrentTile => _board.GetTile(_player.X, _player.Y);
         private List<IItem> CurrentTileItems => CurrentTile.Items;
         private int CurrentTileItemsCount => CurrentTileItems.Count;
+
+        // Implementacja właściwości z interfejsu IMenuState
+        public int CursorIndex { get; set; } = 0;
+        public int ItemCount => CurrentTile.Items.Count;
 
         public LootingState(GameEngine engine, Player player, Board board)
         {
@@ -28,50 +33,46 @@ namespace RpgGame.Engine.States
             _player = player;
             _board = board;
 
-            _keyBindings = new Dictionary<ConsoleKey, Action>
-            {
-                { ConsoleKey.W, () => MoveCursor(-1) },
-                { ConsoleKey.S, () => MoveCursor(1) },
-                { ConsoleKey.E, () => PickUpSelectedItem() },
-                { ConsoleKey.Q, () => _engine.PopState() },
-                { ConsoleKey.Escape, () => _engine.PopState() }
-            };
-        }
-        private void MoveCursor(int direction)
-        {
-            if (CurrentTileItemsCount == 0) return;
-            _cursorIndex += direction;
-            if (_cursorIndex < 0) _cursorIndex = CurrentTileItemsCount - 1;
-            if (_cursorIndex >= CurrentTileItemsCount) _cursorIndex = 0;
-        }
-        private void PickUpSelectedItem()
-        {
-            _player.CollectSpecific(_cursorIndex, _board);
-            ValidateState();
-        }
-        private void ValidateState()
-        {
-            if(CurrentTileItemsCount==0)
-            {
-                _engine.PopState();
-            }
-            else if(_cursorIndex>= CurrentTileItemsCount)
-            {
-                _cursorIndex = CurrentTileItemsCount - 1;
-            }
-        }
+            // Tworzenie "ogniw" łańcucha zobowiązań dla menu podnoszenia
+
+            // Ruch kursora (korzystamy z tej samej komendy co w InventoryState!)
+            var wKey = new KeyCommandHandler(ConsoleKey.W, new MoveCursorCommand(this, -1));
+            var sKey = new KeyCommandHandler(ConsoleKey.S, new MoveCursorCommand(this, 1));
+
+            // Podnoszenie przedmiotu
+            var eKey = new KeyCommandHandler(ConsoleKey.E, new LootItemCommand(player, board, this));
+
+            // Wyjście z menu
+            var qKey = new KeyCommandHandler(ConsoleKey.Q, new PopStateCommand(engine));
+            var escKey = new KeyCommandHandler(ConsoleKey.Escape, new PopStateCommand(engine));
+
+            // Złożenie łańcucha w całość
+            wKey.SetNext(sKey)
+                .SetNext(eKey)
+                .SetNext(qKey)
+                .SetNext(escKey);
+
+            // Zapisanie referencji do głowy łańcucha
+            _inputChainHead = wKey;
+        }        
 
         public void HandleInput(ConsoleKey key)
         {
-            _errorMessage = string.Empty;
-            if (_keyBindings.TryGetValue(key, out Action action)) action.Invoke();
-            else _errorMessage = $"Klawisz '{key}' nie ma funkcji w menu podnoszenia.";
-        }
+            // Przekazujemy klawisz do łańcucha
+            _inputChainHead.Handle(key, out _errorMessage);
 
+            // Jeśli po jakiejś akcji (np. podniesieniu przedmiotu) na ziemi nie ma już nic,
+            // automatycznie zamykamy okno podnoszenia (wracamy do PlayingState)
+            if (ItemCount == 0)
+            {
+                _engine.PopState();
+            }
+        }
         public void Draw(ConsoleRenderer renderer)
         {
             renderer.DrawBoard(_board, _player);
-            renderer.DrawLootingMenu(_player, CurrentTile, _cursorIndex, _errorMessage);
+            // Używamy zaktualizowanej właściwości CursorIndex
+            renderer.DrawLootingMenu(_player, CurrentTile, CursorIndex, _errorMessage);
         }
     }
 }

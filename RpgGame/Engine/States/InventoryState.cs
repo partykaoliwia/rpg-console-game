@@ -4,19 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RpgGame.Characters;
+using RpgGame.Engine.Commands;
+using RpgGame.Engine.Input;
 using RpgGame.Gameboard;
 using RpgGame.Items;
 
 namespace RpgGame.Engine.States
 {
-    public class InventoryState : IGameState
+    public class InventoryState : IGameState, IMenuState
     {
         private readonly GameEngine _engine;
         private readonly Player _player;
         private readonly Board _board;
-        private readonly Dictionary<ConsoleKey, Action> _keyBindings;
-        private int _cursorIndex = 0;
+        private readonly InputHandler _inputChainHead;
         private string _errorMessage = string.Empty;
+        public int CursorIndex { get; set; } = 0;
+        public int ItemCount => _player.Inventory.Count;
 
         public InventoryState(GameEngine engine, Player player, Board board)
         {
@@ -24,72 +27,47 @@ namespace RpgGame.Engine.States
             _player = player;
             _board = board;
 
-            _keyBindings = new Dictionary<ConsoleKey, Action>
-            {
-                { ConsoleKey.W, () => MoveCursor(-1) }, //up
-                { ConsoleKey.S, () => MoveCursor(1) }, //down
-                { ConsoleKey.L, () => { GetSelectedItem()?.EquipToLeftHand(_player); 
-                                        ValidateState(); } },
-                { ConsoleKey.R, () => { GetSelectedItem()?.EquipToRightHand(_player); 
-                                        ValidateState(); } },
-                { ConsoleKey.D1, () => _player.UnequipLeft() },
-                { ConsoleKey.D2, () => _player.UnequipRight() },
-                { ConsoleKey.Q, () => { DropSelectedItem(); 
-                                        ValidateState(); } },
-                { ConsoleKey.I, () => _engine.PopState() },
-                { ConsoleKey.Escape, () => _engine.PopState() }
-            };
-        }
+            // Wnętrze konstruktora InventoryState:
 
-        private void MoveCursor(int direction)
-        {
-            //direction -1 up, 1 down
-            if (_player.Inventory.Count == 0) return;
-            _cursorIndex += direction;
-            if (_cursorIndex < 0) _cursorIndex = _player.Inventory.Count - 1; // za bardzo w gore, to idziemy od dolu
-            else if ( _cursorIndex >= _player.Inventory.Count) _cursorIndex = 0; // za bardzo w dol, to idziemy od gory
-        }
-        private IItem GetSelectedItem()
-        {
-            if (_player.Inventory.Count == 0) return null;
-            return _player.Inventory[_cursorIndex];
-        }
-        private void DropSelectedItem()
-        {
-            if(_player.Inventory.Count > 0)
-            {
-                _player.DropItem(_cursorIndex, _board);
-            }
-        }
-        private void ValidateState()
-        {
-            if(_player.Inventory.Count == 0)
-            {
-                _engine.PopState(); //automatyczne wyjscie z InventoryMode, gdy pozbedziemy sie z inventory przedmiotow
-            }
-            else if(_cursorIndex >= _player.Inventory.Count)
-            {
-                _cursorIndex = _player.Inventory.Count - 1; //ustawiamy kursor na ostatni przedmiot
-            }
+            // Ruch kursora (wspólny dla obu menu!)
+            var wKey = new KeyCommandHandler(ConsoleKey.W, new MoveCursorCommand(this, -1));
+            var sKey = new KeyCommandHandler(ConsoleKey.S, new MoveCursorCommand(this, 1));
+
+            // Zakładanie (przekazujemy HandSlot)
+            var lKey = new KeyCommandHandler(ConsoleKey.L, new EquipCommand(player, this, HandSlot.Left));
+            var rKey = new KeyCommandHandler(ConsoleKey.R, new EquipCommand(player, this, HandSlot.Right));
+
+            // Zdejmowanie
+            var d1Key = new KeyCommandHandler(ConsoleKey.D1, new UnequipCommand(player, HandSlot.Left));
+            var d2Key = new KeyCommandHandler(ConsoleKey.D2, new UnequipCommand(player, HandSlot.Right));
+
+            // Wyrzucanie
+            var qKey = new KeyCommandHandler(ConsoleKey.Q, new DropItemCommand(player, board, this));
+
+            // Zamykanie
+            var escKey = new KeyCommandHandler(ConsoleKey.Escape, new PopStateCommand(engine));
+
+            // Budowanie łańcucha
+            wKey.SetNext(sKey).SetNext(lKey).SetNext(rKey)
+                .SetNext(d1Key).SetNext(d2Key).SetNext(qKey).SetNext(escKey);
+
+            _inputChainHead = wKey;
         }
         public void HandleInput(ConsoleKey key)
         {
-            _errorMessage = string.Empty;
+            _inputChainHead.Handle(key, out _errorMessage);
 
-            if (_keyBindings.TryGetValue(key, out Action action))
+            // Wyjście z menu, gdy skończą się przedmioty 
+            // (przenieśliśmy to tutaj, żeby nie brudzić komend logiką zamykania okien)
+            if (ItemCount == 0)
             {
-                action.Invoke();
-            }
-            else
-            {
-                _errorMessage = $"Klawisz '{key}' nie ma funkcji w ekwipunku.";
+                _engine.PopState();
             }
         }
-
         public void Draw(ConsoleRenderer renderer)
         {
             renderer.DrawBoard(_board, _player);
-            renderer.DrawInventoryMenu(_player, _cursorIndex, _errorMessage);
+            renderer.DrawInventoryMenu(_player, CursorIndex, _errorMessage);
         }
     }
 }
