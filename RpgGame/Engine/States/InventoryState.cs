@@ -27,13 +27,12 @@ namespace RpgGame.Engine.States
             _player = player;
             _board = board;
 
-            // Wnętrze konstruktora InventoryState:
 
-            // Ruch kursora (wspólny dla obu menu!)
+            // Przesuwanie kursora
             var wKey = new KeyCommandHandler(ConsoleKey.W, new MoveCursorCommand(this, -1));
             var sKey = new KeyCommandHandler(ConsoleKey.S, new MoveCursorCommand(this, 1));
 
-            // Zakładanie (przekazujemy HandSlot)
+            // Zakładanie
             var lKey = new KeyCommandHandler(ConsoleKey.L, new EquipCommand(player, this, HandSlot.Left));
             var rKey = new KeyCommandHandler(ConsoleKey.R, new EquipCommand(player, this, HandSlot.Right));
 
@@ -57,8 +56,6 @@ namespace RpgGame.Engine.States
         {
             _inputChainHead.Handle(key, out _errorMessage);
 
-            // Wyjście z menu, gdy skończą się przedmioty 
-            // (przenieśliśmy to tutaj, żeby nie brudzić komend logiką zamykania okien)
             if (ItemCount == 0)
             {
                 _engine.PopState();

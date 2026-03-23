@@ -23,7 +23,6 @@ namespace RpgGame.Engine.States
         private List<IItem> CurrentTileItems => CurrentTile.Items;
         private int CurrentTileItemsCount => CurrentTileItems.Count;
 
-        // Implementacja właściwości z interfejsu IMenuState
         public int CursorIndex { get; set; } = 0;
         public int ItemCount => CurrentTile.Items.Count;
 
@@ -33,9 +32,8 @@ namespace RpgGame.Engine.States
             _player = player;
             _board = board;
 
-            // Tworzenie "ogniw" łańcucha zobowiązań dla menu podnoszenia
 
-            // Ruch kursora (korzystamy z tej samej komendy co w InventoryState!)
+            // Przesuwanie kursora
             var wKey = new KeyCommandHandler(ConsoleKey.W, new MoveCursorCommand(this, -1));
             var sKey = new KeyCommandHandler(ConsoleKey.S, new MoveCursorCommand(this, 1));
 
@@ -46,23 +44,19 @@ namespace RpgGame.Engine.States
             var qKey = new KeyCommandHandler(ConsoleKey.Q, new PopStateCommand(engine));
             var escKey = new KeyCommandHandler(ConsoleKey.Escape, new PopStateCommand(engine));
 
-            // Złożenie łańcucha w całość
+            // Złożenie łańcucha
             wKey.SetNext(sKey)
                 .SetNext(eKey)
                 .SetNext(qKey)
                 .SetNext(escKey);
 
-            // Zapisanie referencji do głowy łańcucha
             _inputChainHead = wKey;
         }        
 
         public void HandleInput(ConsoleKey key)
         {
-            // Przekazujemy klawisz do łańcucha
             _inputChainHead.Handle(key, out _errorMessage);
 
-            // Jeśli po jakiejś akcji (np. podniesieniu przedmiotu) na ziemi nie ma już nic,
-            // automatycznie zamykamy okno podnoszenia (wracamy do PlayingState)
             if (ItemCount == 0)
             {
                 _engine.PopState();
@@ -71,7 +65,6 @@ namespace RpgGame.Engine.States
         public void Draw(ConsoleRenderer renderer)
         {
             renderer.DrawBoard(_board, _player);
-            // Używamy zaktualizowanej właściwości CursorIndex
             renderer.DrawLootingMenu(_player, CurrentTile, CursorIndex, _errorMessage);
         }
     }

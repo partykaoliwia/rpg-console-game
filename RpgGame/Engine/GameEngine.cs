@@ -42,7 +42,6 @@ namespace RpgGame.Engine
                     var keyInfo = Console.ReadKey(true);
                     currentState.HandleInput(keyInfo.Key);
                 }
-                Thread.Sleep(5); // TO DO
             }
         }
     }

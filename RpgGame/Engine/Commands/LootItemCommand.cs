@@ -20,14 +20,12 @@ namespace RpgGame.Engine.Commands
 
         public void Execute()
         {
-            // Pobieramy kafel (pole), na którym stoi gracz
             var tile = _board.GetTile(_player.X, _player.Y);
             if (tile.Items.Count == 0) return;
 
-            // Gracz podnosi konkretny przedmiot z ziemi
             _player.CollectSpecific(_menu.CursorIndex, _board);
 
-            // Poprawiamy kursor, jeśli ubyło przedmiotów na ziemi
+            // poprawa kursora
             if (_menu.CursorIndex >= tile.Items.Count && tile.Items.Count > 0)
             {
                 _menu.CursorIndex = tile.Items.Count - 1;

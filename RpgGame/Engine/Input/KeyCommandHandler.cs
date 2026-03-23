@@ -16,15 +16,12 @@ namespace RpgGame.Engine.Input
 
         public override bool Handle(ConsoleKey key, out string errorMessage)
         {
-            // Pozbyliśmy się switcha! Sprawdzamy tylko ten jeden konkretny warunek.
             if (key == _triggerKey)
             {
                 _command.Execute();
                 errorMessage = string.Empty;
-                return true; // Obsłużone, przerywamy łańcuch
+                return true;
             }
-
-            // Podajemy dalej
             return base.Handle(key, out errorMessage);
         }
     }

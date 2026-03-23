@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 using RpgGame.Characters;
-using RpgGame.Common; // Konieczne do interfejsu IDrawable!
+using RpgGame.Common;
 using RpgGame.Gameboard;
 
 namespace RpgGame.Engine
@@ -10,14 +10,13 @@ namespace RpgGame.Engine
     {
         // Rozmiary całego okna konsoli (Plansza + UI)
         private const int ScreenWidth = 120;
-        private static int ScreenHeight = 29;
+        private const int ScreenHeight = 29;
 
         private const int StatX = 45;
         private const int StatY = 0;
         private const int BottomX = 0;
         private const int BottomY = 21;
 
-        // Nasz wirtualny ekran w pamięci RAM!
         private readonly char[,] _buffer = new char[ScreenWidth, ScreenHeight];
 
         public ConsoleRenderer()
@@ -26,7 +25,6 @@ namespace RpgGame.Engine
             ClearBuffer();
         }
 
-        // Czyści bufor w pamięci (zastępuje Console.Clear)
         public void ClearBuffer()
         {
             for (int y = 0; y < ScreenHeight; y++)
@@ -38,7 +36,7 @@ namespace RpgGame.Engine
             }
         }
 
-        // 1. RYSOWANIE PLANSZY DO BUFORA (Używa IDrawable!)
+        // RYSOWANIE PLANSZY
         public void DrawBoard(Board board, Player player)
         {
             for (int y = 0; y < board.Height; y++)
@@ -47,12 +45,11 @@ namespace RpgGame.Engine
                 {
                     if (player.X == x && player.Y == y)
                     {
-                        DrawAt(x, y, player); // Przekazujemy gracza jako IDrawable
+                        DrawAt(x, y, player);
                     }
                     else
                     {
                         var tile = board.GetTile(x, y);
-                        // Polimorfizm - rysujemy przedmiot LUB płytkę
                         IDrawable thingToDraw = tile.Items.Count > 0 ? tile.Items[0] : tile;
                         DrawAt(x, y, thingToDraw);
                     }
@@ -60,7 +57,7 @@ namespace RpgGame.Engine
             }
         }
 
-        // 2. RYSOWANIE STATYSTYK GRACZA DO BUFORA
+        // RYSOWANIE STATYSTYK GRACZA
         public int DrawPlayerStats(Player player, int inventoryCursorIndex =-1)
         {
             int currentY = StatY;
@@ -78,7 +75,6 @@ namespace RpgGame.Engine
             WriteToBuffer(StatX, currentY++, $"Right Hand:  {(player.RightHand != null ? player.RightHand.Name : "Empty")}");
             WriteToBuffer(StatX, currentY++, "—————————————————");
 
-            // Rysujemy ekwipunek ZAWSZE obok planszy
             string status = player.Inventory.Count >= player.MaxInventorySize ? "(FULL)" : $"({player.Inventory.Count}/{player.MaxInventorySize})";
             WriteToBuffer(StatX, currentY++, $"INVENTORY {status}");
 
@@ -90,35 +86,31 @@ namespace RpgGame.Engine
             {
                 for (int i = 0; i < player.Inventory.Count; i++)
                 {
-                    // Jeśli jesteśmy w InventoryState, inventoryCursorIndex narysuje strzałkę
                     string prefix = (i == inventoryCursorIndex) ? "> " : "  ";
                     WriteToBuffer(StatX, currentY++, $"{prefix}{i + 1}. {player.Inventory[i].Name}");
                 }
             }
 
-            return currentY; // Zwracamy pozycję Y!
+            return currentY;
         }
 
-        // NOWA METODA: Zawsze wyświetla informację, czy stoimy na przedmiocie
+        // RYSOWANIE ITEMÓW NA ZIEMI
         public void DrawGroundItems(ITile tile, int currentY, int lootCursorIndex = -1)
         {
             if (tile.Items.Count > 0)
             {
-                currentY++; // Pusta linia odstępu
+                currentY++;
                 WriteToBuffer(StatX, currentY++, "ON THE GROUND:");
                 for (int i = 0; i < tile.Items.Count; i++)
                 {
-                    // Jeśli jesteśmy w LootingState, lootCursorIndex narysuje strzałkę
                     string prefix = (i == lootCursorIndex) ? "> " : "  ";
                     WriteToBuffer(StatX, currentY++, $"{prefix}{i + 1}. {tile.Items[i].Name}");
                 }
             }
         }
-        // 3. RYSOWANIE MENU EKWIPUNKU
-        // 4. RYSOWANIE MENU EKWIPUNKU (Tylko nakładka sterowania)
+        // RYSOWANIE MENU INVENTORY
         public void DrawInventoryMenu(Player player, int cursorIndex, string errorMessage)
         {
-            // Przekazujemy kursor! Ekwipunek narysuje się ze wskaźnikiem
             DrawPlayerStats(player, cursorIndex);
 
             int bY = BottomY;
@@ -132,11 +124,11 @@ namespace RpgGame.Engine
             DrawMessage(errorMessage, bY + 1);
         }
 
-        // 4. RYSOWANIE MENU PODNOSZENIA (Looting)
+        // RYSOWANIE MENU LOOTING
         public void DrawLootingMenu(Player player, ITile currentTile, int cursorIndex, string errorMessage)
         {
-            int nextY = DrawPlayerStats(player); // Ekwipunek bez kursora
-            DrawGroundItems(currentTile, nextY, cursorIndex); // Ziemia z kursoerm!
+            int nextY = DrawPlayerStats(player);
+            DrawGroundItems(currentTile, nextY, cursorIndex);
 
             int bY = BottomY;
             WriteToBuffer(BottomX, bY++, "LOOTING MENU");
@@ -147,13 +139,12 @@ namespace RpgGame.Engine
             DrawMessage(errorMessage, bY + 1);
         }
 
-        // 5. DYNAMICZNY TUTORIAL (Zwykła gra)
-        // 3. RYSOWANIE WIDOKU GRY (Zastępuje dawne DrawTutorial)
+        // GŁÓWNE RYSOWANIE STEROWANIA, STATÓW ITD
         public void DrawPlayingView(Board board, Player player, string errorMessage = "")
         {
-            int nextY = DrawPlayerStats(player); // Rysuje statystyki i ekwipunek (bez kursora)
+            int nextY = DrawPlayerStats(player); // staty, ekwipunek
             var tile = board.GetTile(player.X, player.Y);
-            DrawGroundItems(tile, nextY);        // Rysuje przedmioty na ziemi (bez kursora)
+            DrawGroundItems(tile, nextY);        // przedmioty na ziemi
 
             int bY = BottomY;
             WriteToBuffer(BottomX, bY++, "CONTROLS:");
@@ -168,7 +159,7 @@ namespace RpgGame.Engine
             DrawMessage(errorMessage, bY + 1);
         }
 
-        // 6. RYSOWANIE KOMUNIKATÓW
+        // RYSOWANIE KOMUNIKATÓW
         public void DrawMessage(string message, int line)
         {
             if (!string.IsNullOrEmpty(message))
@@ -177,9 +168,7 @@ namespace RpgGame.Engine
             }
         }
 
-        // === MAGIA DZIEJE SIĘ TUTAJ ===
-
-        // NOWA METODA POMOCNICZA DLA IDRAWABLE
+        // metody pomocnicze
         private void DrawAt(int x, int y, IDrawable drawable)
         {
             if (x >= 0 && x < ScreenWidth && y >= 0 && y < ScreenHeight)
@@ -188,7 +177,6 @@ namespace RpgGame.Engine
             }
         }
 
-        // Prywatna metoda, która wpisuje stringa w odpowiednie miejsce tablicy
         private void WriteToBuffer(int startX, int startY, string text)
         {
             for (int i = 0; i < text.Length; i++)
@@ -201,7 +189,7 @@ namespace RpgGame.Engine
             }
         }
 
-        // Tę metodę wywołuje GameEngine na samym końcu pętli!
+        // RENDEROWANIE
         public void RenderToConsole()
         {
             var sb = new StringBuilder(ScreenWidth * ScreenHeight + ScreenHeight);
@@ -215,10 +203,10 @@ namespace RpgGame.Engine
                 sb.AppendLine();
             }
 
-            Console.SetCursorPosition(0, 0); // Wracamy na górę konsoli
-            Console.Write(sb.ToString());    // Wypluwamy całą klatkę naraz!
+            Console.SetCursorPosition(0, 0);
+            Console.Write(sb.ToString());
 
-            ClearBuffer(); // Czyścimy wirtualny ekran przygotowując na kolejną klatkę
+            ClearBuffer();
         }
     }
 }

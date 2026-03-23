@@ -16,7 +16,6 @@ namespace RpgGame.Engine.Commands
 
         public void Execute()
         {
-            // Prosta decyzja w oparciu o przekazany slot
             if (_slot == HandSlot.Left)
             {
                 _player.UnequipLeft();

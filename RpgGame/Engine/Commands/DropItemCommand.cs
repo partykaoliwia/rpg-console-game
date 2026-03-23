@@ -24,7 +24,7 @@ namespace RpgGame.Engine.Commands
             {
                 _player.DropItem(_menu.CursorIndex, _board);
 
-                // Automatyczna poprawa kursora, jeśli usunęliśmy ostatni element
+                // poprawa kursora, jeśli usunęliśmy ostatni element
                 if (_menu.CursorIndex >= _player.Inventory.Count && _player.Inventory.Count > 0)
                 {
                     _menu.CursorIndex = _player.Inventory.Count - 1;

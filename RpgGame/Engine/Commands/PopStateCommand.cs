@@ -1,5 +1,5 @@
 ﻿using System;
-using RpgGame.Engine.States; // jeśli GameEngine jest w tym samym namespace co komendy, ten using może nie być potrzebny, ale zależy od Twojej struktury
+using RpgGame.Engine.States;
 
 namespace RpgGame.Engine.Commands
 {
@@ -14,8 +14,6 @@ namespace RpgGame.Engine.Commands
 
         public void Execute()
         {
-            // Zdejmujemy aktualny stan (np. InventoryState lub LootingState) ze stosu,
-            // co spowoduje automatyczny powrót do poprzedniego stanu (np. PlayingState).
             _engine.PopState();
         }
     }
