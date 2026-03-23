@@ -192,12 +192,12 @@ namespace RpgGame.Engine
         // RYSOWANIE EKRANU INSTRUKCJI
         public void DrawInstructionScreen(List<string> instructions, string errorMessage = "")
         {
-            int currentY = 5; // Zaczynamy rysować trochę niżej, żeby ładnie wyglądało
-            int startX = 10;  // Margines od lewej
+            int currentY = 0; // Zaczynamy rysować trochę niżej, żeby ładnie wyglądało
+            int startX = 30;  // Margines od lewej
 
-            WriteToBuffer(startX, currentY++, "==========================================================");
-            WriteToBuffer(startX, currentY++, "                LABIRYNT DEDALA                   ");
-            WriteToBuffer(startX, currentY++, "==========================================================");
+            WriteToBuffer(startX-10, currentY++, "===============================================================================");
+            WriteToBuffer(startX, currentY++, "                      LABIRYNT DEDALA                     ");
+            WriteToBuffer(startX-10, currentY++, "===============================================================================");
             currentY++;
 
             foreach (var line in instructions)
@@ -205,7 +205,7 @@ namespace RpgGame.Engine
                 WriteToBuffer(startX, currentY++, line);
             }
 
-            currentY += 2;
+            currentY += 1;
             WriteToBuffer(startX, currentY, ">>> Wciśnij [ENTER], aby wejść do labiryntu... <<<");
             DrawMessage(errorMessage, currentY + 2);
         }
