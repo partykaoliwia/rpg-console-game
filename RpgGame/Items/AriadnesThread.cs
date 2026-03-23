@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace RpgGame.Items
 {
-    public class Rock : Junk
+    public class AriadnesThread : Junk
     {
-        public override char Symbol => '.';
-        public override string Name => "Rock";
+        public override char Symbol => '&';
+        public override string Name => "Kłębek nici Ariadny";
     }
 }

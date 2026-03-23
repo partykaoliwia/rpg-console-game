@@ -7,11 +7,12 @@ using RpgGame.Characters;
 
 namespace RpgGame.Items
 {
-    public class Axe : Weapon
+    public class Labrys : Weapon
     {
+        //oburęczna broń
         public override char Symbol => 'T';
-        public override string Name => "Two Handed Axe";
-        public Axe() : base(35) { }
+        public override string Name => "Labrys";
+        public Labrys() : base(35) { }
         public override void EquipToLeftHand(Player player)
         {
             player.EquipToBothHands(this);

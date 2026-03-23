@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace RpgGame.Items
 {
-    public class Sword : Weapon
+    public class Dory : Weapon
     {
         public override char Symbol => '/';
         public override string Name => "Iron Sword";
-        public Sword() : base(15) { }
+        public Dory() : base(15) { }
     }
 }

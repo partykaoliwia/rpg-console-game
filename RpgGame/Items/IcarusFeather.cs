@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace RpgGame.Items
 {
-    public class Stick : Junk
+    public class IcarusFeather : Junk
     {
-        public override char Symbol => 'l';
-        public override string Name => "Stick";
+        public override char Symbol => '~';
+        public override string Name => "Złamane pióro Ikara";
     }
 }

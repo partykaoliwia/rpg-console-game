@@ -18,11 +18,11 @@ namespace RpgGame.Characters
         public int Y { get; private set; }
 
         // atrybuty
-        public int Strength { get; private set; } = 10;
-        public int Health { get; private set; } = 20;
-        public int Luck { get; private set; } = 30;
-        public int Aggression { get; private set; } = 40;
-        public int Wisdom { get; private set; } = 50;
+        public int Strength { get; private set; } = 10; // Krzepa Heraklesa
+        public int Health { get; private set; } = 20; // Wigor Witalny
+        public int Luck { get; private set; } = 30; // Fortuna
+        public int Aggression { get; private set; } = 40; // Furia Aresa
+        public int Wisdom { get; private set; } = 50; // Mądrość Ateny
 
         // waluta
         public int Coins { get; private set; } = 0;

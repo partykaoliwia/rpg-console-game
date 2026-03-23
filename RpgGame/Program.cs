@@ -1,33 +1,36 @@
-﻿using RpgGame.Engine;
-using RpgGame.Gameboard;
-using RpgGame.Items;
-using RpgGame.Characters;
+﻿using RpgGame.Characters;
+using RpgGame.Engine;
+using RpgGame.Engine.Builders;
+using RpgGame.Engine.States;
 
-namespace RpgGame
+class Program
 {
-    internal class Program
+    static void Main(string[] args)
     {
-        static void Main()
-        {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
-            var board = new Board();
-            var player = new Player(0, 0);
+        // 1. Inicjalizacja Kierownika budowy (Director)
+        var director = new DungeonDirector();
 
-            board.GetTile(3, 3).Items.Add(new Coin(10));
-            board.GetTile(5, 3).Items.Add(new Paper());
-            board.GetTile(5, 3).Items.Add(new Stick());
-            board.GetTile(8, 2).Items.Add(new Sword());
-            board.GetTile(3, 2).Items.Add(new Sword());
-            board.GetTile(8, 2).Items.Add(new Dagger());
-            board.GetTile(8, 2).Items.Add(new Dagger());
-            board.GetTile(9, 4).Items.Add(new Rock());
-            board.GetTile(15, 3).Items.Add(new Gold(100));
-            board.GetTile(15, 3).Items.Add(new Coin(50));
-            board.GetTile(15, 3).Items.Add(new Axe());
-            board.GetTile(20, 5).Items.Add(new Gold(25));
+        // 2. Budujemy planszę
+        var mapBuilder = new MapBuilder();
+        director.SetBuilder(mapBuilder);
+        director.ConstructMinotaursLabyrinth(); // Odpalamy mityczną strategię
+        var finalBoard = mapBuilder.BuildResult();
 
-            var engine = new GameEngine(board, player);
-            engine.RunGame();
-        }
+        // 3. Budujemy spójną instrukcję na podstawie TEJ SAMEJ strategii!
+        var instructionBuilder = new InstructionBuilder();
+        director.SetBuilder(instructionBuilder);
+        director.ConstructMinotaursLabyrinth();
+        var instructions = instructionBuilder.BuildResult();
+
+        // 4. Konfigurujemy obiekty gry
+        Player player = new Player();
+        // Konstruktor GameEngine od razu wrzuca PlayingState na dno stosu
+        GameEngine engine = new GameEngine(finalBoard, player);
+
+        // 5. Wrzucamy InstructionState na SAM WIERZCH
+        engine.PushState(new InstructionState(engine, instructions));
+
+        // 6. Odpalamy pętlę!
+        engine.RunGame();
     }
 }

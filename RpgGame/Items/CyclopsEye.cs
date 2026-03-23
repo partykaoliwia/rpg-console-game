@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace RpgGame.Items
 {
-    public class Paper : Junk
+    public class CyclopsEye : Junk
     {
-        public override char Symbol => '#';
-        public override string Name => "Piece of paper";
+        public override char Symbol => 'o';
+        public override string Name => "Oko cyklopa";
     }
 }

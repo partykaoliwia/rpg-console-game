@@ -9,8 +9,8 @@ namespace RpgGame.Items
 {
     public class Coin : Currency
     {
-        public override char Symbol => 'o';
-        public override string Name => "Coin";
+        public override char Symbol => 'O';
+        public override string Name => "Obol Charona";
         private readonly int _value;
         public Coin(int value) : base(value) { }
         public override bool PickUp(Player player)

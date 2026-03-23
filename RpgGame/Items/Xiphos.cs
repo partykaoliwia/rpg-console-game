@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace RpgGame.Items
 {
-    public class Dagger : Weapon
+    public class Xiphos : Weapon
     {
         public override char Symbol => '-';
-        public override string Name => "Fire Dagger";
-        public Dagger() : base(8) { }
+        public override string Name => "Xiphos";
+        public Xiphos() : base(8) { }
     }
 }

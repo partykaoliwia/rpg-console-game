@@ -10,7 +10,7 @@ namespace RpgGame.Items
     public class Gold : Currency
     {
         public override char Symbol => 'G';
-        public override string Name => "Gold";
+        public override string Name => "Złota drachma";
 
         public Gold(int value) : base(value) { }
 

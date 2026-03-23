@@ -63,13 +63,14 @@ namespace RpgGame.Engine
             int currentY = StatY;
             WriteToBuffer(StatX, currentY++, "—————————————————");
             WriteToBuffer(StatX, currentY++, "ATTRIBUTES");
-            WriteToBuffer(StatX, currentY++, $"Health: {player.Health}");
-            WriteToBuffer(StatX, currentY++, $"Strength: {player.Strength}");
-            WriteToBuffer(StatX, currentY++, $"Wisdom: {player.Wisdom}");
-            WriteToBuffer(StatX, currentY++, $"Luck: {player.Luck}");
-            WriteToBuffer(StatX, currentY++, $"Aggression: {player.Aggression}");
+            WriteToBuffer(StatX, currentY++, $"Wigor witalny: {player.Health}");
+            WriteToBuffer(StatX, currentY++, $"Krzepa Heraklesa: {player.Strength}");
+            WriteToBuffer(StatX, currentY++, $"Mądrość Ateny: {player.Wisdom}");
+            WriteToBuffer(StatX, currentY++, $"Fortuna: {player.Luck}");
+            WriteToBuffer(StatX, currentY++, $"Furia Aresa: {player.Aggression}");
             WriteToBuffer(StatX, currentY++, "—————————————————");
-            WriteToBuffer(StatX, currentY++, $"Coins: {player.Coins} Gold: {player.Gold}");
+            WriteToBuffer(StatX, currentY++, $"Obole Charona: {player.Coins}");
+            WriteToBuffer(StatX, currentY++, $"Złote Drachmy: {player.Gold}");
             WriteToBuffer(StatX, currentY++, "—————————————————");
             WriteToBuffer(StatX, currentY++, $"Left Hand:   {(player.LeftHand != null ? player.LeftHand.Name : "Empty")}");
             WriteToBuffer(StatX, currentY++, $"Right Hand:  {(player.RightHand != null ? player.RightHand.Name : "Empty")}");
@@ -188,6 +189,26 @@ namespace RpgGame.Engine
                 }
             }
         }
+        // RYSOWANIE EKRANU INSTRUKCJI
+        public void DrawInstructionScreen(List<string> instructions, string errorMessage = "")
+        {
+            int currentY = 5; // Zaczynamy rysować trochę niżej, żeby ładnie wyglądało
+            int startX = 10;  // Margines od lewej
+
+            WriteToBuffer(startX, currentY++, "==========================================================");
+            WriteToBuffer(startX, currentY++, "                LABIRYNT DEDALA                   ");
+            WriteToBuffer(startX, currentY++, "==========================================================");
+            currentY++;
+
+            foreach (var line in instructions)
+            {
+                WriteToBuffer(startX, currentY++, line);
+            }
+
+            currentY += 2;
+            WriteToBuffer(startX, currentY, ">>> Wciśnij [ENTER], aby wejść do labiryntu... <<<");
+            DrawMessage(errorMessage, currentY + 2);
+        }
 
         // RENDEROWANIE
         public void RenderToConsole()
@@ -208,5 +229,7 @@ namespace RpgGame.Engine
 
             ClearBuffer();
         }
+
+
     }
 }
