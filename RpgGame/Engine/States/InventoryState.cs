@@ -45,10 +45,11 @@ namespace RpgGame.Engine.States
 
             // Zamykanie
             var escKey = new KeyCommandHandler(ConsoleKey.Escape, new PopStateCommand(engine));
+            var iKey = new KeyCommandHandler(ConsoleKey.I, new PopStateCommand(engine));
 
             // Budowanie łańcucha
             wKey.SetNext(sKey).SetNext(lKey).SetNext(rKey)
-                .SetNext(d1Key).SetNext(d2Key).SetNext(qKey).SetNext(escKey);
+                .SetNext(d1Key).SetNext(d2Key).SetNext(qKey).SetNext(escKey).SetNext(iKey);
 
             _inputChainHead = wKey;
         }

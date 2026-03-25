@@ -18,9 +18,8 @@ namespace RpgGame.Engine.Builders
         {
             // Zawsze zaczynamy od bloku początkowego
             _builder.BuildFilledDungeon();
-
             // Następnie dowolna kombinacja metod
-            _builder.AddCentralHall(8, 6); // Tu może czekać Boss
+            _builder.AddCentralHall(9, 6); // Tu może czekać Boss
             _builder.AddRooms();
             _builder.AddCorridors();
             _builder.AddItems(10); // Kłębki nici, pióra Ikara itp.

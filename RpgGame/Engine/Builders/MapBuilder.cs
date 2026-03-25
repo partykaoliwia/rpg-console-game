@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RpgGame.Gameboard;
+using RpgGame.Items;
 
 namespace RpgGame.Engine.Builders
 {
@@ -11,6 +12,7 @@ namespace RpgGame.Engine.Builders
     {
         private Board _board;
         private Random _random = new Random();
+        private DfsCorridors _corridorgenerator = new DfsCorridors();
         public MapBuilder()
         {
             _board = new Board();
@@ -40,27 +42,8 @@ namespace RpgGame.Engine.Builders
 
         public void AddCorridors()
         {
-            // Algorytm "Pijanego Minotaura" (Random Walk)
-            // Startujemy ze środka mapy
-            int currentX = _board.Width / 2;
-            int currentY = _board.Height / 2;
-
-            // Długość korytarza w kaflach (np. 150 kroków)
-            int steps = 150;
-
-            for (int i = 0; i < steps; i++)
-            {
-                // Wyryj korytarz w obecnym miejscu
-                _board.SetTile(currentX, currentY, new EmptyTile());
-
-                // Wybierz losowy kierunek: 0-Góra, 1-Prawo, 2-Dół, 3-Lewo
-                int direction = _random.Next(0, 4);
-
-                if (direction == 0 && currentY > 1) currentY--;
-                else if (direction == 1 && currentX < _board.Width - 2) currentX++;
-                else if (direction == 2 && currentY < _board.Height - 2) currentY++;
-                else if (direction == 3 && currentX > 1) currentX--;
-            }
+            _corridorgenerator.GenerateCorridors(_board);
+            
         }
 
         public void AddRooms()
@@ -117,11 +100,31 @@ namespace RpgGame.Engine.Builders
                 // Kładziemy item TYLKO na podłodze (nie na ścianie)
                 if (tile.IsWalkable)
                 {
-                    // Przykład dodania itemu (musisz mieć jakieś zaimplementowane klasy)
-                    // tile.Items.Add(new AriadnesThread());
+                    // Oddelegowanie tworzenia obiektu do naszej prostej fabryki
+                    var junkItem = CreateRandomJunk();
 
+                    tile.Items.Add(junkItem);
                     placed++;
                 }
+            }
+        }
+
+        // Metoda działająca jak prosta fabryka (Simple Factory)
+        private Junk CreateRandomJunk()
+        {
+            // Losujemy liczbę od 0 do 2
+            int roll = _random.Next(0, 3);
+
+            switch (roll)
+            {
+                case 0:
+                    return new IcarusFeather();
+                case 1:
+                    return new CyclopsEye();
+                case 2:
+                    return new AriadnesThread();
+                default:
+                    return new IcarusFeather(); // Fallback w razie nieprzewidzianych błędów
             }
         }
 
@@ -138,18 +141,39 @@ namespace RpgGame.Engine.Builders
 
                 if (tile.IsWalkable)
                 {
-                    // Losujemy typ broni
-                    if (_random.Next(0, 2) == 0)
-                    {
-                        // tile.Items.Add(new XiphosSword());
-                    }
-                    else
-                    {
-                        // tile.Items.Add(new LabrysAxe());
-                    }
+                    // Oddelegowanie tworzenia obiektu do Fabryki
+                    var weapon = CreateWeaponForSequence(placed);
 
+                    tile.Items.Add(weapon);
                     placed++;
                 }
+            }
+        }
+
+        // Metoda działająca na zasadzie Fabryki (Factory)
+        private Weapon CreateWeaponForSequence(int sequenceIndex)
+        {
+            // Przyjmuję nazwy klas broni na potrzeby przykładu:
+            // Jednoręczne: ShortSword, Dagger
+            // Dwuręczna: BattleAxe
+
+            if (sequenceIndex == 0 || sequenceIndex == 2)
+            {
+                // Pierwsza (0) i trzecia (2) broń to losowa jednoręczna
+                return _random.Next(0, 2) == 0 ? new Xiphos() : new Dory();
+            }
+            else if (sequenceIndex == 1)
+            {
+                // Druga (1) broń to GWARANTOWANA dwuręczna
+                return new Labrys();
+            }
+            else
+            {
+                // Wszystkie pozostałe (3 i więcej) to pełen random z 3 dostępnych
+                int roll = _random.Next(0, 3);
+                if (roll == 0) return new Xiphos();
+                if (roll == 1) return new Dory();
+                return new Labrys();
             }
         }
     }
