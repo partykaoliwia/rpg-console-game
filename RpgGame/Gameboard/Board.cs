@@ -29,17 +29,5 @@ namespace RpgGame.Gameboard
             if (x < 0 || x >= Width || y < 0 || y >= Height) return new Wall();
             return _tiles[x, y];
         }
-        //public void DrawBoard()
-        //{
-        //    Console.SetCursorPosition(0, 0);
-        //    for(int y=0; y<Height;y++)
-        //    {
-        //        for(int x=0; x<Width; x++)
-        //        {
-        //            Console.Write(_tiles[x, y].Symbol);
-        //        }
-        //        Console.WriteLine();
-        //    }
-        //}
     }
 }

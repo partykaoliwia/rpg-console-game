@@ -25,12 +25,10 @@ namespace RpgGame.Engine.Commands
         {
             if (CurrentTile.Items.Count == 1)
             {
-                // jeśli jest tylko jeden przedmiot, podnosimy go bez otwierania menu
                 _player.CollectSpecific(0, _board);
             }
             else if (CurrentTile.Items.Count > 1)
             {
-                // jeśli jest więcej, odpalamy Looting menu
                 _engine.PushState(new LootingState(_engine, _player, _board));
             }
         }

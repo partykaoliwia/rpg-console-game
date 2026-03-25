@@ -10,7 +10,6 @@ namespace RpgGame.Engine.Builders
     {
         private List<string> _instructions = new List<string>();
 
-        // Zwraca gotową listę instrukcji dla ekranu początkowego
         public List<string> BuildResult() => _instructions;
 
         public void BuildEmptyDungeon()

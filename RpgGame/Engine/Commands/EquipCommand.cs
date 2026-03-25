@@ -23,10 +23,8 @@ namespace RpgGame.Engine.Commands
         {
             if (_player.Inventory.Count == 0) return;
 
-            // pobieramy przedmiot, na który wskazuje kursor
             var item = _player.Inventory[_menu.CursorIndex];
 
-            // zakładamy go w odpowiednią rękę
             if (_slot == HandSlot.Left)
             {
                 item.EquipToLeftHand(_player);

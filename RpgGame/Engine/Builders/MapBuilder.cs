@@ -42,24 +42,25 @@ namespace RpgGame.Engine.Builders
 
         public void AddCorridors()
         {
-            _corridorgenerator.GenerateCorridors(_board);
-            
+            _corridorgenerator.GenerateCorridors(_board); // drazenie korytarzy DFSem
         }
 
         public void AddRooms()
         {
-            // Losujemy od 3 do 6 komnat na mapie
+            // losujemy ilosc pokoi
             int roomCount = _random.Next(3, 7);
 
             for (int i = 0; i < roomCount; i++)
             {
-                int roomWidth = _random.Next(3, 8); // szerokość pokoju: 3-7
-                int roomHeight = _random.Next(3, 8); // wysokość pokoju: 3-7
+                // losujemy wymiary
+                int roomWidth = _random.Next(2, 7);
+                int roomHeight = _random.Next(2,7);
 
-                // Losujemy pozycję, tak aby nie wyjść poza tablicę (zostawiamy 1 kafelek marginesu)
+                // losujemy pozycje
                 int startX = _random.Next(1, _board.Width - roomWidth - 1);
                 int startY = _random.Next(1, _board.Height - roomHeight - 1);
-
+                
+                // drazymy pokoje
                 for (int y = startY; y < startY + roomHeight; y++)
                 {
                     for (int x = startX; x < startX + roomWidth; x++)
@@ -97,22 +98,17 @@ namespace RpgGame.Engine.Builders
 
                 var tile = _board.GetTile(x, y);
 
-                // Kładziemy item TYLKO na podłodze (nie na ścianie)
                 if (tile.IsWalkable)
                 {
-                    // Oddelegowanie tworzenia obiektu do naszej prostej fabryki
                     var junkItem = CreateRandomJunk();
-
                     tile.Items.Add(junkItem);
                     placed++;
                 }
             }
         }
 
-        // Metoda działająca jak prosta fabryka (Simple Factory)
         private Junk CreateRandomJunk()
         {
-            // Losujemy liczbę od 0 do 2
             int roll = _random.Next(0, 3);
 
             switch (roll)
@@ -124,7 +120,7 @@ namespace RpgGame.Engine.Builders
                 case 2:
                     return new AriadnesThread();
                 default:
-                    return new IcarusFeather(); // Fallback w razie nieprzewidzianych błędów
+                    return new IcarusFeather();
             }
         }
 
@@ -141,7 +137,6 @@ namespace RpgGame.Engine.Builders
 
                 if (tile.IsWalkable)
                 {
-                    // Oddelegowanie tworzenia obiektu do Fabryki
                     var weapon = CreateWeaponForSequence(placed);
 
                     tile.Items.Add(weapon);
@@ -149,27 +144,22 @@ namespace RpgGame.Engine.Builders
                 }
             }
         }
-
-        // Metoda działająca na zasadzie Fabryki (Factory)
-        private Weapon CreateWeaponForSequence(int sequenceIndex)
+        private Weapon CreateWeaponForSequence(int index)
         {
-            // Przyjmuję nazwy klas broni na potrzeby przykładu:
-            // Jednoręczne: ShortSword, Dagger
-            // Dwuręczna: BattleAxe
-
-            if (sequenceIndex == 0 || sequenceIndex == 2)
+            // losowanie broni, ale tak zeby jesli jest ich wiecej niz 1 to byla gwarancja na dwureczna
+            if (index == 0 || index == 2)
             {
                 // Pierwsza (0) i trzecia (2) broń to losowa jednoręczna
                 return _random.Next(0, 2) == 0 ? new Xiphos() : new Dory();
             }
-            else if (sequenceIndex == 1)
+            else if (index == 1)
             {
-                // Druga (1) broń to GWARANTOWANA dwuręczna
+                // Druga (1) broń to dwuręczna
                 return new Labrys();
             }
             else
             {
-                // Wszystkie pozostałe (3 i więcej) to pełen random z 3 dostępnych
+                // pozostale bronie losowo
                 int roll = _random.Next(0, 3);
                 if (roll == 0) return new Xiphos();
                 if (roll == 1) return new Dory();

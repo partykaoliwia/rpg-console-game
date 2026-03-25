@@ -8,7 +8,6 @@ namespace RpgGame.Engine
 {
     public class ConsoleRenderer
     {
-        // Rozmiary całego okna konsoli (Plansza + UI)
         private const int ScreenWidth = 120;
         private const int ScreenHeight = 29;
 
@@ -62,7 +61,7 @@ namespace RpgGame.Engine
         {
             int currentY = StatY;
             WriteToBuffer(StatX, currentY++, "—————————————————");
-            WriteToBuffer(StatX, currentY++, "ATTRIBUTES");
+            WriteToBuffer(StatX, currentY++, "ATRYBUTY");
             WriteToBuffer(StatX, currentY++, $"Wigor witalny: {player.Health}");
             WriteToBuffer(StatX, currentY++, $"Krzepa Heraklesa: {player.Strength}");
             WriteToBuffer(StatX, currentY++, $"Mądrość Ateny: {player.Wisdom}");
@@ -81,7 +80,7 @@ namespace RpgGame.Engine
 
             if (player.Inventory.Count == 0)
             {
-                WriteToBuffer(StatX, currentY++, "  (Empty)");
+                WriteToBuffer(StatX, currentY++, "  (Pusty)");
             }
             else
             {
@@ -192,8 +191,8 @@ namespace RpgGame.Engine
         // RYSOWANIE EKRANU INSTRUKCJI
         public void DrawInstructionScreen(List<string> instructions, string errorMessage = "")
         {
-            int currentY = 0; // Zaczynamy rysować trochę niżej, żeby ładnie wyglądało
-            int startX = 30;  // Margines od lewej
+            int currentY = 0; 
+            int startX = 30;
 
             WriteToBuffer(startX-10, currentY++, "===============================================================================");
             WriteToBuffer(startX, currentY++, "                      LABIRYNT DEDALA                     ");

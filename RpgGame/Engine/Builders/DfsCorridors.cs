@@ -7,6 +7,7 @@ using RpgGame.Gameboard;
 
 namespace RpgGame.Engine.Builders
 {
+    // generowanie labiryntu przy użyciu DFS
     public class DfsCorridors
     {
         private Random _random = new Random();
@@ -16,16 +17,20 @@ namespace RpgGame.Engine.Builders
             Stack<(int x, int y)> stack = new Stack<(int, int)>();
             int startX = 1;
             int startY = 1;
-
             board.SetTile(startX, startY, new EmptyTile());
             stack.Push((startX, startY));
+
+            // drazenie korytarzy
             while(stack.Count>0)
             {
                 var current = stack.Peek();
                 var unvisitedNeighbors = GetUnvisitedNeighbors(board, current.x, current.y);
                 if (unvisitedNeighbors.Count > 0)
                 {
+                    // wybieramy losowa sciane oddalona o dwa pola w dowolnym kierunku
                     var next = unvisitedNeighbors[_random.Next(unvisitedNeighbors.Count)];
+
+                    // sciana pomiedzy
                     int midX = current.x + (next.x - current.x) / 2;
                     int midY = current.y + (next.y - current.y) / 2;
 
@@ -38,35 +43,32 @@ namespace RpgGame.Engine.Builders
                     stack.Pop();
                 }
             }
+            // wejscie do labiryntu
             board.SetTile(0, 1, new EmptyTile());
             board.SetTile(0, 0, new EmptyTile());
 
-            // DFS chodzi po nieparzystych koordynatach, więc szukamy najwyższego nieparzystego Y
+            // wyjscie z labiryntu
             int searchY = board.Height - 2;
             if (searchY % 2 == 0)
             {
-                searchY--; // Upewniamy się, że szukamy na "linii korytarzy"
+                searchY--;
             }
-
-            // Zaczynamy szukać od prawej krawędzi do lewej
             for (int i = board.Width - 1; i > 0; i--)
             {
                 if (board.GetTile(i, searchY).IsWalkable)
                 {
-                    // Znaleźliśmy skrajny prawy korytarz na dole. 
-                    // Przebijamy ściany w dół aż do krawędzi mapy.
                     for (int y = searchY + 1; y < board.Height; y++)
                     {
                         board.SetTile(i, y, new EmptyTile());
                     }
-
-                    break; // Znaleźliśmy i wydrążyliśmy wyjście, więc uciekamy z pętli
+                    break;
                 }
             }
         }
 
         private List<(int x, int y)> GetUnvisitedNeighbors(Board board, int x, int y)
         {
+            // zbieramy pola oddalone o dwa od naszego pola wejsciowego i zwracamy te, ktore sa sciana
             var neighbors = new List<(int x, int y)>();
             int[][] directions = new int[][] { new int[] { 0, -2 }, new int[] { 0, 2 }, new int[] { -2, 0 }, new int[] { 2, 0 } };
             foreach(var direction in directions)

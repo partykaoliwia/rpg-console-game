@@ -18,14 +18,7 @@ namespace RpgGame.Engine.States
         {
             _engine = engine;
             _instructions = instructions;
-            // Tworzymy komendę i Handler dla klawisza Enter
             var enterKey = new KeyCommandHandler(ConsoleKey.Enter, new PopStateCommand(engine));
-
-            // Opcjonalnie: Jeśli chciałabyś dodać wyjście z gry ESC, wystarczy odkomentować:
-            // var escKey = new KeyCommandHandler(ConsoleKey.Escape, new QuitCommand(engine));
-            // enterKey.SetNext(escKey);
-
-            // Ustawiamy głowę łańcucha
             _inputChainHead = enterKey;
         }
         public void Draw(ConsoleRenderer renderer)
