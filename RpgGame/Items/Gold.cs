@@ -10,13 +10,14 @@ namespace RpgGame.Items
     public class Gold : Currency
     {
         public override char Symbol => 'G';
-        public override string Name => "Złota drachma";
+        public override string Name => CurrencyName;
+        public static string CurrencyName = "Złota Drachma";
 
         public Gold(int value) : base(value) { }
 
         public override bool PickUp(Player player)
         {
-            player.AddGold(Value);
+            player.AddCurrency(this.Name, this.Value);
             return true;
         }
     }

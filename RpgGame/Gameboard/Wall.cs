@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,8 +11,10 @@ namespace RpgGame.Gameboard
 {
     public class Wall : ITile
     {
+        public Color ItemColor => Color.DarkSlateGray;
         public char Symbol => '█';
         public bool IsWalkable => false;
         public List<IItem> Items { get; } = new List<IItem>();
+
     }
 }

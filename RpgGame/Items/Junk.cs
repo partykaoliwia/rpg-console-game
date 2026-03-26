@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,9 @@ namespace RpgGame.Items
     {
         public abstract char Symbol { get; }
         public abstract string Name { get; }
+
+        public abstract Color ItemColor { get; }
+
         public virtual bool PickUp(Player player)
         {
             return player.TryAddToInventory(this);

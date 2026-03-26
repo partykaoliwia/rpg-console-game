@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace RpgGame.Characters
 {
     public class Player : IDrawable
     {
+        public Color ItemColor => Color.DodgerBlue;
         public char Symbol => '¶';
 
         // wspolrzedne
@@ -25,14 +27,18 @@ namespace RpgGame.Characters
         public int Wisdom { get; private set; } = 50; // Mądrość Ateny
 
         // waluta
-        public int Coins { get; private set; } = 0;
-        public int Gold { get; private set; } = 0;
+        public Dictionary<string, int> Wallet { get; private set; } = new Dictionary<string, int>()
+        {
+            {Gold.CurrencyName,0 },
+            {Coin.CurrencyName,0 }
+        };
 
         // ekwipunek, rece
         public List<IItem> Inventory { get;  } = new List<IItem>();
         public IItem? LeftHand { get; private set; }
         public IItem? RightHand { get; private set; }
         public int MaxInventorySize { get; } = 6;
+
 
         // konstruktor
         public Player(int startX = 0, int startY = 0)
@@ -54,8 +60,17 @@ namespace RpgGame.Characters
                 Y = newY;
             }    
         }
-        public void AddCoins(int amount) => Coins += amount;
-        public void AddGold(int amount) => Gold += amount;
+        public void AddCurrency(string currencyName, int amount)
+        {
+            if (Wallet.ContainsKey(currencyName))
+            {
+                Wallet[currencyName] += amount;
+            }
+            else
+            {
+                Wallet.Add(currencyName, amount);
+            }
+        }
         public void EquipToBothHands(IItem item)
         {
             ClearHands();

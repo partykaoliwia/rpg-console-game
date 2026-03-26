@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Pastel;
 using RpgGame.Characters;
 using RpgGame.Common;
 using RpgGame.Gameboard;
@@ -16,7 +17,7 @@ namespace RpgGame.Engine
         private const int BottomX = 0;
         private const int BottomY = 21;
 
-        private readonly char[,] _buffer = new char[ScreenWidth, ScreenHeight];
+        private readonly string[,] _buffer = new string[ScreenWidth, ScreenHeight];
 
         public ConsoleRenderer()
         {
@@ -30,7 +31,7 @@ namespace RpgGame.Engine
             {
                 for (int x = 0; x < ScreenWidth; x++)
                 {
-                    _buffer[x, y] = ' ';
+                    _buffer[x, y] = " ";
                 }
             }
         }
@@ -68,8 +69,10 @@ namespace RpgGame.Engine
             WriteToBuffer(StatX, currentY++, $"Fortuna: {player.Luck}");
             WriteToBuffer(StatX, currentY++, $"Furia Aresa: {player.Aggression}");
             WriteToBuffer(StatX, currentY++, "—————————————————");
-            WriteToBuffer(StatX, currentY++, $"Obole Charona: {player.Coins}");
-            WriteToBuffer(StatX, currentY++, $"Złote Drachmy: {player.Gold}");
+            foreach(var currency in player.Wallet)
+            {
+                WriteToBuffer(StatX, currentY++, $"{currency.Key} : {currency.Value}");
+            }
             WriteToBuffer(StatX, currentY++, "—————————————————");
             WriteToBuffer(StatX, currentY++, $"Left Hand:   {(player.LeftHand != null ? player.LeftHand.Name : "Empty")}");
             WriteToBuffer(StatX, currentY++, $"Right Hand:  {(player.RightHand != null ? player.RightHand.Name : "Empty")}");
@@ -173,7 +176,7 @@ namespace RpgGame.Engine
         {
             if (x >= 0 && x < ScreenWidth && y >= 0 && y < ScreenHeight)
             {
-                _buffer[x, y] = drawable.Symbol;
+                _buffer[x, y] = drawable.Symbol.ToString().Pastel(drawable.ItemColor);
             }
         }
 
@@ -184,7 +187,7 @@ namespace RpgGame.Engine
                 int x = startX + i;
                 if (x < ScreenWidth && startY < ScreenHeight)
                 {
-                    _buffer[x, startY] = text[i];
+                    _buffer[x, startY] = text[i].ToString();
                 }
             }
         }
@@ -207,6 +210,18 @@ namespace RpgGame.Engine
             currentY += 1;
             WriteToBuffer(startX, currentY, ">>> Wciśnij [ENTER], aby wejść do labiryntu... <<<");
             DrawMessage(errorMessage, currentY + 2);
+        }
+        private void WriteToBufferColored(int startX, int startY, string text, System.Drawing.Color color)
+        {
+            for (int i = 0; i < text.Length; i++)
+            {
+                int x = startX + i;
+                if (x < ScreenWidth && startY < ScreenHeight)
+                {
+                    // Każdy znak pokolorowany z osobna
+                    _buffer[x, startY] = text[i].ToString().Pastel(color);
+                }
+            }
         }
 
         // RENDEROWANIE
