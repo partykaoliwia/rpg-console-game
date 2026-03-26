@@ -15,5 +15,6 @@ namespace RpgGame.Engine.Builders
         void AddCentralHall(int width, int height);
         void AddItems(int count);
         void AddWeapons(int count);
+        void AddMoney(int count);
     }
 }

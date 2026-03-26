@@ -9,8 +9,8 @@ namespace RpgGame.Items
 {
     public class CyclopsEye : Junk
     {
-        public override Color ItemColor => Color.DarkKhaki;
-        public override char Symbol => 'o';
+        public override Color ItemColor => Color.White;
+        public override string Symbol => "•";
         public override string Name => "Oko cyklopa";
 
     }

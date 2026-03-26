@@ -13,7 +13,7 @@ namespace RpgGame.Characters
     public class Player : IDrawable
     {
         public Color ItemColor => Color.DodgerBlue;
-        public char Symbol => '¶';
+        public string Symbol => "¶";
 
         // wspolrzedne
         public int X { get; private set; }

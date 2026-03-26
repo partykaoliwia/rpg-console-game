@@ -11,7 +11,7 @@ namespace RpgGame.Gameboard
     public class EmptyTile : ITile
     {
         public Color ItemColor => Color.DeepPink;
-        public char Symbol => ' ';
+        public string Symbol => " ";
         public bool IsWalkable => true;
         public List<IItem> Items { get; } = new List<IItem>();
 

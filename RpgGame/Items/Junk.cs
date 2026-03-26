@@ -10,7 +10,7 @@ namespace RpgGame.Items
 {
     public abstract class Junk : IItem
     {
-        public abstract char Symbol { get; }
+        public abstract string Symbol { get; }
         public abstract string Name { get; }
 
         public abstract Color ItemColor { get; }

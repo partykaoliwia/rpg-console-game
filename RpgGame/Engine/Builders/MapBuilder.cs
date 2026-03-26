@@ -123,7 +123,39 @@ namespace RpgGame.Engine.Builders
                     return new IcarusFeather();
             }
         }
+        public void AddMoney(int count)
+        {
+            int placed = 0;
+            while (placed < count)
+            {
+                int x = _random.Next(0, _board.Width);
+                int y = _random.Next(0, _board.Height);
 
+                var tile = _board.GetTile(x, y);
+                if (tile.IsWalkable)
+                {
+                    var money = CreateRandomCurrency();
+                    tile.Items.Add(money);
+                    placed++;
+                }
+            }
+        }
+
+        private Currency CreateRandomCurrency()
+        {
+            int[] moneyValues = { 10, 10, 10, 10, 25, 25, 25, 35, 35, 50 };
+            int value = moneyValues[_random.Next(moneyValues.Length)];
+            int roll = _random.Next(0, 2);
+
+            if (roll == 0)
+            {
+                return new Gold(value);
+            }
+            else
+            {
+                return new Coin(value);
+            }
+        }
         public void AddWeapons(int count)
         {
             int placed = 0;

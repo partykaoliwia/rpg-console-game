@@ -10,7 +10,7 @@ namespace RpgGame.Common
 {
     public interface IDrawable
     {
-        char Symbol { get; }
+        string Symbol { get; }
         Color ItemColor { get; }
     }
 }

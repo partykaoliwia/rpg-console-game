@@ -10,7 +10,7 @@ namespace RpgGame.Items
     public class AriadnesThread : Junk
     {
         public override Color ItemColor => Color.DarkRed;
-        public override char Symbol => '&';
+        public override string Symbol => "&";
 
         public override string Name => "Kłębek nici Ariadny";
 

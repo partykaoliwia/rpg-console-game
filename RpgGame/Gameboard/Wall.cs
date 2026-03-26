@@ -12,7 +12,7 @@ namespace RpgGame.Gameboard
     public class Wall : ITile
     {
         public Color ItemColor => Color.DarkSlateGray;
-        public char Symbol => '█';
+        public string Symbol => "█";
         public bool IsWalkable => false;
         public List<IItem> Items { get; } = new List<IItem>();
 

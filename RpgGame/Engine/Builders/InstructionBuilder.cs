@@ -63,5 +63,10 @@ namespace RpgGame.Engine.Builders
             _instructions.Add("Zarządzaj nią w swoim ekwipunku naciskając [I].");
             _instructions.Add("");
         }
+        public void AddMoney(int count)
+        {
+
+        }
+
     }
 }
