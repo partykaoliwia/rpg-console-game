@@ -26,32 +26,30 @@ namespace RpgGame.Engine.States
             _engine = engine;
             _player = player;
             _board = board;
+            var s = "Inventory";
 
-
-            // Przesuwanie kursora
-            var wKey = new KeyCommandHandler(ConsoleKey.W, new MoveCursorCommand(this, -1));
-            var sKey = new KeyCommandHandler(ConsoleKey.S, new MoveCursorCommand(this, 1));
+            // Góra dół
+            var upKey = new KeyCommandHandler(s,"MoveUp", new MoveCursorCommand(this, -1));
+            var downKey = new KeyCommandHandler(s, "MoveDown", new MoveCursorCommand(this, 1));
 
             // Zakładanie
-            var lKey = new KeyCommandHandler(ConsoleKey.L, new EquipCommand(player, this, HandSlot.Left));
-            var rKey = new KeyCommandHandler(ConsoleKey.R, new EquipCommand(player, this, HandSlot.Right));
+            var equipLeftKey = new KeyCommandHandler(s, "EquipLeft", new EquipCommand(player, this, HandSlot.Left));
+            var equipRightKey = new KeyCommandHandler(s,"EquipRight", new EquipCommand(player, this, HandSlot.Right));
 
             // Zdejmowanie
-            var d1Key = new KeyCommandHandler(ConsoleKey.D1, new UnequipCommand(player, HandSlot.Left));
-            var d2Key = new KeyCommandHandler(ConsoleKey.D2, new UnequipCommand(player, HandSlot.Right));
+            var unequipRightKey = new KeyCommandHandler(s,"UnequipRight", new UnequipCommand(player, HandSlot.Left));
+            var unequipLeftKey = new KeyCommandHandler(s,"UnequipLeft", new UnequipCommand(player, HandSlot.Right));
 
             // Wyrzucanie
-            var qKey = new KeyCommandHandler(ConsoleKey.Q, new DropItemCommand(player, board, this));
+            var dropKey = new KeyCommandHandler(s,"Drop", new DropItemCommand(player, board, this));
 
             // Zamykanie
-            var escKey = new KeyCommandHandler(ConsoleKey.Escape, new PopStateCommand(engine));
-            var iKey = new KeyCommandHandler(ConsoleKey.I, new PopStateCommand(engine));
+            var quitKey = new KeyCommandHandler(s,"Quit",new PopStateCommand(engine));
 
             // Budowanie łańcucha
-            wKey.SetNext(sKey).SetNext(lKey).SetNext(rKey)
-                .SetNext(d1Key).SetNext(d2Key).SetNext(qKey).SetNext(escKey).SetNext(iKey);
+            upKey.SetNext(downKey).SetNext(equipLeftKey).SetNext(equipRightKey).SetNext(unequipLeftKey).SetNext(unequipRightKey).SetNext(dropKey).SetNext(quitKey);
 
-            _inputChainHead = wKey;
+            _inputChainHead = upKey;
         }
         public void HandleInput(ConsoleKey key)
         {

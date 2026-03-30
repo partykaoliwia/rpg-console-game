@@ -22,23 +22,18 @@ namespace RpgGame.Engine.States
             _engine = engine;
             _board = board;
             _player = player;
+            string s = "Playing";
+            var upKey = new KeyCommandHandler(s, "MoveUp", new MoveCommand(player, board, 0, -1));
+            var downKey = new KeyCommandHandler(s, "MoveDown", new MoveCommand(player, board, 0, 1));
+            var leftKey = new KeyCommandHandler(s,"MoveLeft",new MoveCommand(player, board, -1, 0));
+            var rightKey = new KeyCommandHandler(s,"MoveRight",new MoveCommand(player, board, 1, 0));
+            var collectKey = new KeyCommandHandler(s,"Collect", new CollectCommand(engine, player, board));
+            var inventoryKey = new KeyCommandHandler(s,"OpenInventory",new PushStateCommand(engine, new InventoryState(engine, player, board)));
+            var quitKey = new KeyCommandHandler(s,"Quit",new QuitCommand(engine));
 
-            var wKey = new KeyCommandHandler(ConsoleKey.W, new MoveCommand(player, board, 0, -1));
-            var sKey = new KeyCommandHandler(ConsoleKey.S, new MoveCommand(player, board, 0, 1));
-            var aKey = new KeyCommandHandler(ConsoleKey.A, new MoveCommand(player, board, -1, 0));
-            var dKey = new KeyCommandHandler(ConsoleKey.D, new MoveCommand(player, board, 1, 0));
-            var eKey = new KeyCommandHandler(ConsoleKey.E, new CollectCommand(engine, player, board));
-            var iKey = new KeyCommandHandler(ConsoleKey.I, new PushStateCommand(engine, new InventoryState(engine, player, board)));
-            var escKey = new KeyCommandHandler(ConsoleKey.Escape, new QuitCommand(engine));
+            upKey.SetNext(downKey).SetNext(leftKey).SetNext(rightKey).SetNext(collectKey).SetNext(inventoryKey).SetNext(quitKey);
 
-            wKey.SetNext(sKey)
-                .SetNext(aKey)
-                .SetNext(dKey)
-                .SetNext(eKey)
-                .SetNext(iKey)
-                .SetNext(escKey);
-
-            _inputChainHead = wKey;
+            _inputChainHead = upKey;
         }
 
         public void HandleInput(ConsoleKey key)

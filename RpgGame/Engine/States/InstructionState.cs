@@ -18,8 +18,9 @@ namespace RpgGame.Engine.States
         {
             _engine = engine;
             _instructions = instructions;
-            var enterKey = new KeyCommandHandler(ConsoleKey.Enter, new PopStateCommand(engine));
-            _inputChainHead = enterKey;
+            string s = "Instruction";
+            var continueKey = new KeyCommandHandler(s,"Continue", new PopStateCommand(engine));
+            _inputChainHead = continueKey;
         }
         public void Draw(ConsoleRenderer renderer)
         {
