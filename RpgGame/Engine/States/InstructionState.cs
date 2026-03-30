@@ -20,6 +20,9 @@ namespace RpgGame.Engine.States
             _instructions = instructions;
             string s = "Instruction";
             var continueKey = new KeyCommandHandler(s,"Continue", new PopStateCommand(engine));
+            var reloadKey = new KeyCommandHandler(s, "Reload", new ReloadConfigCommand());
+
+            continueKey.SetNext(reloadKey);
             _inputChainHead = continueKey;
         }
         public void Draw(ConsoleRenderer renderer)

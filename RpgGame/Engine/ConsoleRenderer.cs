@@ -3,6 +3,7 @@ using System.Text;
 using Pastel;
 using RpgGame.Characters;
 using RpgGame.Common;
+using RpgGame.Engine.Input;
 using RpgGame.Gameboard;
 
 namespace RpgGame.Engine
@@ -114,15 +115,24 @@ namespace RpgGame.Engine
         // RYSOWANIE MENU INVENTORY
         public void DrawInventoryMenu(Player player, int cursorIndex, string errorMessage)
         {
+            string up = KeybindManager.Instance.GetKey("Inventory", "MoveUp").ToString();
+            string down = KeybindManager.Instance.GetKey("Inventory", "MoveDown").ToString();
+            string quit = KeybindManager.Instance.GetKey("Inventory", "Quit").ToString();
+            string drop = KeybindManager.Instance.GetKey("Inventory", "Drop").ToString();
+            string eqL = KeybindManager.Instance.GetKey("Inventory", "EquipLeft").ToString();
+            string eqR = KeybindManager.Instance.GetKey("Inventory", "EquipRight").ToString();
+            string uneqL = KeybindManager.Instance.GetKey("Inventory", "UnequipLeft").ToString();
+            string uneqR = KeybindManager.Instance.GetKey("Inventory", "UnequipRight").ToString();
+
             DrawPlayerStats(player, cursorIndex);
 
             int bY = BottomY;
             WriteToBuffer(BottomX, bY++, "INVENTORY MENU");
-            WriteToBuffer(BottomX, bY++, "[W/S] Up/Down");
-            WriteToBuffer(BottomX, bY++, "[L/R] Equip L/R Hand");
-            WriteToBuffer(BottomX, bY++, "[1/2] Empty L/R");
-            WriteToBuffer(BottomX, bY++, "[Q] Drop");
-            WriteToBuffer(BottomX, bY++, "[I] Close");
+            WriteToBuffer(BottomX, bY++, $"[{up}/{down}] Up/Down");
+            WriteToBuffer(BottomX, bY++, $"[{eqL}/{eqR}] Equip L/R Hand");
+            WriteToBuffer(BottomX, bY++, $"[{uneqL}/{uneqR}] Empty L/R");
+            WriteToBuffer(BottomX, bY++, $"[{drop}] Drop");
+            WriteToBuffer(BottomX, bY++, $"[{quit}] Close");
 
             DrawMessage(errorMessage, bY + 1);
         }
@@ -130,14 +140,19 @@ namespace RpgGame.Engine
         // RYSOWANIE MENU LOOTING
         public void DrawLootingMenu(Player player, ITile currentTile, int cursorIndex, string errorMessage)
         {
+            string up = KeybindManager.Instance.GetKey("Looting", "MoveUp").ToString();
+            string down = KeybindManager.Instance.GetKey("Looting", "MoveDown").ToString();
+            string quit = KeybindManager.Instance.GetKey("Looting", "Quit").ToString();
+            string collect = KeybindManager.Instance.GetKey("Looting", "Collect").ToString();
+
             int nextY = DrawPlayerStats(player);
             DrawGroundItems(currentTile, nextY, cursorIndex);
 
             int bY = BottomY;
             WriteToBuffer(BottomX, bY++, "LOOTING MENU");
-            WriteToBuffer(BottomX, bY++, "[W/S] Up/Down");
-            WriteToBuffer(BottomX, bY++, "[E] Pick Up Selected");
-            WriteToBuffer(BottomX, bY++, "[Q] Cancel");
+            WriteToBuffer(BottomX, bY++, $"[{up}/{down}] Up/Down");
+            WriteToBuffer(BottomX, bY++, $"[{collect}] Pick Up Selected");
+            WriteToBuffer(BottomX, bY++, $"[{quit}] Cancel");
 
             DrawMessage(errorMessage, bY + 1);
         }
@@ -145,19 +160,26 @@ namespace RpgGame.Engine
         // GŁÓWNE RYSOWANIE STEROWANIA, STATÓW ITD
         public void DrawPlayingView(Board board, Player player, string errorMessage = "")
         {
+            string up = KeybindManager.Instance.GetKey("Playing", "MoveUp").ToString();
+            string down = KeybindManager.Instance.GetKey("Playing", "MoveDown").ToString();
+            string left = KeybindManager.Instance.GetKey("Playing", "MoveLeft").ToString();
+            string right = KeybindManager.Instance.GetKey("Playing", "MoveRight").ToString();
+            string inv = KeybindManager.Instance.GetKey("Playing", "OpenInventory").ToString();
+            string collect = KeybindManager.Instance.GetKey("Playing", "Collect").ToString();
+
             int nextY = DrawPlayerStats(player); // staty, ekwipunek
             var tile = board.GetTile(player.X, player.Y);
             DrawGroundItems(tile, nextY);        // przedmioty na ziemi
 
             int bY = BottomY;
             WriteToBuffer(BottomX, bY++, "CONTROLS:");
-            WriteToBuffer(BottomX, bY++, "[W/A/S/D] Move");
-            WriteToBuffer(BottomX, bY++, "[I] Inventory");
+            WriteToBuffer(BottomX, bY++, $"[{up}/{left}/{down}/{right}] Move");
+            WriteToBuffer(BottomX, bY++, $"[{inv}] Inventory");
 
             if (tile.Items.Count == 1)
-                WriteToBuffer(BottomX, bY++, $"[E] Pick up {tile.Items[0].Name}");
+                WriteToBuffer(BottomX, bY++, $"[{collect}] Pick up {tile.Items[0].Name}");
             else if (tile.Items.Count > 1)
-                WriteToBuffer(BottomX, bY++, "[E] Open Loot Menu");
+                WriteToBuffer(BottomX, bY++, $"[{collect}] Open Loot Menu");
 
             DrawMessage(errorMessage, bY + 1);
         }
@@ -208,7 +230,8 @@ namespace RpgGame.Engine
             }
 
             currentY += 1;
-            WriteToBuffer(startX, currentY, ">>> Wciśnij [ENTER], aby wejść do labiryntu... <<<");
+            string continueKey = KeybindManager.Instance.GetKey("Instruction", "Continue").ToString();
+            WriteToBuffer(startX, currentY, $">>> Wciśnij [{continueKey}], aby wejść do labiryntu... <<<");
             DrawMessage(errorMessage, currentY + 2);
         }
         private void WriteToBufferColored(int startX, int startY, string text, System.Drawing.Color color)

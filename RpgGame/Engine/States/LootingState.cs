@@ -43,8 +43,11 @@ namespace RpgGame.Engine.States
             // Wyjście z menu
             var quitKey = new KeyCommandHandler(s,"Quit", new PopStateCommand(engine));
 
+            var reloadKey = new KeyCommandHandler(s, "Reload", new ReloadConfigCommand());
+
+
             // Złożenie łańcucha
-            upKey.SetNext(downKey).SetNext(collectKey).SetNext(quitKey);
+            upKey.SetNext(downKey).SetNext(collectKey).SetNext(quitKey).SetNext(reloadKey);
 
             _inputChainHead = upKey;
         }        

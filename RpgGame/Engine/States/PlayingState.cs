@@ -30,8 +30,9 @@ namespace RpgGame.Engine.States
             var collectKey = new KeyCommandHandler(s,"Collect", new CollectCommand(engine, player, board));
             var inventoryKey = new KeyCommandHandler(s,"OpenInventory",new PushStateCommand(engine, new InventoryState(engine, player, board)));
             var quitKey = new KeyCommandHandler(s,"Quit",new QuitCommand(engine));
+            var reloadKey = new KeyCommandHandler(s, "Reload", new ReloadConfigCommand());
 
-            upKey.SetNext(downKey).SetNext(leftKey).SetNext(rightKey).SetNext(collectKey).SetNext(inventoryKey).SetNext(quitKey);
+            upKey.SetNext(downKey).SetNext(leftKey).SetNext(rightKey).SetNext(collectKey).SetNext(inventoryKey).SetNext(quitKey).SetNext(reloadKey);
 
             _inputChainHead = upKey;
         }

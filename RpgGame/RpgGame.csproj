@@ -10,10 +10,4 @@
 	<ItemGroup>
 		<PackageReference Include="Pastel" Version="7.0.0" />
 	</ItemGroup>
-	
-	<ItemGroup>
-	  <None Update="keybinds.txt">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
 </Project>
