@@ -12,7 +12,7 @@ namespace RpgGame.Characters
 {
     public class Player : IDrawable
     {
-        public Color ItemColor => Color.DodgerBlue;
+        public Color ItemColor => Color.White;
         public string Symbol => "¶";
 
         // wspolrzedne
@@ -110,10 +110,17 @@ namespace RpgGame.Characters
         {
             if (LeftHand != null)
             {
-                if (LeftHand == RightHand) ClearHands();
+                if (LeftHand == RightHand) 
+                {
+                    ClearHands();
+                }
                 else
                 {
-                    Inventory.Add(LeftHand);
+                    if (!TryAddToInventory(LeftHand))
+                    {
+                        // Nie wypisuj tutaj - pozwól state'owi obsługić komunikat
+                        return;
+                    }
                     LeftHand = null;
                 }
             }
@@ -122,18 +129,30 @@ namespace RpgGame.Characters
         {
             if (RightHand != null)
             {
-                if (RightHand == LeftHand) ClearHands();
+                if (RightHand == LeftHand) 
+                {
+                    ClearHands();
+                }
                 else
                 {
-                    Inventory.Add(RightHand);
+                    if (!TryAddToInventory(RightHand))
+                    {
+                        return;
+                    }
                     RightHand = null;
                 }
             }
         }
         public void ClearHands()
         {
-            if (LeftHand != null) Inventory.Add(LeftHand);
-            if (RightHand != null && RightHand != LeftHand) Inventory.Add(RightHand);
+            if (LeftHand != null && !TryAddToInventory(LeftHand))
+            {
+                // Handle gracefully without printing
+            }
+            if (RightHand != null && RightHand != LeftHand && !TryAddToInventory(RightHand))
+            {
+                // Handle gracefully without printing
+            }
 
             LeftHand = null;
             RightHand = null;

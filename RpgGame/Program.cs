@@ -23,8 +23,8 @@ class Program
         // budowa plansza
         var mapBuilder = new MapBuilder();
         director.SetBuilder(mapBuilder);
-        director.ConstructTestItemkow();
-        //director.ConstructMinotaursLabyrinth(); 
+        //director.ConstructTestItemkow();
+        director.ConstructMinotaursLabyrinth(); 
         var finalBoard = mapBuilder.BuildResult();
 
         // budowa instrukcji

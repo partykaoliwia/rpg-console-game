@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RpgGame.Engine.Input;
 
 namespace RpgGame.Engine.Builders
 {
@@ -14,58 +15,45 @@ namespace RpgGame.Engine.Builders
 
         public void BuildEmptyDungeon()
         {
-            _instructions.Add("Wkroczyłeś na bezkresne, krwawe piaski areny Aresa.");
-            _instructions.Add("Przestrzeń jest całkowicie otwarta, sprzyjając walce.");
-            _instructions.Add(""); // Pusta linia dla zachowania odstępu
+            _instructions.Add("Wkroczyłeś na otwartą arenę pełną piasku i krwi, gdzie toczy się bezlitosna walka.");
         }
 
         public void BuildFilledDungeon()
         {
-            _instructions.Add("Stoisz przed litą skałą, w której zmyślny Dedal wykuł swój");
-            _instructions.Add("mroczny Labirynt. Otaczają Cię grube, kamienne ściany.");
-            _instructions.Add("");
+            _instructions.Add("Stoisz przed wejściem do mrocznego labiryntu wykutego przez Dedala, pełnego ukrytych ścieżek i tajemnic.");
         }
 
         public void AddCorridors()
         {
-            _instructions.Add("Przed Tobą plątanina krętych korytarzy. Uważaj, bo w tym miejscu");
-            _instructions.Add("niezwykle łatwo zgubić drogę, jeśli nie posiadasz nici Ariadny.");
-            _instructions.Add("");
+            _instructions.Add("Przed tobą mnóstwo krętych i wąskich korytarzy, w których łatwo się zgubić.");
         }
 
         public void AddRooms()
         {
-            _instructions.Add("W głębi skały wyryto ukryte kryjówki – niegdyś służyły za ");
-            _instructions.Add("bezpieczne skrytki lub schronienie dla zagubionych herosów.");
-            _instructions.Add("");
+            _instructions.Add("Natknąłeś się na kilka ukrytych pomieszczeń wykutych w skale, które mogą kryć skarby lub niebezpieczeństwo.");
         }
 
         public void AddCentralHall(int width, int height)
         {
-            _instructions.Add($"Gdzieś w samym sercu tego przeklętego miejsca znajduje się");
-            _instructions.Add($"potężna Komnata. To tam czai się największe niebezpieczeństwo.");
-            _instructions.Add("");
+            _instructions.Add("W samym sercu tego przeklętego miejsca czai się potężna Komnata. To tam czeka największe niebezpieczeństwo.");
         }
 
         public void AddItems(int count)
         {
-            _instructions.Add($"Bogowie i dawni królowie ukryli tu swoje skarby. W mroku");
-            _instructions.Add($"rozrzucono dokładnie {count} starożytnych artefaktów");
-            _instructions.Add("Podejdź do nich i wciśnij [E], aby je podnieść.");
-            _instructions.Add("");
+            string collect = KeybindManager.Instance.GetKey("Playing", "Collect").ToString();
+            _instructions.Add($"Bogowie pozostawili tu {count} starożytnych artefaktów, które możesz podnieść naciskając [{collect}].");
         }
 
         public void AddWeapons(int count)
         {
-            _instructions.Add($"W pyle leży {count} sztuk oręża poległych hoplitów.");
-            _instructions.Add("Znajdziesz tu mityczne bronie, takie jak Xiphos czy Labrys.");
-            _instructions.Add("Użyj klawisza [E], by dobyć broni z ziemi.");
-            _instructions.Add("Zarządzaj nią w swoim ekwipunku naciskając [I].");
-            _instructions.Add("");
+            string collect = KeybindManager.Instance.GetKey("Playing", "Collect").ToString();
+            string inv = KeybindManager.Instance.GetKey("Playing", "OpenInventory").ToString();
+            _instructions.Add($"Poprzedni śmiałkowie pozostawili tu {count} sztuk potężnej broni - użyj [{collect}] by podnieść, a [{inv}] by zarządzać ekwipunkiem.");
         }
+
         public void AddMoney(int count)
         {
-
+            _instructions.Add($"Rozrzucono tu {count} monet, zbieraj je, by wzmocnić swoją pozycję w świecie śmiertelników.");
         }
 
     }

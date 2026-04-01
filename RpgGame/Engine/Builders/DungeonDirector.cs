@@ -19,16 +19,17 @@ namespace RpgGame.Engine.Builders
             _builder.AddRooms();
             _builder.AddCorridors();
             _builder.AddItems(10);
-            _builder.AddWeapons(6);
+            _builder.AddWeapons(12);
+            _builder.AddMoney(10);
         }
 
         // pozostale sposoby
         public void ConstructTestItemkow()
         {
             _builder.BuildEmptyDungeon();
-            _builder.AddItems(20);
-            _builder.AddWeapons(10);
-            _builder.AddMoney(10);
+            _builder.AddItems(50);
+            _builder.AddWeapons(50);
+            _builder.AddMoney(50);
         }
 
     }

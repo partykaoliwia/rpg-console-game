@@ -6,6 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="bin\Debug\net9.0\keybinds.txt" />
+  </ItemGroup>
 	
 	<ItemGroup>
 		<PackageReference Include="Pastel" Version="7.0.0" />
