@@ -10,7 +10,7 @@ namespace RpgGame.Items
 {
     public abstract class Weapon : IItem
     {
-        public Color ItemColor => Color.DarkSeaGreen;
+        public Color ItemColor { get; set; } = Color.DarkSeaGreen;
         public abstract string Symbol { get; }
         public abstract string Name { get; }
         public int Damage { get; set; }

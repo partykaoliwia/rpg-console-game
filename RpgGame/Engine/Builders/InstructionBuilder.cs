@@ -56,5 +56,9 @@ namespace RpgGame.Engine.Builders
             _instructions.Add($"Rozrzucono tu {count} monet, zbieraj je, by wzmocnić swoją pozycję w świecie śmiertelników.");
         }
 
+        public void AddEnemies(int count)
+        {
+            _instructions.Add($"W tym strasznym labiryncie czai się {count} potężnych wrogów oraz minotaur, zagrażających twojemu życiu.");
+        }
     }
 }

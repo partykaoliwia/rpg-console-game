@@ -21,6 +21,7 @@ namespace RpgGame.Engine.Builders
             _builder.AddItems(10);
             _builder.AddWeapons(12);
             _builder.AddMoney(10);
+            _builder.AddEnemies(20);
         }
 
         // pozostale sposoby

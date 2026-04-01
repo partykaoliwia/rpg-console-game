@@ -81,7 +81,19 @@ namespace RpgGame.Engine
                     else
                     {
                         var tile = board.GetTile(x, y);
-                        IDrawable thingToDraw = tile.Items.Count > 0 ? tile.Items[0] : tile;
+                        IDrawable thingToDraw;
+                        if(tile.Items.Count > 0)
+                        {
+                            thingToDraw = tile.Items[0];
+                        }
+                        else if(tile.Entity != null)
+                        {
+                            thingToDraw = tile.Entity;
+                        }
+                        else
+                        {
+                            thingToDraw = tile;
+                        }
                         DrawAt(screenX, screenY, thingToDraw);
                     }
                 }
@@ -121,7 +133,7 @@ namespace RpgGame.Engine
             }
             for (int i = 0; i < player.MaxInventorySize && i < 10; i++)
             {
-                string prefix = (i == inventoryCursorIndex) ? "➤ " : "  ";
+                string prefix = (i == inventoryCursorIndex) ? " ➤ " : "  ";
                 string itemStr = i < player.Inventory.Count ? player.Inventory[i].Name : "";
                 WriteToBuffer(RightX + 1, currentY + 2 + i, $"{prefix}{itemStr}");
             }
@@ -147,7 +159,7 @@ namespace RpgGame.Engine
             {
                 for (int i = 0; i < tile.Items.Count; i++)
                 {
-                    string prefix = (i == lootCursorIndex) ? "➤ " : "  ";
+                    string prefix = (i == lootCursorIndex) ? " ➤ " : "  ";
                     WriteToBuffer(LeftX + 2, startY + 2 + i, $"{prefix}{tile.Items[i].Name}");
                 }
             }
@@ -167,14 +179,14 @@ namespace RpgGame.Engine
             string uneqR = KeybindManager.Instance.GetKey("Inventory", "UnequipRight").ToString();
 
             int y = 3;
-            WriteToBuffer(LeftX + 2, y++, $"[{up}/{down}] Wybór");
-            WriteToBuffer(LeftX + 2, y++, $"[{eqL}/{eqR}] Załóż L/P");
-            WriteToBuffer(LeftX + 2, y++, $"[{uneqL}/{uneqR}] Zdejmij L/P");
-            WriteToBuffer(LeftX + 2, y++, $"[{drop}] Wyrzuć");
-            WriteToBuffer(LeftX + 2, y++, $"[{quit}] Zamknij");
+            WriteToBuffer(LeftX + 2, y++, $"[{up}/{down}] W górę/dół");
+            WriteToBuffer(LeftX + 2, y++, $"[{eqL}/{eqR}] Włóż do L/P ręki");
+            WriteToBuffer(LeftX + 2, y++, $"[{uneqL}/{uneqR}] Wyciągnij z L/P ręki");
+            WriteToBuffer(LeftX + 2, y++, $"[{drop}] Wyrzuć na ziemię");
+            WriteToBuffer(LeftX + 2, y++, $"[{quit}] Powrót");
 
             // Narysuj resztę widoku
-            DrawPlayerStats(player, cursorIndex);
+            DrawPlayerStats(player, cursorIndex); 
             DrawGroundItems(currentTile, 0);
             DrawMessage(errorMessage, ScreenHeight - 1);
         }
@@ -189,9 +201,9 @@ namespace RpgGame.Engine
             string collect = KeybindManager.Instance.GetKey("Looting", "Collect").ToString();
 
             int y = 3;
-            WriteToBuffer(LeftX + 2, y++, $"[{up}/{down}] Wybór");
-            WriteToBuffer(LeftX + 2, y++, $"[{collect}] Podnieś element");
-            WriteToBuffer(LeftX + 2, y++, $"[{quit}] Anuluj");
+            WriteToBuffer(LeftX + 2, y++, $"[{up}/{down}] W górę/dół");
+            WriteToBuffer(LeftX + 2, y++, $"[{collect}] Podnieś");
+            WriteToBuffer(LeftX + 2, y++, $"[{quit}] Powrót");
 
             DrawPlayerStats(player);
             DrawGroundItems(currentTile, 0, cursorIndex);
@@ -210,14 +222,12 @@ namespace RpgGame.Engine
             string collect = KeybindManager.Instance.GetKey("Playing", "Collect").ToString();
 
             int y = 3;
-            WriteToBuffer(LeftX + 2, y++, $"[{up},{left},{down},{right}] Ruch");
-            WriteToBuffer(LeftX + 2, y++, $"[{inv}] Ekwipunek");
+            WriteToBuffer(LeftX + 2, y++, $"[{up}/{left}/{down}/{right}] Ruch");
+            WriteToBuffer(LeftX + 2, y++, $"[{inv}] Otwórz ekwipunek");
 
             var tile = board.GetTile(player.X, player.Y);
-            if (tile.Items.Count == 1)
-                WriteToBuffer(LeftX + 2, y++, $"[{collect}] Podnieś przedmiot");
-            else if (tile.Items.Count > 1)
-                WriteToBuffer(LeftX + 2, y++, $"[{collect}] Otwórz łupy");
+            if (tile.Items.Count >= 1)
+                WriteToBuffer(LeftX + 2, y++, $"[{collect}] Podnieś");
 
             DrawBoard(board, player);
             DrawPlayerStats(player); 

@@ -12,7 +12,7 @@ namespace RpgGame.Characters
 {
     public class Player : IDrawable
     {
-        public Color ItemColor => Color.White;
+        public Color ItemColor { get; set; } = Color.White;
         public string Symbol => "¶";
 
         // wspolrzedne

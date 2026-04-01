@@ -16,5 +16,6 @@ namespace RpgGame.Engine.Builders
         void AddItems(int count);
         void AddWeapons(int count);
         void AddMoney(int count);
+        void AddEnemies(int count);
     }
 }

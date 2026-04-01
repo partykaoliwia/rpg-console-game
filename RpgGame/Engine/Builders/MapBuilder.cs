@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RpgGame.Characters;
 using RpgGame.Gameboard;
 using RpgGame.Items;
 
@@ -54,12 +56,12 @@ namespace RpgGame.Engine.Builders
             {
                 // losujemy wymiary
                 int roomWidth = _random.Next(2, 7);
-                int roomHeight = _random.Next(2,7);
+                int roomHeight = _random.Next(2, 7);
 
                 // losujemy pozycje
                 int startX = _random.Next(1, _board.Width - roomWidth - 1);
                 int startY = _random.Next(1, _board.Height - roomHeight - 1);
-                
+
                 // drazymy pokoje
                 for (int y = startY; y < startY + roomHeight; y++)
                 {
@@ -196,6 +198,46 @@ namespace RpgGame.Engine.Builders
                 if (roll == 0) return new Xiphos();
                 if (roll == 1) return new Dory();
                 return new Labrys();
+            }
+        }
+        public void AddEnemies(int count)
+        {
+            Enemy enemy;
+            int x = _board.Width / 2;
+            int y = _board.Height / 2;
+            var tile = _board.GetTile(x, y);
+            enemy = new Enemy(80, 15, 5); // minotaur
+            enemy.ItemColor = Color.SaddleBrown;
+            if (tile.IsWalkable)
+            {
+                tile.Entity = enemy;
+            }
+            int placed = 1;
+            while (placed < count)
+            {
+                x = _random.Next(0, _board.Width);
+                y = _random.Next(0, _board.Height);
+                tile = _board.GetTile(x, y);
+                if (tile.IsWalkable && tile.Entity == null)
+                {
+                    // pozostali to losowi przeciwnicy
+                    int roll = _random.Next(0, 3);
+                    if (roll == 0)
+                    {
+                        enemy = new Enemy(30, 10, 2);
+                    }
+                    else if (roll == 1)
+                    {
+                        enemy = new Enemy(40, 13, 1);
+                    }
+                    else
+                    {
+                        enemy = new Enemy(35, 15, 10);
+                    }
+
+                    tile.Entity = enemy;
+                    placed++;
+                }
             }
         }
     }

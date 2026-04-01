@@ -13,7 +13,7 @@ namespace RpgGame.Items
         public abstract string Symbol { get; }
         public abstract string Name { get; }
 
-        public abstract Color ItemColor { get; }
+        public abstract Color ItemColor { get; set; }
 
         public virtual bool PickUp(Player player)
         {

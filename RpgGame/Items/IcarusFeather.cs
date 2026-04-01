@@ -9,7 +9,7 @@ namespace RpgGame.Items
 {
     public class IcarusFeather : Junk
     {
-        public override Color ItemColor => Color.LightBlue;
+        public override Color ItemColor { get; set; } = Color.LightBlue;
         public override string Symbol => "~";
         public override string Name => "Złamane pióro Ikara";
 

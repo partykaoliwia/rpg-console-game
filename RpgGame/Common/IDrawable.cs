@@ -11,6 +11,6 @@ namespace RpgGame.Common
     public interface IDrawable
     {
         string Symbol { get; }
-        Color ItemColor { get; }
+        Color ItemColor { get; set; }
     }
 }

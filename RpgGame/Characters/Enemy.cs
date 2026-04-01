@@ -10,8 +10,8 @@ namespace RpgGame.Characters
 {
     public class Enemy : IDrawable
     {
-        public string Symbol => "#";
-        public Color ItemColor => Color.DarkRed;
+        public string Symbol { get; set; } = "■";
+        public Color ItemColor { get; set; } = Color.DarkRed;
         //public string Name { get; set; }
         public int HP { get; set; }
         public int Strength { get; set; }

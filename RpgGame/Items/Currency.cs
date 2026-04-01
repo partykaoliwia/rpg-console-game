@@ -10,7 +10,7 @@ namespace RpgGame.Items
 {
     public abstract class Currency : IItem
     {
-        public Color ItemColor => Color.Gold;
+        public Color ItemColor { get; set; } = Color.Gold;
         public abstract string Symbol { get; }
         public abstract string Name { get; }
         public int Value { get; protected set; }
