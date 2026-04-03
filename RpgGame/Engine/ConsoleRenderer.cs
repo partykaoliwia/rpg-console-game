@@ -6,7 +6,7 @@ using RpgGame.Characters;
 using RpgGame.Common;
 using RpgGame.Engine.Input;
 using RpgGame.Gameboard;
-using RpgGame.Items;
+using RpgGame.Items.Money;
 
 namespace RpgGame.Engine
 {
@@ -14,15 +14,10 @@ namespace RpgGame.Engine
     {
         private const int ScreenWidth = 120;
         private const int ScreenHeight = 29;
-
-        // Stałe używane do zachowania oryginalnego API, 
-        // ale wewnątrz metod i tak pozycjonujemy według nowego Layoutu.
         private const int StatX = 45; 
         private const int StatY = 0;
         private const int BottomX = 0;
         private const int BottomY = 21;
-
-        // --- NOWY LAYOUT ---
         private const int LeftX = 2;
         private const int LeftWidth = 30;
         private const int BoardOffsetX = 35;
@@ -51,22 +46,11 @@ namespace RpgGame.Engine
         }
 
         // RYSOWANIE PLANSZY
-        // RYSOWANIE PLANSZY
         public void DrawBoard(Board board, Player player)
         {
-            // 1. Dostępna przestrzeń między lewą a prawą kolumną
             int availableWidth = RightX - (LeftX + LeftWidth);
-
-            // 2. Wyśrodkowanie samej planszy (bez marginesów na ramkę)
             int boardStartX = (LeftX + LeftWidth) + (availableWidth - board.Width) / 2;
             int boardStartY = Math.Max(3, (ScreenHeight - board.Height) / 2);
-
-            // 3. Tytuł gry wyśrodkowany precyzyjnie względem planszy
-            //string title = "L A B I R Y N T   D E D A L A";
-            //int titleX = boardStartX + (board.Width / 2) - (title.Length / 2);
-            //WriteToBufferColored(titleX, boardStartY - 2, title, System.Drawing.Color.Gold);
-
-            // 4. Rysowanie kafelków i gracza
             for (int y = 0; y < board.Height; y++)
             {
                 for (int x = 0; x < board.Width; x++)
@@ -105,7 +89,7 @@ namespace RpgGame.Engine
         {
             // BOX 1: GRACZ
             int currentY = 1;
-            DrawBox(RightX, currentY, RightWidth, 11, " GRACZ ");
+            DrawBox(RightX, currentY, RightWidth, 11, " PLAYER ");
 
             int coins = player.Wallet.ContainsKey(Coin.CurrencyName) ? player.Wallet[Coin.CurrencyName] : 0;
             int gold = player.Wallet.ContainsKey(Gold.CurrencyName) ? player.Wallet[Gold.CurrencyName] : 0;
@@ -123,12 +107,12 @@ namespace RpgGame.Engine
             currentY += 11;
             if(player.Inventory.Count >= player.MaxInventorySize)
             {
-                DrawBox(RightX, currentY, RightWidth, 10, " EKWIPUNEK (FULL) ");
+                DrawBox(RightX, currentY, RightWidth, 10, " INVENTORY (FULL) ");
 
             }
             else
             {
-                DrawBox(RightX, currentY, RightWidth, 10, " EKWIPUNEK ");
+                DrawBox(RightX, currentY, RightWidth, 10, " INVENTORY ");
 
             }
             for (int i = 0; i < player.MaxInventorySize && i < 10; i++)
@@ -140,21 +124,18 @@ namespace RpgGame.Engine
 
             // BOX 3: RĘCE
             currentY += 10;
-            DrawBox(RightX, currentY, RightWidth, 5, " RĘCE ");
+            DrawBox(RightX, currentY, RightWidth, 5, " HANDS ");
             WriteToBuffer(RightX + 2, currentY + 2, $"L: {(player.LeftHand != null ? player.LeftHand.Name : "")}");
-            WriteToBuffer(RightX + 2, currentY + 3, $"P: {(player.RightHand != null ? player.RightHand.Name : "")}");
+            WriteToBuffer(RightX + 2, currentY + 3, $"R: {(player.RightHand != null ? player.RightHand.Name : "")}");
 
-            return currentY + 5; // Zgodnie z sygnaturą zwraca int (następną pozycję Y)
+            return currentY + 5;
         }
 
         // RYSOWANIE ITEMÓW NA ZIEMI
         public void DrawGroundItems(ITile tile, int currentY, int lootCursorIndex = -1)
         {
-            // Parametr currentY ignorujemy wizualnie na rzecz sztywnego layoutu, 
-            // ale nie zmieniamy sygnatury by zachować kompatybilność.
             int startY = 12;
-            DrawBox(LeftX, startY, LeftWidth, 14, " NA ZIEMI ");
-
+            DrawBox(LeftX, startY, LeftWidth, 14, " ON THE GROUND ");
             if (tile.Items.Count > 0)
             {
                 for (int i = 0; i < tile.Items.Count; i++)
@@ -185,7 +166,6 @@ namespace RpgGame.Engine
             WriteToBuffer(LeftX + 2, y++, $"[{drop}] Wyrzuć na ziemię");
             WriteToBuffer(LeftX + 2, y++, $"[{quit}] Powrót");
 
-            // Narysuj resztę widoku
             DrawPlayerStats(player, cursorIndex); 
             DrawGroundItems(currentTile, 0);
             DrawMessage(errorMessage, ScreenHeight - 1);
@@ -194,7 +174,7 @@ namespace RpgGame.Engine
         // RYSOWANIE MENU LOOTING
         public void DrawLootingMenu(Player player, ITile currentTile, int cursorIndex, string errorMessage)
         {
-            DrawBox(LeftX, 1, LeftWidth, 10, " MENU PODNOSZENIA ");
+            DrawBox(LeftX, 1, LeftWidth, 10, " LOOT MENU ");
             string up = KeybindManager.Instance.GetKey("Looting", "MoveUp").ToString();
             string down = KeybindManager.Instance.GetKey("Looting", "MoveDown").ToString();
             string quit = KeybindManager.Instance.GetKey("Looting", "Quit").ToString();
@@ -213,7 +193,7 @@ namespace RpgGame.Engine
         // GŁÓWNE RYSOWANIE STEROWANIA, STATÓW ITD
         public void DrawPlayingView(Board board, Player player, string errorMessage = "")
         {
-            DrawBox(LeftX, 1, LeftWidth, 10, " INSTRUKCJE ");
+            DrawBox(LeftX, 1, LeftWidth, 10, " CONTROLS ");
             string up = KeybindManager.Instance.GetKey("Playing", "MoveUp").ToString();
             string down = KeybindManager.Instance.GetKey("Playing", "MoveDown").ToString();
             string left = KeybindManager.Instance.GetKey("Playing", "MoveLeft").ToString();
@@ -245,68 +225,8 @@ namespace RpgGame.Engine
                 WriteToBufferColored(startX, line, formatted, System.Drawing.Color.Red);
             }
         }
-
-        // RYSOWANIE EKRANU INSTRUKCJI
-        //public void DrawInstructionScreen(List<string> instructions, string errorMessage = "")
-        //{
-        //    int currentY = 2; 
-        //    int startX = 25;
-
-        //    WriteToBuffer(startX, currentY++, "=====================================================================");
-        //    WriteToBufferColored(startX, currentY++, "                      LABIRYNT DEDALA                      ", System.Drawing.Color.Gold);
-        //    WriteToBuffer(startX, currentY++, "=====================================================================");
-        //    currentY++;
-
-        //    foreach (var line in instructions)
-        //    {
-        //        WriteToBuffer(startX, currentY++, line);
-        //    }
-
-        //    currentY += 2;
-        //    string continueKey = KeybindManager.Instance.GetKey("Instruction", "Continue").ToString();
-        //    WriteToBuffer(startX, currentY, $">>> Wciśnij [{continueKey}], aby wejść do labiryntu... <<<");
-        //    DrawMessage(errorMessage, currentY + 2);
-        //}
-        //public void DrawInstructionScreen(List<string> instructions, string errorMessage = "")
-        //{
-        //    // 1. Obliczamy całkowitą wysokość tego widoku, aby wyśrodkować go również w PIONIE
-        //    // 3 linie nagłówka + 1 pusta + liczba linii instrukcji + 2 puste + 1 linia "continue"
-        //    int totalHeight = 3 + 1 + instructions.Count + 2 + 1;
-
-        //    // Zaczynamy rysować od połowy ekranu minus połowa wysokości naszego bloku tekstu
-        //    int currentY = Math.Max(0, (ScreenHeight - totalHeight) / 2);
-
-        //    string headerTop = "=====================================================================";
-        //    string headerMid = "                      LABIRYNT DEDALA                      ";
-        //    string headerBot = "=====================================================================";
-
-        //    // 2. Wyśrodkowanie nagłówków w POZIOMIE
-        //    WriteToBuffer((ScreenWidth - headerTop.Length) / 2, currentY++, headerTop);
-        //    WriteToBufferColored((ScreenWidth - headerMid.Length) / 2, currentY++, headerMid, System.Drawing.Color.Gold);
-        //    WriteToBuffer((ScreenWidth - headerBot.Length) / 2, currentY++, headerBot);
-        //    currentY++;
-
-        //    // 3. Dynamiczne centrowanie każdej linii z listy (Twój pomysł z DrawDescription!)
-        //    foreach (var line in instructions)
-        //    {
-        //        int startX = (ScreenWidth - line.Length) / 2;
-        //        WriteToBuffer(Math.Max(0, startX), currentY++, line);
-        //    }
-
-        //    currentY += 2;
-        //    string continueKey = KeybindManager.Instance.GetKey("Instruction", "Continue").ToString();
-        //    string continueText = $">>> Wciśnij [{continueKey}], aby wejść do labiryntu... <<<";
-
-        //    // Centrowanie tekstu "Wciśnij..."
-        //    WriteToBuffer((ScreenWidth - continueText.Length) / 2, currentY, continueText);
-
-        //    // Wyświetlanie błędów (Twoja metoda DrawMessage ma już wbudowane centrowanie)
-        //    DrawMessage(errorMessage, currentY + 2);
-        //}
         public void DrawInstructionScreen(List<string> instructions, string errorMessage = "")
         {
-            // --- DEFINICJA TYTUŁU ASCII (6 linijek wysokości, szerokość ~60 znaków) ---
-            // Używamy solidnych znaków ██╗, aby uzyskać gruby, "klockowy" efekt jak w Twoim przykładzie.
             string[] asciiTitle = new string[]
             {
          " ██╗      █████╗ ██████╗ ██╗██████╗ ██╗   ██╗███╗   ██╗████████╗",
@@ -314,7 +234,7 @@ namespace RpgGame.Engine
          " ██║     ███████║██████╔╝██║██████╔╝ ╚████╔╝ ██╔██╗ ██║   ██║   ",
          " ██║     ██╔══██║██╔══██╗██║██╔══██╗  ╚██╔╝  ██║╚██╗██║   ██║   ",
          " ███████╗██║  ██║██████╔╝██║██║  ██║   ██║   ██║ ╚████║   ██║   ",
-         " ╚══════╝╚═╝  ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═══╝   ╚═╝   ", // Pusta linia między wyrazami
+         " ╚══════╝╚═╝  ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═══╝   ╚═╝   ",
          " ██████╗ ███████╗██████╗  █████╗ ██╗      █████╗",
          "  ██╔══██╗██╔════╝██╔══██╗██╔══██╗██║     ██╔══██╗",
          "  ██║  ██║█████╗  ██║  ██║███████║██║     ███████║",
@@ -322,16 +242,8 @@ namespace RpgGame.Engine
          "  ██████╔╝███████╗██████╔╝██║  ██║███████╗██║  ██║",
          "  ╚═════╝ ╚══════╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝"
             };
-
-            // 1. Obliczamy całkowitą wysokość tego widoku, aby wyśrodkować go w PIONIE (Y)
-            // Wysokość ASCII (12) + Pusta (1) + Instrukcje + Puste (2) + "Continue" (1)
             int totalHeight = asciiTitle.Length + 1 + instructions.Count + 2 + 1;
-
-            // Zaczynamy rysować od połowy ekranu minus połowa wysokości naszego bloku tekstu
             int currentY = Math.Max(1, (ScreenHeight - totalHeight) / 2);
-
-            // 2. Rysujemy tytuł ASCII (wyśrodkowany w POZIOMIE w Gold)
-            // Wybieramy Gold, by nawiązać do "Mitologii Greckiej".
             foreach (string line in asciiTitle)
             {
                 int startX = (ScreenWidth - line.Length) / 2;
@@ -357,9 +269,6 @@ namespace RpgGame.Engine
             // Wyświetlanie błędów (DrawMessage ma wbudowane centrowanie)
             DrawMessage(errorMessage, currentY + 2);
         }
-
-        // --- PRYWATNE METODY POMOCNICZE ---
-
         private void DrawBox(int x, int y, int width, int height, string title)
         {
             if (width < 2 || height < 2) return;
@@ -380,7 +289,6 @@ namespace RpgGame.Engine
                 WriteToBuffer(titlePos, y, title);
             }
         }
-
         private void DrawAt(int x, int y, IDrawable drawable)
         {
             if (x >= 0 && x < ScreenWidth && y >= 0 && y < ScreenHeight)
@@ -388,7 +296,6 @@ namespace RpgGame.Engine
                 _buffer[x, y] = drawable.Symbol.ToString().Pastel(drawable.ItemColor);
             }
         }
-
         private void WriteToBuffer(int startX, int startY, string text)
         {
             for (int i = 0; i < text.Length; i++)
@@ -400,7 +307,6 @@ namespace RpgGame.Engine
                 }
             }
         }
-
         private void WriteToBufferColored(int startX, int startY, string text, System.Drawing.Color color)
         {
             for (int i = 0; i < text.Length; i++)
@@ -412,7 +318,6 @@ namespace RpgGame.Engine
                 }
             }
         }
-
         // RENDEROWANIE
         public void RenderToConsole()
         {
@@ -431,6 +336,88 @@ namespace RpgGame.Engine
             Console.Write(sb.ToString());
 
             ClearBuffer();
+        }
+        // RYSOWANIE EKRANU WALKI
+        public void DrawCombatScreen(Player player, Enemy enemy, string battleLog, bool isChoosingWeapon, string errorMessage = "")
+        {
+            // 1. LEWY PANEL - INSTRUKCJE AKCJI
+            DrawBox(LeftX, 1, LeftWidth, 10, " AKCJA ");
+            int y = 3;
+
+            if (isChoosingWeapon)
+            {
+                string left = KeybindManager.Instance.GetKey("Combat", "ChooseLeft").ToString();
+                string right = KeybindManager.Instance.GetKey("Combat", "ChooseRight").ToString();
+                string esc = KeybindManager.Instance.GetKey("Combat", "Flee").ToString();
+
+                WriteToBuffer(LeftX + 2, y++, "Wybierz broń:");
+                WriteToBuffer(LeftX + 2, y++, $"[{left}] Lewa Ręka");
+                WriteToBuffer(LeftX + 2, y++, $"[{right}] Prawa Ręka");
+                y++;
+                WriteToBuffer(LeftX + 2, y++, $"[{esc}] Anuluj");
+            }
+            else
+            {
+                string atk1 = KeybindManager.Instance.GetKey("Combat", "NormalAttack").ToString();
+                string atk2 = KeybindManager.Instance.GetKey("Combat", "StealthAttack").ToString();
+                string atk3 = KeybindManager.Instance.GetKey("Combat", "MagicAttack").ToString();
+                string esc = KeybindManager.Instance.GetKey("Combat", "Flee").ToString();
+
+                WriteToBuffer(LeftX + 2, y++, $"[{atk1}] Zwykły Atak");
+                WriteToBuffer(LeftX + 2, y++, $"[{atk2}] Skryty Atak");
+                WriteToBuffer(LeftX + 2, y++, $"[{atk3}] Atak Magiczny");
+                y++;
+                WriteToBuffer(LeftX + 2, y++, $"[{esc}] Ucieczka");
+            }
+
+            // 2. PRAWY PANEL - STATYSTYKI GRACZA
+            // Używamy Twojej gotowej metody - pokaże na bieżąco HP, staty i co mamy w rękach!
+            DrawPlayerStats(player);
+
+            // 3. ŚRODKOWY PANEL - PRZECIWNIK
+            int centerAreaStart = LeftX + LeftWidth + 2;
+            int centerAreaWidth = RightX - centerAreaStart - 2;
+            int enemyBoxWidth = 30;
+            int enemyBoxX = centerAreaStart + (centerAreaWidth - enemyBoxWidth) / 2;
+
+            DrawBox(enemyBoxX, 4, enemyBoxWidth, 8, $" {enemy.Name} ");
+
+            // Kolorujemy HP na czerwono żeby się wyróżniało
+            WriteToBufferColored(enemyBoxX + 2, 6, $"Wigor (HP): {Math.Max(0, enemy.HP)}", System.Drawing.Color.Red);
+            WriteToBuffer(enemyBoxX + 2, 7, $"Siła:       {enemy.Strength}");
+            WriteToBuffer(enemyBoxX + 2, 8, $"Pancerz:    {enemy.Armor}");
+
+            // Rysujemy "Ikonkę" wroga na środku ramki
+            string enemyIcon = $"[ {enemy.Symbol} ]";
+            WriteToBufferColored(enemyBoxX + (enemyBoxWidth - enemyIcon.Length) / 2, 10, enemyIcon, enemy.ItemColor);
+
+            // 4. DOLNY PANEL - BATTLE LOG
+            int logBoxY = 15;
+            int logBoxHeight = 5;
+            DrawBox(centerAreaStart, logBoxY, centerAreaWidth, logBoxHeight, " LOG WALKI ");
+
+            if (!string.IsNullOrEmpty(battleLog))
+            {
+                // Sprytnie łamiemy logi na dwie linie, jeśli zawierają pionową kreskę kontrataku
+                if (battleLog.Contains(" | "))
+                {
+                    var parts = battleLog.Split(new[] { " | " }, StringSplitOptions.None);
+                    // Odcinamy nadmiar znaków by nie rozsadzić bufora ekranu
+                    string line1 = parts[0].Length > centerAreaWidth - 4 ? parts[0].Substring(0, centerAreaWidth - 4) : parts[0];
+                    string line2 = parts[1].Length > centerAreaWidth - 4 ? parts[1].Substring(0, centerAreaWidth - 4) : parts[1];
+
+                    WriteToBufferColored(centerAreaStart + 2, logBoxY + 1, line1, System.Drawing.Color.Gold);
+                    WriteToBufferColored(centerAreaStart + 2, logBoxY + 2, line2, System.Drawing.Color.LightCoral);
+                }
+                else
+                {
+                    string singleLine = battleLog.Length > centerAreaWidth - 4 ? battleLog.Substring(0, centerAreaWidth - 4) : battleLog;
+                    WriteToBufferColored(centerAreaStart + 2, logBoxY + 2, singleLine, System.Drawing.Color.Gold);
+                }
+            }
+
+            // 5. RYSOWANIE EWENTUALNYCH BŁĘDÓW (na samym dole)
+            DrawMessage(errorMessage, ScreenHeight - 1);
         }
     }
 }

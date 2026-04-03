@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RpgGame.Characters;
+using RpgGame.Combat;
 
 namespace RpgGame.Items
 {
@@ -32,5 +33,7 @@ namespace RpgGame.Items
         {
             player.EquipToRightHand(this);
         }
+        public virtual void Unequip(Player player) { }
+        public abstract CombatStats Accept(IAttackVisitor visitor,Player player);
     }
 }

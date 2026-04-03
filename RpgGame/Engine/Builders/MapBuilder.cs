@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using RpgGame.Characters;
 using RpgGame.Gameboard;
 using RpgGame.Items;
+using RpgGame.Items.Money;
+using RpgGame.Items.Unusables;
 
 namespace RpgGame.Engine.Builders
 {
@@ -180,24 +182,25 @@ namespace RpgGame.Engine.Builders
         }
         private Weapon CreateWeaponForSequence(int index)
         {
+            int damage = 1;
             // losowanie broni, ale tak zeby jesli jest ich wiecej niz 1 to byla gwarancja na dwureczna
             if (index == 0 || index == 2)
             {
                 // Pierwsza (0) i trzecia (2) broń to losowa jednoręczna
-                return _random.Next(0, 2) == 0 ? new Xiphos() : new Dory();
+                return _random.Next(0, 2) == 0 ? new Xiphos(damage) : new Dory(damage);
             }
             else if (index == 1)
             {
                 // Druga (1) broń to dwuręczna
-                return new Labrys();
+                return new Labrys(damage);
             }
             else
             {
                 // pozostale bronie losowo
                 int roll = _random.Next(0, 3);
-                if (roll == 0) return new Xiphos();
-                if (roll == 1) return new Dory();
-                return new Labrys();
+                if (roll == 0) return new Xiphos(damage);
+                if (roll == 1) return new Dory(damage);
+                return new Labrys(damage);
             }
         }
         public void AddEnemies(int count)

@@ -23,10 +23,10 @@ namespace RpgGame.Engine.States
             _board = board;
             _player = player;
             string s = "Playing";
-            var upKey = new KeyCommandHandler(s, "MoveUp", new MoveCommand(player, board, 0, -1));
-            var downKey = new KeyCommandHandler(s, "MoveDown", new MoveCommand(player, board, 0, 1));
-            var leftKey = new KeyCommandHandler(s,"MoveLeft",new MoveCommand(player, board, -1, 0));
-            var rightKey = new KeyCommandHandler(s,"MoveRight",new MoveCommand(player, board, 1, 0));
+            var upKey = new KeyCommandHandler(s, "MoveUp", new MoveCommand(engine, player, board, 0, -1));
+            var downKey = new KeyCommandHandler(s, "MoveDown", new MoveCommand(engine, player, board, 0, 1));
+            var leftKey = new KeyCommandHandler(s,"MoveLeft",new MoveCommand(engine, player, board, -1, 0));
+            var rightKey = new KeyCommandHandler(s,"MoveRight",new MoveCommand(engine,player, board, 1, 0));
             var collectKey = new KeyCommandHandler(s,"Collect", new CollectCommand(engine, player, board));
             var inventoryKey = new KeyCommandHandler(s,"OpenInventory",new PushStateCommand(engine, new InventoryState(engine, player, board)));
             var quitKey = new KeyCommandHandler(s,"Quit",new QuitCommand(engine));

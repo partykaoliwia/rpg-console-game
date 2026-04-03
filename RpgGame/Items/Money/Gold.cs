@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RpgGame.Characters;
 
-namespace RpgGame.Items
+namespace RpgGame.Items.Money
 {
     public class Gold : Currency
     {
@@ -17,7 +17,7 @@ namespace RpgGame.Items
 
         public override bool PickUp(Player player)
         {
-            player.AddCurrency(this.Name, this.Value);
+            player.AddCurrency(Name, Value);
             return true;
         }
     }

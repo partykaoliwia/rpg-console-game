@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RpgGame.Characters;
+using RpgGame.Combat;
 
-namespace RpgGame.Items
+namespace RpgGame.Items.Money
 {
     public abstract class Currency : IItem
     {
@@ -23,5 +24,10 @@ namespace RpgGame.Items
         public abstract bool PickUp(Player player);
         public void EquipToLeftHand(Player player) { }
         public void EquipToRightHand(Player player) { }
+        public virtual void Unequip(Player player) { }
+        public virtual CombatStats Accept(IAttackVisitor visitor, Player player)
+        {
+            return visitor.Visit(this, player);
+        }
     }
 }

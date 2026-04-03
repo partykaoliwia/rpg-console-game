@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using RpgGame.Common;
 using RpgGame.Gameboard;
 using RpgGame.Items;
+using RpgGame.Items.Money;
 
 namespace RpgGame.Characters
 {
@@ -20,11 +21,12 @@ namespace RpgGame.Characters
         public int Y { get; private set; }
 
         // atrybuty
-        public int Strength { get; private set; } = 10; // Krzepa Heraklesa
-        public int Health { get; private set; } = 20; // Wigor Witalny
-        public int Luck { get; private set; } = 30; // Fortuna
-        public int Aggression { get; private set; } = 40; // Furia Aresa
-        public int Wisdom { get; private set; } = 50; // Mądrość Ateny
+        public int Strength { get; set; } = 10; // Krzepa Heraklesa
+        public int Health { get; set; } = 20; // Wigor Witalny
+        public int Luck { get; set; } = 30; // Fortuna
+        public int Aggression { get; set; } = 40; // Furia Aresa
+        public int Wisdom { get; set; } = 50; // Mądrość Ateny
+        public int Dexterity { get; set; } = 20;
 
         // waluta
         public Dictionary<string, int> Wallet { get; private set; } = new Dictionary<string, int>()
@@ -180,6 +182,11 @@ namespace RpgGame.Characters
             if (Inventory.Count >= MaxInventorySize) return false;
             Inventory.Add(item);
             return true;
+        }
+        public void TakeDamage(int damage)
+        {
+            Health -= damage;
+            if(Health < 0) Health = 0;
         }
     }
 }

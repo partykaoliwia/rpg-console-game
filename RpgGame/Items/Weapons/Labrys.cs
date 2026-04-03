@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RpgGame.Characters;
+using RpgGame.Items.Weapons;
 
 namespace RpgGame.Items
 {
-    public class Labrys : Weapon
+    public class Labrys : HeavyWeapon
     {
         //oburęczna broń
         public override string Symbol => "T";
         public override string Name => "Labrys";
-        public Labrys() : base(35) { }
+        public Labrys(int damage) : base(damage) { }
         public override void EquipToLeftHand(Player player)
         {
             player.EquipToBothHands(this);

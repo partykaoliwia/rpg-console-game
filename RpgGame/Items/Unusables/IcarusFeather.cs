@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RpgGame.Items
+namespace RpgGame.Items.Unusables
 {
     public class IcarusFeather : Junk
     {

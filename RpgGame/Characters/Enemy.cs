@@ -12,16 +12,17 @@ namespace RpgGame.Characters
     {
         public string Symbol { get; set; } = "■";
         public Color ItemColor { get; set; } = Color.DarkRed;
-        //public string Name { get; set; }
+        public string Name { get; set; }
         public int HP { get; set; }
         public int Strength { get; set; }
         public int Armor { get; set; }
         public bool IsAlive => HP > 0;
-        public Enemy(int hp, int strength, int armor)
+        public Enemy(int hp, int strength, int armor, string name = "Enemy")
         {
             HP = hp;
             Strength = strength;
             Armor = armor;
+            Name = name;
         }
         public int TakeDamage(int damage)
         {

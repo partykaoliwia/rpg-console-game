@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RpgGame.Items.Weapons;
 
 namespace RpgGame.Items
 {
-    public class Dory : Weapon
+    public class Dory : MagicWeapon
     {
         public override string Symbol => "/";
         public override string Name => "Dory";
-        public Dory() : base(15) { }
+        public Dory(int damage) : base(damage) { }
     }
 }
