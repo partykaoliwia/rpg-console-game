@@ -70,13 +70,13 @@ namespace RpgGame.Engine
                         {
                             thingToDraw = tile.Items[0];
                         }
-                        else if(tile.Entity != null)
-                        {
-                            thingToDraw = tile.Entity;
-                        }
                         else
                         {
                             thingToDraw = tile;
+                        }
+                        if (tile.Entity != null)
+                        {
+                            thingToDraw = tile.Entity;
                         }
                         DrawAt(screenX, screenY, thingToDraw);
                     }
@@ -337,24 +337,83 @@ namespace RpgGame.Engine
 
             ClearBuffer();
         }
+
         // RYSOWANIE EKRANU WALKI
         public void DrawCombatScreen(Player player, Enemy enemy, string battleLog, bool isChoosingWeapon, string errorMessage = "")
         {
-            // 1. LEWY PANEL - INSTRUKCJE AKCJI
-            DrawBox(LeftX, 1, LeftWidth, 10, " AKCJA ");
-            int y = 3;
+            // Wymiary i pozycje poszczególnych kolumn
+            int leftColX = LeftX;           // 2
+            int rightColX = RightX;         // 85
+            int colWidth = 32;
+            int centerColX = 36;            // Pomiędzy lewą a prawą (2+32+2 = 36)
+            int centerColWidth = 47;        // Szerokość środka (85 - 36 - 2 = 47)
 
+            // ==========================================
+            // KOLUMNA LEWA
+            // ==========================================
+
+            // 1. LEWY GÓRNY - PRZECIWNIK
+            DrawBox(leftColX, 1, colWidth, 10, $" {enemy.Name} ");
+            WriteToBufferColored(leftColX + 2, 3, $"Wigor (HP): {Math.Max(0, enemy.HP)}", System.Drawing.Color.Red);
+            WriteToBuffer(leftColX + 2, 4, $"Siła:       {enemy.Strength}");
+            WriteToBuffer(leftColX + 2, 5, $"Pancerz:    {enemy.Armor}");
+
+            string enemyIcon = $"[ {enemy.Symbol} ]";
+            WriteToBufferColored(leftColX + (colWidth - enemyIcon.Length) / 2, 8, enemyIcon, enemy.ItemColor);
+
+            // 2. LEWY DOLNY - ZASADY WALKI
+            DrawBox(leftColX, 12, colWidth, 15, " WIEDZA O WALCE ");
+            int infoY = 14;
+            WriteToBufferColored(leftColX + 2, infoY++, "[1] Zwykły Atak", System.Drawing.Color.DarkGray);
+            WriteToBuffer(leftColX + 2, infoY++, "Ciężka broń: +Siła");
+            WriteToBuffer(leftColX + 2, infoY++, "Lekka broń:  +Zręczność");
+            infoY++;
+            WriteToBufferColored(leftColX + 2, infoY++, "[2] Skryty Atak", System.Drawing.Color.DarkGray);
+            WriteToBuffer(leftColX + 2, infoY++, "Lekka broń:  Podwójne obr.");
+            WriteToBuffer(leftColX + 2, infoY++, "Magia/Brak:  Zero obr.");
+            infoY++;
+            WriteToBufferColored(leftColX + 2, infoY++, "[3] Magiczny Atak", System.Drawing.Color.DarkGray);
+            WriteToBuffer(leftColX + 2, infoY++, "Magiczna:   Skaluje z Mądrością");
+            WriteToBuffer(leftColX + 2, infoY++, "Ciężka/Lekka: Tylko baza obr.");
+
+            // ==========================================
+            // KOLUMNA PRAWA
+            // ==========================================
+
+            // 3. PRAWY GÓRNY - GRACZ
+            DrawBox(rightColX, 1, colWidth, 11, " GRACZ ");
+            WriteToBuffer(rightColX + 2, 3, $"Wigor: {player.Health}");
+            WriteToBuffer(rightColX + 2, 4, $"Fortuna: {player.Luck}");
+            WriteToBuffer(rightColX + 2, 5, $"Krzepa: {player.Strength}");
+            WriteToBuffer(rightColX + 2, 6, $"Furia: {player.Aggression}");
+            WriteToBuffer(rightColX + 2, 7, $"Mądrość: {player.Wisdom}");
+
+            // 4. POD GRACZEM - RĘCE
+            DrawBox(rightColX, 13, colWidth, 5, " RĘCE ");
+            string leftHandName = player.LeftHand != null ? player.LeftHand.Name : "Pusta";
+            string rightHandName = player.RightHand != null ? player.RightHand.Name : "Pusta";
+
+            // Skracanie nazw jeśli są za długie by zmieścić w boxie
+            if (leftHandName.Length > 25) leftHandName = leftHandName.Substring(0, 22) + "...";
+            if (rightHandName.Length > 25) rightHandName = rightHandName.Substring(0, 22) + "...";
+
+            WriteToBuffer(rightColX + 2, 15, $"L: {leftHandName}");
+            WriteToBuffer(rightColX + 2, 16, $"P: {rightHandName}");
+
+            // 5. PRAWY DOLNY - STEROWANIE
+            DrawBox(rightColX, 19, colWidth, 8, " STEROWANIE ");
+            int ctrlY = 21;
             if (isChoosingWeapon)
             {
                 string left = KeybindManager.Instance.GetKey("Combat", "ChooseLeft").ToString();
                 string right = KeybindManager.Instance.GetKey("Combat", "ChooseRight").ToString();
                 string esc = KeybindManager.Instance.GetKey("Combat", "Flee").ToString();
 
-                WriteToBuffer(LeftX + 2, y++, "Wybierz broń:");
-                WriteToBuffer(LeftX + 2, y++, $"[{left}] Lewa Ręka");
-                WriteToBuffer(LeftX + 2, y++, $"[{right}] Prawa Ręka");
-                y++;
-                WriteToBuffer(LeftX + 2, y++, $"[{esc}] Anuluj");
+                WriteToBufferColored(rightColX + 2, ctrlY++, "Wybierz broń do uderzenia:", System.Drawing.Color.Gold);
+                WriteToBuffer(rightColX + 2, ctrlY++, $"[{left}] Lewa Ręka");
+                WriteToBuffer(rightColX + 2, ctrlY++, $"[{right}] Prawa Ręka");
+                ctrlY++;
+                WriteToBuffer(rightColX + 2, ctrlY++, $"[{esc}] Anuluj Wybór");
             }
             else
             {
@@ -363,61 +422,65 @@ namespace RpgGame.Engine
                 string atk3 = KeybindManager.Instance.GetKey("Combat", "MagicAttack").ToString();
                 string esc = KeybindManager.Instance.GetKey("Combat", "Flee").ToString();
 
-                WriteToBuffer(LeftX + 2, y++, $"[{atk1}] Zwykły Atak");
-                WriteToBuffer(LeftX + 2, y++, $"[{atk2}] Skryty Atak");
-                WriteToBuffer(LeftX + 2, y++, $"[{atk3}] Atak Magiczny");
-                y++;
-                WriteToBuffer(LeftX + 2, y++, $"[{esc}] Ucieczka");
+                WriteToBuffer(rightColX + 2, ctrlY++, $"[{atk1}] Zwykły Atak");
+                WriteToBuffer(rightColX + 2, ctrlY++, $"[{atk2}] Skryty Atak");
+                WriteToBuffer(rightColX + 2, ctrlY++, $"[{atk3}] Magiczny Atak");
+                ctrlY++;
+                WriteToBuffer(rightColX + 2, ctrlY++, $"[{esc}] Ucieczka");
             }
 
-            // 2. PRAWY PANEL - STATYSTYKI GRACZA
-            // Używamy Twojej gotowej metody - pokaże na bieżąco HP, staty i co mamy w rękach!
-            DrawPlayerStats(player);
+            // ==========================================
+            // ŚRODEK
+            // ==========================================
 
-            // 3. ŚRODKOWY PANEL - PRZECIWNIK
-            int centerAreaStart = LeftX + LeftWidth + 2;
-            int centerAreaWidth = RightX - centerAreaStart - 2;
-            int enemyBoxWidth = 30;
-            int enemyBoxX = centerAreaStart + (centerAreaWidth - enemyBoxWidth) / 2;
-
-            DrawBox(enemyBoxX, 4, enemyBoxWidth, 8, $" {enemy.Name} ");
-
-            // Kolorujemy HP na czerwono żeby się wyróżniało
-            WriteToBufferColored(enemyBoxX + 2, 6, $"Wigor (HP): {Math.Max(0, enemy.HP)}", System.Drawing.Color.Red);
-            WriteToBuffer(enemyBoxX + 2, 7, $"Siła:       {enemy.Strength}");
-            WriteToBuffer(enemyBoxX + 2, 8, $"Pancerz:    {enemy.Armor}");
-
-            // Rysujemy "Ikonkę" wroga na środku ramki
-            string enemyIcon = $"[ {enemy.Symbol} ]";
-            WriteToBufferColored(enemyBoxX + (enemyBoxWidth - enemyIcon.Length) / 2, 10, enemyIcon, enemy.ItemColor);
-
-            // 4. DOLNY PANEL - BATTLE LOG
-            int logBoxY = 15;
-            int logBoxHeight = 5;
-            DrawBox(centerAreaStart, logBoxY, centerAreaWidth, logBoxHeight, " LOG WALKI ");
+            // 6. ŚRODKOWY PANEL - LOGI WALKI
+            DrawBox(centerColX, 1, centerColWidth, 26, " LOG WALKI ");
 
             if (!string.IsNullOrEmpty(battleLog))
             {
-                // Sprytnie łamiemy logi na dwie linie, jeśli zawierają pionową kreskę kontrataku
-                if (battleLog.Contains(" | "))
-                {
-                    var parts = battleLog.Split(new[] { " | " }, StringSplitOptions.None);
-                    // Odcinamy nadmiar znaków by nie rozsadzić bufora ekranu
-                    string line1 = parts[0].Length > centerAreaWidth - 4 ? parts[0].Substring(0, centerAreaWidth - 4) : parts[0];
-                    string line2 = parts[1].Length > centerAreaWidth - 4 ? parts[1].Substring(0, centerAreaWidth - 4) : parts[1];
+                int logY = 3;
+                // Rozdzielamy logi po znaku " | "
+                var logs = battleLog.Split(new[] { " | " }, StringSplitOptions.RemoveEmptyEntries);
 
-                    WriteToBufferColored(centerAreaStart + 2, logBoxY + 1, line1, System.Drawing.Color.Gold);
-                    WriteToBufferColored(centerAreaStart + 2, logBoxY + 2, line2, System.Drawing.Color.LightCoral);
-                }
-                else
+                foreach (var log in logs)
                 {
-                    string singleLine = battleLog.Length > centerAreaWidth - 4 ? battleLog.Substring(0, centerAreaWidth - 4) : battleLog;
-                    WriteToBufferColored(centerAreaStart + 2, logBoxY + 2, singleLine, System.Drawing.Color.Gold);
+                    string remaining = log.Trim();
+
+                    // Zawijanie wierszy jeśli tekst jest dłuższy niż szerokość boxa
+                    while (remaining.Length > 0)
+                    {
+                        int maxLen = centerColWidth - 4;
+                        string lineToPrint;
+
+                        if (remaining.Length <= maxLen)
+                        {
+                            lineToPrint = remaining;
+                            remaining = "";
+                        }
+                        else
+                        {
+                            // Szukamy spacji by nie ucinać słów w połowie
+                            int spaceIndex = remaining.LastIndexOf(' ', maxLen);
+                            if (spaceIndex == -1) spaceIndex = maxLen;
+
+                            lineToPrint = remaining.Substring(0, spaceIndex);
+                            remaining = remaining.Substring(spaceIndex).Trim();
+                        }
+
+                        // Ciosy gracza na złoto, ciosy wroga na czerwonawo
+                        var color = logY % 3 == 0 ? System.Drawing.Color.Gold : System.Drawing.Color.LightCoral;
+                        WriteToBufferColored(centerColX + 2, logY++, lineToPrint, color);
+                    }
+                    logY++; // Pusta linijka między wpisami
                 }
             }
 
-            // 5. RYSOWANIE EWENTUALNYCH BŁĘDÓW (na samym dole)
+            // ==========================================
+            // BŁĘDY
+            // ==========================================
             DrawMessage(errorMessage, ScreenHeight - 1);
         }
+
+
     }
 }
