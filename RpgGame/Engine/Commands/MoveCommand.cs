@@ -31,7 +31,8 @@ namespace RpgGame.Engine.Commands
 
             if(_board.GetTile(_player.X + _dx, _player.Y + _dy).Entity!=null)
             { 
-                var command = new PushStateCommand(_engine,new CombatState(_engine,_player, _board.GetTile(_player.X + _dx, _player.Y + _dy).Entity)); 
+                ITile tile = _board.GetTile(_player.X + _dx, _player.Y + _dy);
+                var command = new PushStateCommand(_engine,new CombatState(_engine,_player, tile.Entity, tile)); 
                 command.Execute();
                 return;
             }

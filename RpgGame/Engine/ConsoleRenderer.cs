@@ -93,17 +93,16 @@ namespace RpgGame.Engine
 
             int coins = player.Wallet.ContainsKey(Coin.CurrencyName) ? player.Wallet[Coin.CurrencyName] : 0;
             int gold = player.Wallet.ContainsKey(Gold.CurrencyName) ? player.Wallet[Gold.CurrencyName] : 0;
-            WriteToBuffer(RightX + 2, currentY + 2, $"Obole Charona: {coins}");
-            WriteToBuffer(RightX + 2, currentY + 3, $"Złote Drachmy:  {gold}");
+            WriteToBuffer(RightX + 2, currentY + 2, $"Charon's Obols: {coins}");
+            WriteToBuffer(RightX + 2, currentY + 3, $"Golden Drachmas: {gold}");
 
+            WriteToBuffer(RightX + 2, currentY + 5, $"Health: {player.Health}");
+            WriteToBuffer(RightX + 2, currentY + 6, $"Fortune: {player.Luck}");
+            WriteToBuffer(RightX + 2, currentY + 7, $"Strength: {player.Strength}");
+            WriteToBuffer(RightX + 2, currentY + 8, $"Fury: {player.Aggression}");
+            WriteToBuffer(RightX + 2, currentY + 9, $"Wisdom: {player.Wisdom}");
 
-            WriteToBuffer(RightX + 2, currentY + 5, $"Wigor: {player.Health}");
-            WriteToBuffer(RightX + 2, currentY + 6, $"Fortuna: {player.Luck}");
-            WriteToBuffer(RightX + 2, currentY + 7, $"Krzepa Heraklesa: {player.Strength}");
-            WriteToBuffer(RightX + 2, currentY + 8, $"Furia Aresa: {player.Aggression}");
-            WriteToBuffer(RightX + 2, currentY + 9, $"Mądrość Ateny: {player.Wisdom}");
-
-            // BOX 2: EKWIPUNEK
+            // BOX 2: INVENTORY
             currentY += 11;
             if(player.Inventory.Count >= player.MaxInventorySize)
             {
@@ -149,7 +148,7 @@ namespace RpgGame.Engine
         // RYSOWANIE MENU INVENTORY
         public void DrawInventoryMenu(Player player, int cursorIndex, string errorMessage, ITile currentTile)
         {
-            DrawBox(LeftX, 1, LeftWidth, 10, " MENU EKWIPUNKU ");
+            DrawBox(LeftX, 1, LeftWidth, 10, " CONTROLS ");
             string up = KeybindManager.Instance.GetKey("Inventory", "MoveUp").ToString();
             string down = KeybindManager.Instance.GetKey("Inventory", "MoveDown").ToString();
             string quit = KeybindManager.Instance.GetKey("Inventory", "Quit").ToString();
@@ -160,37 +159,37 @@ namespace RpgGame.Engine
             string uneqR = KeybindManager.Instance.GetKey("Inventory", "UnequipRight").ToString();
 
             int y = 3;
-            WriteToBuffer(LeftX + 2, y++, $"[{up}/{down}] W górę/dół");
-            WriteToBuffer(LeftX + 2, y++, $"[{eqL}/{eqR}] Włóż do L/P ręki");
-            WriteToBuffer(LeftX + 2, y++, $"[{uneqL}/{uneqR}] Wyciągnij z L/P ręki");
-            WriteToBuffer(LeftX + 2, y++, $"[{drop}] Wyrzuć na ziemię");
-            WriteToBuffer(LeftX + 2, y++, $"[{quit}] Powrót");
+            WriteToBuffer(LeftX + 2, y++, $"[{up}/{down}] Up/Down");
+            WriteToBuffer(LeftX + 2, y++, $"[{eqL}/{eqR}] Equip to L/R hand");
+            WriteToBuffer(LeftX + 2, y++, $"[{uneqL}/{uneqR}] Unequip from L/R hand");
+            WriteToBuffer(LeftX + 2, y++, $"[{drop}] Drop");
+            WriteToBuffer(LeftX + 2, y++, $"[{quit}] Return");
 
             DrawPlayerStats(player, cursorIndex); 
             DrawGroundItems(currentTile, 0);
             DrawMessage(errorMessage, ScreenHeight - 1);
         }
 
-        // RYSOWANIE MENU LOOTING
+        // DRAWING LOOTING MENU
         public void DrawLootingMenu(Player player, ITile currentTile, int cursorIndex, string errorMessage)
         {
-            DrawBox(LeftX, 1, LeftWidth, 10, " LOOT MENU ");
+            DrawBox(LeftX, 1, LeftWidth, 10, " CONTROLS ");
             string up = KeybindManager.Instance.GetKey("Looting", "MoveUp").ToString();
             string down = KeybindManager.Instance.GetKey("Looting", "MoveDown").ToString();
             string quit = KeybindManager.Instance.GetKey("Looting", "Quit").ToString();
             string collect = KeybindManager.Instance.GetKey("Looting", "Collect").ToString();
 
             int y = 3;
-            WriteToBuffer(LeftX + 2, y++, $"[{up}/{down}] W górę/dół");
-            WriteToBuffer(LeftX + 2, y++, $"[{collect}] Podnieś");
-            WriteToBuffer(LeftX + 2, y++, $"[{quit}] Powrót");
+            WriteToBuffer(LeftX + 2, y++, $"[{up}/{down}] Up/Down");
+            WriteToBuffer(LeftX + 2, y++, $"[{collect}] Pick up");
+            WriteToBuffer(LeftX + 2, y++, $"[{quit}] Return");
 
             DrawPlayerStats(player);
             DrawGroundItems(currentTile, 0, cursorIndex);
             DrawMessage(errorMessage, ScreenHeight - 1);
         }
 
-        // GŁÓWNE RYSOWANIE STEROWANIA, STATÓW ITD
+        // MAIN DRAWING OF CONTROLS, STATES ETC
         public void DrawPlayingView(Board board, Player player, string errorMessage = "")
         {
             DrawBox(LeftX, 1, LeftWidth, 10, " CONTROLS ");
@@ -202,12 +201,12 @@ namespace RpgGame.Engine
             string collect = KeybindManager.Instance.GetKey("Playing", "Collect").ToString();
 
             int y = 3;
-            WriteToBuffer(LeftX + 2, y++, $"[{up}/{left}/{down}/{right}] Ruch");
-            WriteToBuffer(LeftX + 2, y++, $"[{inv}] Otwórz ekwipunek");
+            WriteToBuffer(LeftX + 2, y++, $"[{up}/{left}/{down}/{right}] Move");
+            WriteToBuffer(LeftX + 2, y++, $"[{inv}] Open inventory");
 
             var tile = board.GetTile(player.X, player.Y);
             if (tile.Items.Count >= 1)
-                WriteToBuffer(LeftX + 2, y++, $"[{collect}] Podnieś");
+                WriteToBuffer(LeftX + 2, y++, $"[{collect}] Pick up");
 
             DrawBoard(board, player);
             DrawPlayerStats(player); 
@@ -215,7 +214,7 @@ namespace RpgGame.Engine
             DrawMessage(errorMessage, ScreenHeight - 1);
         }
 
-        // RYSOWANIE KOMUNIKATÓW
+        // DRAWING MESSAGES
         public void DrawMessage(string message, int line)
         {
             if (!string.IsNullOrEmpty(message))
@@ -229,18 +228,18 @@ namespace RpgGame.Engine
         {
             string[] asciiTitle = new string[]
             {
-         " ██╗      █████╗ ██████╗ ██╗██████╗ ██╗   ██╗███╗   ██╗████████╗",
-         " ██║     ██╔══██╗██╔══██╗██║██╔══██╗╚██╗ ██╔╝████╗  ██║╚══██╔══╝",
-         " ██║     ███████║██████╔╝██║██████╔╝ ╚████╔╝ ██╔██╗ ██║   ██║   ",
-         " ██║     ██╔══██║██╔══██╗██║██╔══██╗  ╚██╔╝  ██║╚██╗██║   ██║   ",
-         " ███████╗██║  ██║██████╔╝██║██║  ██║   ██║   ██║ ╚████║   ██║   ",
-         " ╚══════╝╚═╝  ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═══╝   ╚═╝   ",
-         " ██████╗ ███████╗██████╗  █████╗ ██╗      █████╗",
-         "  ██╔══██╗██╔════╝██╔══██╗██╔══██╗██║     ██╔══██╗",
-         "  ██║  ██║█████╗  ██║  ██║███████║██║     ███████║",
-         "  ██║  ██║██╔══╝  ██║  ██║██╔══██║██║     ██╔══██║",
-         "  ██████╔╝███████╗██████╔╝██║  ██║███████╗██║  ██║",
-         "  ╚═════╝ ╚══════╝╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝"
+                "  ██████╗  █████╗ ███████╗██████╗  █████╗ ██╗     ██╗   ██╗███████╗",
+                "  ██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔══██╗██║     ██║   ██║██╔════╝",
+                "  ██║  ██║███████║█████╗  ██║  ██║███████║██║     ██║   ██║███████╗",
+                "  ██║  ██║██╔══██║██╔══╝  ██║  ██║██╔══██║██║     ██║   ██║╚════██║",
+                "  ██████╔╝██║  ██║███████╗██████╔╝██║  ██║███████╗╚██████╔╝███████║",
+                "  ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚══════╝",
+                "██╗      █████╗ ██████╗ ██╗   ██╗██████╗ ██╗ ███╗   ██╗████████╗██╗  ██╗",
+                "██║     ██╔══██╗██╔══██╗╚██╗ ██╔╝██╔══██╗██║ ████╗  ██║╚══██╔══╝██║  ██║",
+                "██║     ███████║██████╔╝ ╚████╔╝ ██████╔╝██║ ██╔██╗ ██║   ██║   ███████║",
+                "██║     ██╔══██║██╔══██╗  ╚██╔╝  ██╔══██╗██║ ██║╚██╗██║   ██║   ██╔══██║",
+                "███████╗██║  ██║██████╔╝   ██║   ██║  ██║██║ ██║ ╚████║   ██║   ██║  ██║",
+                "╚══════╝╚═╝  ╚═╝╚═════╝    ╚═╝   ╚═╝  ╚═╝╚═╝ ╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝"
             };
             int totalHeight = asciiTitle.Length + 1 + instructions.Count + 2 + 1;
             int currentY = Math.Max(1, (ScreenHeight - totalHeight) / 2);
@@ -261,14 +260,13 @@ namespace RpgGame.Engine
 
             currentY += 2;
             string continueKey = KeybindManager.Instance.GetKey("Instruction", "Continue").ToString();
-            string continueText = $"Wciśnij [{continueKey}], aby wejść do labiryntu...";
-
-            // Centrowanie tekstu "Wciśnij..."
-            // WriteToBuffer((ScreenWidth - continueText.Length) / 2, currentY, continueText);
+            string continueText = $"Press [{continueKey}] to enter the labyrinth...";
+            
             WriteToBufferColored((ScreenWidth - continueText.Length) / 2, currentY, continueText, System.Drawing.Color.DarkGoldenrod);
-            // Wyświetlanie błędów (DrawMessage ma wbudowane centrowanie)
+            // Display errors (DrawMessage has built-in centering)
             DrawMessage(errorMessage, currentY + 2);
         }
+
         private void DrawBox(int x, int y, int width, int height, string title)
         {
             if (width < 2 || height < 2) return;
@@ -353,55 +351,58 @@ namespace RpgGame.Engine
             // ==========================================
 
             // 1. LEWY GÓRNY - PRZECIWNIK
-            DrawBox(leftColX, 1, colWidth, 10, $" {enemy.Name} ");
-            WriteToBufferColored(leftColX + 2, 3, $"Wigor (HP): {Math.Max(0, enemy.HP)}", System.Drawing.Color.Red);
-            WriteToBuffer(leftColX + 2, 4, $"Siła:       {enemy.Strength}");
-            WriteToBuffer(leftColX + 2, 5, $"Pancerz:    {enemy.Armor}");
+            DrawBox(leftColX, 1, colWidth, 10, $" {enemy.Name} ".ToUpper());
+            WriteToBufferColored(leftColX + 2, 3, $"❤️: {Math.Max(0, enemy.HP)}", System.Drawing.Color.Red);
+            WriteToBuffer(leftColX + 2, 4, $"Strength: {enemy.Strength}");
+            WriteToBuffer(leftColX + 2, 5, $"Armor: {enemy.Armor}");
 
             string enemyIcon = $"[ {enemy.Symbol} ]";
             WriteToBufferColored(leftColX + (colWidth - enemyIcon.Length) / 2, 8, enemyIcon, enemy.ItemColor);
 
-            // 2. LEWY DOLNY - ZASADY WALKI
-            DrawBox(leftColX, 12, colWidth, 15, " WIEDZA O WALCE ");
+            // 2. BOTTOM LEFT - COMBAT KNOWLEDGE
+            string atk1 = KeybindManager.Instance.GetKey("Combat", "NormalAttack").ToString();
+            string atk2 = KeybindManager.Instance.GetKey("Combat", "StealthAttack").ToString();
+            string atk3 = KeybindManager.Instance.GetKey("Combat", "MagicAttack").ToString();
+            DrawBox(leftColX, 12, colWidth, 15, " COMBAT GUIDE ");
             int infoY = 14;
-            WriteToBufferColored(leftColX + 2, infoY++, "[1] Zwykły Atak", System.Drawing.Color.DarkGray);
-            WriteToBuffer(leftColX + 2, infoY++, "Ciężka broń: +Siła");
-            WriteToBuffer(leftColX + 2, infoY++, "Lekka broń:  +Zręczność");
+            WriteToBufferColored(leftColX + 2, infoY++, $"[{atk1}] Normal Attack", System.Drawing.Color.DarkGray);
+            WriteToBuffer(leftColX + 2, infoY++, "Labrys: +Strength");
+            WriteToBuffer(leftColX + 2, infoY++, "Xiphos: +Dexterity");
             infoY++;
-            WriteToBufferColored(leftColX + 2, infoY++, "[2] Skryty Atak", System.Drawing.Color.DarkGray);
-            WriteToBuffer(leftColX + 2, infoY++, "Lekka broń:  Podwójne obr.");
-            WriteToBuffer(leftColX + 2, infoY++, "Magia/Brak:  Zero obr.");
+            WriteToBufferColored(leftColX + 2, infoY++, $"[{atk2}] Stealth Attack", System.Drawing.Color.DarkGray);
+            WriteToBuffer(leftColX + 2, infoY++, "Xiphos: Double dmg");
+            WriteToBuffer(leftColX + 2, infoY++, "Dory/None: Zero dmg");
             infoY++;
-            WriteToBufferColored(leftColX + 2, infoY++, "[3] Magiczny Atak", System.Drawing.Color.DarkGray);
-            WriteToBuffer(leftColX + 2, infoY++, "Magiczna:   Skaluje z Mądrością");
-            WriteToBuffer(leftColX + 2, infoY++, "Ciężka/Lekka: Tylko baza obr.");
+            WriteToBufferColored(leftColX + 2, infoY++, $"[{atk3}] Magic Attack", System.Drawing.Color.DarkGray);
+            WriteToBuffer(leftColX + 2, infoY++, "Dory: Scales w/ Wisdom");
+            WriteToBuffer(leftColX + 2, infoY++, "Labrys/Xiphos: Base dmg only");
 
             // ==========================================
-            // KOLUMNA PRAWA
+            // RIGHT COLUMN
             // ==========================================
 
-            // 3. PRAWY GÓRNY - GRACZ
-            DrawBox(rightColX, 1, colWidth, 11, " GRACZ ");
-            WriteToBuffer(rightColX + 2, 3, $"Wigor: {player.Health}");
-            WriteToBuffer(rightColX + 2, 4, $"Fortuna: {player.Luck}");
-            WriteToBuffer(rightColX + 2, 5, $"Krzepa: {player.Strength}");
-            WriteToBuffer(rightColX + 2, 6, $"Furia: {player.Aggression}");
-            WriteToBuffer(rightColX + 2, 7, $"Mądrość: {player.Wisdom}");
+            // 3. TOP RIGHT - PLAYER
+            DrawBox(rightColX, 1, colWidth, 11, " PLAYER ");
+            WriteToBuffer(rightColX + 2, 3, $"❤️: {player.Health}");
+            WriteToBuffer(rightColX + 2, 4, $"Fortune: {player.Luck}");
+            WriteToBuffer(rightColX + 2, 5, $"Might: {player.Strength}");
+            WriteToBuffer(rightColX + 2, 6, $"Fury: {player.Aggression}");
+            WriteToBuffer(rightColX + 2, 7, $"Wisdom: {player.Wisdom}");
 
-            // 4. POD GRACZEM - RĘCE
-            DrawBox(rightColX, 13, colWidth, 5, " RĘCE ");
-            string leftHandName = player.LeftHand != null ? player.LeftHand.Name : "Pusta";
-            string rightHandName = player.RightHand != null ? player.RightHand.Name : "Pusta";
+            // 4. BELOW PLAYER - HANDS
+            DrawBox(rightColX, 13, colWidth, 5, " HANDS ");
+            string leftHandName = player.LeftHand != null ? player.LeftHand.Name : "Empty";
+            string rightHandName = player.RightHand != null ? player.RightHand.Name : "Empty";
 
-            // Skracanie nazw jeśli są za długie by zmieścić w boxie
+            // Shorten names if they are too long to fit in box
             if (leftHandName.Length > 25) leftHandName = leftHandName.Substring(0, 22) + "...";
             if (rightHandName.Length > 25) rightHandName = rightHandName.Substring(0, 22) + "...";
 
             WriteToBuffer(rightColX + 2, 15, $"L: {leftHandName}");
-            WriteToBuffer(rightColX + 2, 16, $"P: {rightHandName}");
+            WriteToBuffer(rightColX + 2, 16, $"R: {rightHandName}");
 
-            // 5. PRAWY DOLNY - STEROWANIE
-            DrawBox(rightColX, 19, colWidth, 8, " STEROWANIE ");
+            // 5. BOTTOM RIGHT - CONTROLS
+            DrawBox(rightColX, 19, colWidth, 8, " CONTROLS ");
             int ctrlY = 21;
             if (isChoosingWeapon)
             {
@@ -409,44 +410,41 @@ namespace RpgGame.Engine
                 string right = KeybindManager.Instance.GetKey("Combat", "ChooseRight").ToString();
                 string esc = KeybindManager.Instance.GetKey("Combat", "Flee").ToString();
 
-                WriteToBufferColored(rightColX + 2, ctrlY++, "Wybierz broń do uderzenia:", System.Drawing.Color.Gold);
-                WriteToBuffer(rightColX + 2, ctrlY++, $"[{left}] Lewa Ręka");
-                WriteToBuffer(rightColX + 2, ctrlY++, $"[{right}] Prawa Ręka");
+                WriteToBufferColored(rightColX + 2, ctrlY++, "Choose weapon to strike with:", System.Drawing.Color.Gold);
+                WriteToBuffer(rightColX + 2, ctrlY++, $"[{left}] Left Hand");
+                WriteToBuffer(rightColX + 2, ctrlY++, $"[{right}] Right Hand");
                 ctrlY++;
-                WriteToBuffer(rightColX + 2, ctrlY++, $"[{esc}] Anuluj Wybór");
+                WriteToBuffer(rightColX + 2, ctrlY++, $"[{esc}] Cancel");
             }
             else
             {
-                string atk1 = KeybindManager.Instance.GetKey("Combat", "NormalAttack").ToString();
-                string atk2 = KeybindManager.Instance.GetKey("Combat", "StealthAttack").ToString();
-                string atk3 = KeybindManager.Instance.GetKey("Combat", "MagicAttack").ToString();
                 string esc = KeybindManager.Instance.GetKey("Combat", "Flee").ToString();
 
-                WriteToBuffer(rightColX + 2, ctrlY++, $"[{atk1}] Zwykły Atak");
-                WriteToBuffer(rightColX + 2, ctrlY++, $"[{atk2}] Skryty Atak");
-                WriteToBuffer(rightColX + 2, ctrlY++, $"[{atk3}] Magiczny Atak");
+                WriteToBuffer(rightColX + 2, ctrlY++, $"[{atk1}] Normal Attack");
+                WriteToBuffer(rightColX + 2, ctrlY++, $"[{atk2}] Stealth Attack");
+                WriteToBuffer(rightColX + 2, ctrlY++, $"[{atk3}] Magic Attack");
                 ctrlY++;
-                WriteToBuffer(rightColX + 2, ctrlY++, $"[{esc}] Ucieczka");
+                WriteToBuffer(rightColX + 2, ctrlY++, $"[{esc}] Flee");
             }
 
             // ==========================================
-            // ŚRODEK
+            // CENTER
             // ==========================================
 
-            // 6. ŚRODKOWY PANEL - LOGI WALKI
-            DrawBox(centerColX, 1, centerColWidth, 26, " LOG WALKI ");
+            // 6. CENTER PANEL - BATTLE LOG
+            DrawBox(centerColX, 1, centerColWidth, 26, " BATTLE LOG ");
 
             if (!string.IsNullOrEmpty(battleLog))
             {
                 int logY = 3;
-                // Rozdzielamy logi po znaku " | "
+                // Split logs by " | "
                 var logs = battleLog.Split(new[] { " | " }, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var log in logs)
                 {
                     string remaining = log.Trim();
 
-                    // Zawijanie wierszy jeśli tekst jest dłuższy niż szerokość boxa
+                    // Wrap rows if text is longer than box width
                     while (remaining.Length > 0)
                     {
                         int maxLen = centerColWidth - 4;
@@ -459,7 +457,7 @@ namespace RpgGame.Engine
                         }
                         else
                         {
-                            // Szukamy spacji by nie ucinać słów w połowie
+                            // Find space to not cut words in half
                             int spaceIndex = remaining.LastIndexOf(' ', maxLen);
                             if (spaceIndex == -1) spaceIndex = maxLen;
 
@@ -467,20 +465,110 @@ namespace RpgGame.Engine
                             remaining = remaining.Substring(spaceIndex).Trim();
                         }
 
-                        // Ciosy gracza na złoto, ciosy wroga na czerwonawo
+                        // Player attacks in gold, enemy attacks in red
                         var color = logY % 3 == 0 ? System.Drawing.Color.Gold : System.Drawing.Color.LightCoral;
                         WriteToBufferColored(centerColX + 2, logY++, lineToPrint, color);
                     }
-                    logY++; // Pusta linijka między wpisami
+                    logY++; // Empty line between entries
                 }
             }
 
             // ==========================================
-            // BŁĘDY
+            // ERRORS
             // ==========================================
             DrawMessage(errorMessage, ScreenHeight - 1);
         }
+        //public void DrawGameOverScreen()
+        //{
+        //    ClearBuffer(); // Czyści wszystko!
 
+        //    // ASCII Art z podwójnymi ukośnikami (by C# ich nie pomylił ze znakami specjalnymi)
+        //    string[] asciiDeath = new string[]
+        //    {
+        //        @"  _____          __  __  ______    ____ __      __ ______  _____  ",
+        //        @" / ____|   /\   |  \/  ||  ____|  / __ \\ \    / /|  ____||  __ \ ",
+        //        @"| |  __   /  \  | \  / || |__    | |  | |\ \  / / | |__   | |__) |",
+        //        @"| | |_ | / /\ \ | |\/| ||  __|   | |  | | \ \/ /  |  __|  |  _  / ",
+        //        @"| |__| |/ ____ \| |  | || |____  | |__| |  \  /   | |____ | | \ \ ",
+        //        @" \_____/_/    \_\_|  |_||______|  \____/    \/    |______||_|  \_\",
+        //        @"",
+        //        @"                           YOU DIED.                            "
+        //    };
 
+        //    // Wyliczanie środka ekranu
+        //    int startY = (ScreenHeight - asciiDeath.Length) / 2;
+        //    int startX = (ScreenWidth - asciiDeath[0].Length) / 2;
+
+        //    // Rysowanie na krwisto czerwono
+        //    for (int i = 0; i < asciiDeath.Length; i++)
+        //    {
+        //        WriteToBufferColored(startX, startY + i, asciiDeath[i], System.Drawing.Color.DarkRed);
+        //    }
+
+        //    // Instrukcja na dole
+        //    string info = "Wciśnij dowolny klawisz, aby zakończyć...";
+        //    WriteToBuffer((ScreenWidth - info.Length) / 2, startY + asciiDeath.Length + 2, info);
+        //}
+        public void DrawGameOverScreen(bool animate)
+        {
+            string[] asciiDeath = new string[]
+            {
+                @"  _____          __  __  ______    ____ __      __ ______  _____  ",
+                @" / ____|   /\   |  \/  ||  ____|  / __ \\ \    / /|  ____||  __ \ ",
+                @"| |  __   /  \  | \  / || |__    | |  | |\ \  / / | |__   | |__) |",
+                @"| | |_ | / /\ \ | |\/| ||  __|   | |  | | \ \/ /  |  __|  |  _  / ",
+                @"| |__| |/ ____ \| |  | || |____  | |__| |  \  /   | |____ | | \ \ ",
+                @" \_____/_/    \_\_|  |_||______|  \____/    \/    |______||_|  \_\"
+            };
+
+            int startY = (ScreenHeight - asciiDeath.Length - 4) / 2;
+            int startX = (ScreenWidth - asciiDeath[0].Length) / 2;
+
+            string youDied = "YOU DIED.";
+            int youDiedX = (ScreenWidth - youDied.Length) / 2;
+
+            string info = "Press any key to exit...";
+            int infoX = (ScreenWidth - info.Length) / 2;
+
+            // ANIMATION PLAYED ONLY ONCE:
+            if (animate)
+            {
+                ClearBuffer();
+                Console.Clear();
+
+                for (int i = 0; i < asciiDeath.Length; i++)
+                {
+                    Console.SetCursorPosition(startX, startY + i);
+                    Console.Write(asciiDeath[i].Pastel(System.Drawing.Color.DarkRed));
+                    Thread.Sleep(150);
+                }
+
+                Thread.Sleep(500);
+
+                Console.SetCursorPosition(youDiedX, startY + asciiDeath.Length + 2);
+                foreach (char c in youDied)
+                {
+                    Console.Write(c.ToString().Pastel(System.Drawing.Color.Red));
+                    Thread.Sleep(120);
+                }
+
+                Thread.Sleep(800);
+
+                Console.SetCursorPosition(infoX, startY + asciiDeath.Length + 8);
+                foreach (char c in info)
+                {
+                    Console.Write(c.ToString().Pastel(System.Drawing.Color.White));
+                    Thread.Sleep(30);
+                }
+            }
+
+            // THIS ALWAYS EXECUTES (fills buffer for Engine, so screen doesn't flicker)
+            for (int i = 0; i < asciiDeath.Length; i++)
+            {
+                WriteToBufferColored(startX, startY + i, asciiDeath[i], System.Drawing.Color.DarkRed);
+            }
+            WriteToBufferColored(youDiedX, startY + asciiDeath.Length + 2, youDied, System.Drawing.Color.Red);
+            WriteToBufferColored(infoX, startY + asciiDeath.Length + 8, info, System.Drawing.Color.White);
+        }
     }
 }

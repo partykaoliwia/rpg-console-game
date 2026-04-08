@@ -3,16 +3,18 @@ using RpgGame.Characters;
 using RpgGame.Combat;
 using RpgGame.Engine.Commands;
 using RpgGame.Engine.Input;
+using RpgGame.Gameboard;
 
 namespace RpgGame.Engine.States
 {
     public class CombatState : IGameState
     {
-        private readonly GameEngine _engine;
+        public GameEngine Engine { get; }
 
         // Zmienione na publiczną właściwość, żeby komendy mogły z niej korzystać!
         public Player Player { get; }
         public Enemy CurrentEnemy { get; }
+        public ITile EnemyTile { get; }
 
         // Dwa osobne łańcuchy odpowiedzialności (zamiast jednego)
         private readonly InputHandler _attackChain;
@@ -21,15 +23,18 @@ namespace RpgGame.Engine.States
         public bool IsChoosingWeapon { get; set; } = false;
         public IAttackVisitor PendingAttack { get; set; }
 
-        public string BattleLog { get; set; } = "Wróg staje Ci na drodze! Wybierz atak.";
 
-        public CombatState(GameEngine engine, Player player, Enemy enemy)
+        public string BattleLog { get; set; } = "An enemy approaches! Choose your attack.";
+
+        public CombatState(GameEngine engine, Player player, Enemy enemy, ITile enemyTile)
         {
-            _engine = engine;
+            Engine = engine;
             Player = player;
             CurrentEnemy = enemy;
+            EnemyTile = enemyTile;
 
-            string s = "Combat"; // Sekcja w keybinds.txt
+
+            string s = "Combat";
 
             // --- FAZA 1: ŁAŃCUCH WYBORU ATAKU ---
             var normalAttackKey = new KeyCommandHandler(s, "NormalAttack", new ChooseAttackCommand(this, new NormalAttack()));

@@ -15,50 +15,55 @@ namespace RpgGame.Engine.Builders
 
         public void BuildEmptyDungeon()
         {
-            _instructions.Add("Wkroczyłeś na otwartą arenę pełną piasku i krwi, gdzie toczy się bezlitosna walka.");
+            _instructions.Add("You have entered an open arena filled with sand and blood, where a merciless battle rages.");
         }
 
         public void BuildFilledDungeon()
         {
-            _instructions.Add("Stoisz przed wejściem do mrocznego labiryntu wykutego przez Dedala, pełnego ukrytych ścieżek i tajemnic.");
+            _instructions.Add("You stand before the entrance to a dark labyrinth carved by Daedalus, full of hidden paths and mysteries.");
         }
 
         public void AddCorridors()
         {
-            _instructions.Add("Przed tobą mnóstwo krętych i wąskich korytarzy, w których łatwo się zgubić.");
+            _instructions.Add("Before you stretch countless winding and narrow corridors, where it is easy to get lost.");
         }
 
         public void AddRooms()
         {
-            _instructions.Add("Natknąłeś się na kilka ukrytych pomieszczeń wykutych w skale, które mogą kryć skarby lub niebezpieczeństwo.");
+            _instructions.Add("You have stumbled upon several hidden chambers carved into the rock, which may conceal treasures or danger.");
         }
 
         public void AddCentralHall(int width, int height)
         {
-            _instructions.Add("W samym sercu tego przeklętego miejsca czai się potężna Komnata. To tam czeka największe niebezpieczeństwo.");
+            _instructions.Add("In the very heart of this cursed place lurks a mighty Chamber. That is where the greatest danger awaits.");
         }
 
         public void AddItems(int count)
         {
             string collect = KeybindManager.Instance.GetKey("Playing", "Collect").ToString();
-            _instructions.Add($"Bogowie pozostawili tu {count} starożytnych artefaktów, które możesz podnieść naciskając [{collect}].");
+            _instructions.Add($"The gods have left here {count} ancient artifacts, which you can pick up by pressing [{collect}].");
         }
 
         public void AddWeapons(int count)
         {
             string collect = KeybindManager.Instance.GetKey("Playing", "Collect").ToString();
             string inv = KeybindManager.Instance.GetKey("Playing", "OpenInventory").ToString();
-            _instructions.Add($"Poprzedni śmiałkowie pozostawili tu {count} sztuk potężnej broni - użyj [{collect}] by podnieść, a [{inv}] by zarządzać ekwipunkiem.");
+            _instructions.Add($"Previous adventurers have left {count} pieces of powerful weapons here - use [{collect}] to pick up and [{inv}] to manage your equipment.");
         }
 
         public void AddMoney(int count)
         {
-            _instructions.Add($"Rozrzucono tu {count} monet, zbieraj je, by wzmocnić swoją pozycję w świecie śmiertelników.");
+            _instructions.Add($"There are {count} coins scattered here, collect them to strengthen your position in the world of mortals.");
         }
 
         public void AddEnemies(int count)
         {
-            _instructions.Add($"W tym strasznym labiryncie czai się {count} potężnych wrogów oraz minotaur, zagrażających twojemu życiu.");
+            if(count == 0)
+            {
+                _instructions.Add("In this dreadful labyrinth lurks a minotaur, threatening your life.");
+                return;
+            }
+            _instructions.Add($"In this dreadful labyrinth lurks {count} powerful enemies and a minotaur, threatening your life.");
         }
     }
 }

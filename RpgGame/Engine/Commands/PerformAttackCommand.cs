@@ -25,25 +25,34 @@ namespace RpgGame.Engine.Commands
             // 1. Pobieramy broń ze wskazanej ręki
             IItem weapon = _useLeftHand ? player.LeftHand : player.RightHand;
 
-            if (weapon == null)
-            {
-                _state.BattleLog = "Ta dłoń jest pusta! Wybierz atak ponownie.";
-                _state.IsChoosingWeapon = false; // Cofamy do wyboru ataku
-                return;
-            }
+            CombatStats stats;
+            string attackName;
 
             // 2. WZORZEC ODWIEDZAJĄCY I DEKORATOR w akcji
-            CombatStats stats = weapon.Accept(attackVisitor, player);
+            if (weapon != null)
+            {
+                // Jeśli mamy broń, korzystamy z jej metody Accept
+                stats = weapon.Accept(attackVisitor, player);
+                attackName = weapon.Name;
+            }
+            else
+            {
+                // Gołe pięści! Bezpośrednio wołamy metodę dla "zwykłych przedmiotów"
+                // Nasze metody Visit(IItem) i tak korzystają tylko ze statystyk gracza, więc null tu nic nie popsuje.
+                stats = attackVisitor.Visit((IItem)null, player);
+                attackName = "Gołe pięści";
+            }
 
             // 3. Atakujemy wroga
             int dealtDamage = enemy.TakeDamage(stats.Damage);
-            _state.BattleLog = $"Uderzasz z użyciem: {weapon.Name}! Zadałeś {dealtDamage} obr.";
+            _state.BattleLog = $"Uderzasz z użyciem: {attackName}! Zadałeś {dealtDamage} obr.";
 
             // 4. Sprawdzamy czy wróg zginął
             if (!enemy.IsAlive)
             {
                 _state.BattleLog += " Wróg zginął! Wciśnij [ESC], aby wrócić na planszę.";
                 _state.IsChoosingWeapon = false;
+                _state.EnemyTile.Entity = null; // Wróg znika z planszy
                 return; // Koniec tury, wróg nie oddaje ciosu
             }
 
@@ -56,7 +65,10 @@ namespace RpgGame.Engine.Commands
             // 6. Sprawdzamy czy gracz zginął
             if (player.Health <= 0)
             {
-                _state.BattleLog = $"Poległeś z ręki: {enemy.Name}... Koniec gry. Wciśnij [ESC].";
+                // Zamiast tylko wpisywać do logu, nakładamy stan Game Over!
+                // Wrzucamy go bezpośrednio na silnik gry:
+                _state.Engine.PushState(new GameOverState());
+                return; // Przerywamy komendę!
             }
 
             // Na koniec zawsze resetujemy flagę, by kolejna tura znów pytała o atak 1,2,3

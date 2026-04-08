@@ -26,9 +26,18 @@ namespace RpgGame.Items.Modifiers
             return _decorated.Accept(visitor, player);
         }
         public Color ItemColor => _decorated.ItemColor;
-        public virtual bool PickUp(Player player) => _decorated.PickUp(player);
-        public virtual void EquipToLeftHand(Player player) => _decorated.EquipToLeftHand(player);
-        public virtual void EquipToRightHand(Player player) => _decorated.EquipToRightHand(player);
+        public virtual bool PickUp(Player player)
+        {
+            return player.TryAddToInventory(this);
+        }
+        public virtual void EquipToLeftHand(Player player)
+        {
+            player.EquipToLeftHand(this);
+        }
+        public virtual void EquipToRightHand(Player player)
+        {
+            player.EquipToRightHand(this);
+        }
         public virtual void Unequip(Player player) => _decorated.Unequip(player);
     }
 }
