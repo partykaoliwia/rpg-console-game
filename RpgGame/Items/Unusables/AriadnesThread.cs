@@ -12,7 +12,7 @@ namespace RpgGame.Items.Unusables
         public override Color ItemColor { get; set; } = Color.Navy;
         public override string Symbol => "&";
 
-        public override string Name => "Kłębek nici Ariadny";
+        public override string Name => "Ariadne's Thread";
 
     }
 }

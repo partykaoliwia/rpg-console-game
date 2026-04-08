@@ -2,6 +2,7 @@
 using RpgGame.Engine.States;
 using RpgGame.Items;
 using RpgGame.Combat;
+using RpgGame.Engine.Input;
 
 namespace RpgGame.Engine.Commands
 {
@@ -40,17 +41,18 @@ namespace RpgGame.Engine.Commands
                 // Gołe pięści! Bezpośrednio wołamy metodę dla "zwykłych przedmiotów"
                 // Nasze metody Visit(IItem) i tak korzystają tylko ze statystyk gracza, więc null tu nic nie popsuje.
                 stats = attackVisitor.Visit((IItem)null, player);
-                attackName = "Gołe pięści";
+                attackName = "Bare hands";
             }
 
             // 3. Atakujemy wroga
             int dealtDamage = enemy.TakeDamage(stats.Damage);
-            _state.BattleLog = $"Uderzasz z użyciem: {attackName}! Zadałeś {dealtDamage} obr.";
+            _state.BattleLog = $"You strike with: {attackName}! You dealt {dealtDamage} damage.";
 
             // 4. Sprawdzamy czy wróg zginął
             if (!enemy.IsAlive)
             {
-                _state.BattleLog += " Wróg zginął! Wciśnij [ESC], aby wrócić na planszę.";
+                string flee = KeybindManager.Instance.GetKey("Combat", "Flee").ToString();
+                _state.BattleLog += $" The enemy has been defeated! Press [{flee}] to return to the board.";
                 _state.IsChoosingWeapon = false;
                 _state.EnemyTile.Entity = null; // Wróg znika z planszy
                 return; // Koniec tury, wróg nie oddaje ciosu
@@ -60,7 +62,7 @@ namespace RpgGame.Engine.Commands
             int receivedDamage = Math.Max(0, enemy.Strength - stats.Defense);
             player.TakeDamage(receivedDamage);
 
-            _state.BattleLog += $" | {enemy.Name} kontratakuje za {receivedDamage}! Masz {player.Health} HP.";
+            _state.BattleLog += $" | {enemy.Name} counterattacks for {receivedDamage}! You have {player.Health} HP.";
 
             // 6. Sprawdzamy czy gracz zginął
             if (player.Health <= 0)

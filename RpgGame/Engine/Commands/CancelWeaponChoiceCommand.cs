@@ -13,9 +13,8 @@ namespace RpgGame.Engine.Commands
 
         public void Execute()
         {
-            // Po prostu zdejmujemy flagę, żeby łańcuch znowu nasłuchiwał 1,2,3
             _state.IsChoosingWeapon = false;
-            _state.BattleLog = "Anulowano wybór broni. Wybierz atak ponownie (1, 2, 3).";
+            _state.BattleLog = "Weapon choice cancelled. Choose your attack again.";
         }
     }
 }

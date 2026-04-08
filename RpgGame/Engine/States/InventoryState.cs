@@ -39,8 +39,8 @@ namespace RpgGame.Engine.States
             var equipRightKey = new KeyCommandHandler(s,"EquipRight", new EquipCommand(player, this, HandSlot.Right));
 
             // Zdejmowanie
-            var unequipRightKey = new KeyCommandHandler(s,"UnequipRight", new UnequipCommand(player, HandSlot.Left));
-            var unequipLeftKey = new KeyCommandHandler(s,"UnequipLeft", new UnequipCommand(player, HandSlot.Right));
+            var unequipRightKey = new KeyCommandHandler(s,"UnequipRight", new UnequipCommand(player, HandSlot.Right));
+            var unequipLeftKey = new KeyCommandHandler(s,"UnequipLeft", new UnequipCommand(player, HandSlot.Left));
 
             // Wyrzucanie
             var dropKey = new KeyCommandHandler(s,"Drop", new DropItemCommand(player, board, this));

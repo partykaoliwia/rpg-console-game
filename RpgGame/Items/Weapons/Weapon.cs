@@ -25,13 +25,13 @@ namespace RpgGame.Items
         {
             return player.TryAddToInventory(this);
         }
-        public virtual void EquipToLeftHand(Player player)
+        public virtual void EquipToLeftHand(Player player, IItem instanceToEquip = null)
         {
-            player.EquipToLeftHand(this);
+            player.EquipToLeftHand(instanceToEquip ?? this);
         }
-        public virtual void EquipToRightHand(Player player)
+        public virtual void EquipToRightHand(Player player, IItem instanceToEquip = null)
         {
-            player.EquipToRightHand(this);
+            player.EquipToRightHand(instanceToEquip ?? this);
         }
         public virtual void Unequip(Player player) { }
         public abstract CombatStats Accept(IAttackVisitor visitor,Player player);

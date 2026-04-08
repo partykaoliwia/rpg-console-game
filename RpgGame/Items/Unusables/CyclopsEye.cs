@@ -11,7 +11,7 @@ namespace RpgGame.Items.Unusables
     {
         public override Color ItemColor { get; set; } = Color.Cyan;
         public override string Symbol => "•";
-        public override string Name => "Oko cyklopa";
+        public override string Name => "Cyclops Eye";
 
     }
 }

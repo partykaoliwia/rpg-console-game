@@ -16,15 +16,15 @@ namespace RpgGame.Items.Modifiers
         private int luck = -5;
         public SpartanModifier(IItem decorated) : base(decorated) { }
         public override string Name => _decorated.Name + "(Spartan)";
-        public override void EquipToLeftHand(Player player)
+        public override void EquipToLeftHand(Player player, IItem instanceToEquip = null)
         {
-            base.EquipToLeftHand(player);
+            base.EquipToLeftHand(player, instanceToEquip ?? this);
             player.Strength += strength;
             player.Luck += luck;
         }
-        public override void EquipToRightHand(Player player)
+        public override void EquipToRightHand(Player player, IItem instanceToEquip = null)
         {
-            base.EquipToRightHand(player);
+            base.EquipToRightHand(player, instanceToEquip ?? this);
             player.Strength += strength;
             player.Luck += luck;
         }

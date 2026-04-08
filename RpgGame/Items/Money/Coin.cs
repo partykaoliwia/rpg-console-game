@@ -12,7 +12,7 @@ namespace RpgGame.Items.Money
         public override string Symbol => "©";
         public override string Name => CurrencyName;
         private readonly int _value;
-        public static string CurrencyName = "Obol Charona";
+        public static string CurrencyName = "Charon's Obols";
 
         public Coin(int value) : base(value) { }
         public override bool PickUp(Player player)

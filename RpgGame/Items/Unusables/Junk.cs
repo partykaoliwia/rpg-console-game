@@ -20,8 +20,8 @@ namespace RpgGame.Items.Unusables
         {
             return player.TryAddToInventory(this);
         }
-        public virtual void EquipToLeftHand(Player player) { }
-        public virtual void EquipToRightHand(Player player) { }
+        public virtual void EquipToLeftHand(Player player, IItem instanceToEquip = null) { }
+        public virtual void EquipToRightHand(Player player, IItem instanceToEquip = null) { }
         public virtual void Unequip(Player player) { }
         public virtual CombatStats Accept(IAttackVisitor visitor, Player player)
         {

@@ -11,7 +11,7 @@ namespace RpgGame.Items.Unusables
     {
         public override Color ItemColor { get; set; } = Color.LightBlue;
         public override string Symbol => "~";
-        public override string Name => "Złamane pióro Ikara";
+        public override string Name => "Icarus Feather";
 
     }
 }

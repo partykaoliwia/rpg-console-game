@@ -17,14 +17,14 @@ namespace RpgGame.Items.Modifiers
         public AthenianModifier(IItem decorated) : base(decorated) { }
         public override string Name => _decorated.Name + "(Athenian)";
 
-        public override void EquipToLeftHand(Player player)
+        public override void EquipToLeftHand(Player player, IItem instanceToEquip = null)
         {
-            base.EquipToLeftHand(player);
+            base.EquipToLeftHand(player, instanceToEquip ?? this);
             player.Wisdom += wisdom;
         }
-        public override void EquipToRightHand(Player player)
+        public override void EquipToRightHand(Player player, IItem instanceToEquip = null)
         {
-            base.EquipToRightHand(player);
+            base.EquipToRightHand(player, instanceToEquip ?? this);
             player.Wisdom += wisdom;
 
         }

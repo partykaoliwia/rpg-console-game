@@ -22,8 +22,8 @@ namespace RpgGame.Items.Money
             Value = value;
         }
         public abstract bool PickUp(Player player);
-        public void EquipToLeftHand(Player player) { }
-        public void EquipToRightHand(Player player) { }
+        public void EquipToLeftHand(Player player, IItem instanceToEquip = null) { }
+        public void EquipToRightHand(Player player, IItem instanceToEquip = null) { }
         public virtual void Unequip(Player player) { }
         public virtual CombatStats Accept(IAttackVisitor visitor, Player player)
         {

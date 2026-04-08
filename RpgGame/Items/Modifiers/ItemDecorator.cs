@@ -30,14 +30,8 @@ namespace RpgGame.Items.Modifiers
         {
             return player.TryAddToInventory(this);
         }
-        public virtual void EquipToLeftHand(Player player)
-        {
-            player.EquipToLeftHand(this);
-        }
-        public virtual void EquipToRightHand(Player player)
-        {
-            player.EquipToRightHand(this);
-        }
+        public virtual void EquipToLeftHand(Player player, IItem instanceToEquip = null) => _decorated.EquipToLeftHand(player, instanceToEquip ?? this);
+        public virtual void EquipToRightHand(Player player, IItem instanceToEquip = null) => _decorated.EquipToRightHand(player, instanceToEquip ?? this);
         public virtual void Unequip(Player player) => _decorated.Unequip(player);
     }
 }

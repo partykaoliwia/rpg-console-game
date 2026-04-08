@@ -89,21 +89,22 @@ namespace RpgGame.Engine
         {
             // BOX 1: GRACZ
             int currentY = 1;
-            DrawBox(RightX, currentY, RightWidth, 11, " PLAYER ");
+            DrawBox(RightX, currentY, RightWidth, 12, " PLAYER ");
 
             int coins = player.Wallet.ContainsKey(Coin.CurrencyName) ? player.Wallet[Coin.CurrencyName] : 0;
             int gold = player.Wallet.ContainsKey(Gold.CurrencyName) ? player.Wallet[Gold.CurrencyName] : 0;
-            WriteToBuffer(RightX + 2, currentY + 2, $"Charon's Obols: {coins}");
-            WriteToBuffer(RightX + 2, currentY + 3, $"Golden Drachmas: {gold}");
+            WriteToBuffer(RightX + 2, currentY + 2, $"©: {coins}");
+            WriteToBuffer(RightX + 2, currentY + 3, $"¤: {gold}");
 
             WriteToBuffer(RightX + 2, currentY + 5, $"Health: {player.Health}");
             WriteToBuffer(RightX + 2, currentY + 6, $"Fortune: {player.Luck}");
             WriteToBuffer(RightX + 2, currentY + 7, $"Strength: {player.Strength}");
             WriteToBuffer(RightX + 2, currentY + 8, $"Fury: {player.Aggression}");
             WriteToBuffer(RightX + 2, currentY + 9, $"Wisdom: {player.Wisdom}");
+            WriteToBuffer(RightX + 2, currentY + 9, $"Dexterity: {player.Dexterity}");
 
             // BOX 2: INVENTORY
-            currentY += 11;
+            currentY += 12;
             if(player.Inventory.Count >= player.MaxInventorySize)
             {
                 DrawBox(RightX, currentY, RightWidth, 10, " INVENTORY (FULL) ");
@@ -161,7 +162,7 @@ namespace RpgGame.Engine
             int y = 3;
             WriteToBuffer(LeftX + 2, y++, $"[{up}/{down}] Up/Down");
             WriteToBuffer(LeftX + 2, y++, $"[{eqL}/{eqR}] Equip to L/R hand");
-            WriteToBuffer(LeftX + 2, y++, $"[{uneqL}/{uneqR}] Unequip from L/R hand");
+            WriteToBuffer(LeftX + 2, y++, $"[{uneqL}/{uneqR}] Unequip L/R hand");
             WriteToBuffer(LeftX + 2, y++, $"[{drop}] Drop");
             WriteToBuffer(LeftX + 2, y++, $"[{quit}] Return");
 
@@ -366,16 +367,17 @@ namespace RpgGame.Engine
             DrawBox(leftColX, 12, colWidth, 15, " COMBAT GUIDE ");
             int infoY = 14;
             WriteToBufferColored(leftColX + 2, infoY++, $"[{atk1}] Normal Attack", System.Drawing.Color.DarkGray);
-            WriteToBuffer(leftColX + 2, infoY++, "Labrys: +Strength");
-            WriteToBuffer(leftColX + 2, infoY++, "Xiphos: +Dexterity");
+            WriteToBuffer(leftColX + 2, infoY++, "Labrys/Xiphos: Base");
+            WriteToBuffer(leftColX + 2, infoY++, "Dory: 1");
             infoY++;
             WriteToBufferColored(leftColX + 2, infoY++, $"[{atk2}] Stealth Attack", System.Drawing.Color.DarkGray);
-            WriteToBuffer(leftColX + 2, infoY++, "Xiphos: Double dmg");
-            WriteToBuffer(leftColX + 2, infoY++, "Dory/None: Zero dmg");
+            WriteToBuffer(leftColX + 2, infoY++, "Xiphos: 2 * base");
+            WriteToBuffer(leftColX + 2, infoY++, "Labrys: 0.5 * base");
+            WriteToBuffer(leftColX + 2, infoY++, "Dory: 1");
             infoY++;
             WriteToBufferColored(leftColX + 2, infoY++, $"[{atk3}] Magic Attack", System.Drawing.Color.DarkGray);
-            WriteToBuffer(leftColX + 2, infoY++, "Dory: Scales w/ Wisdom");
-            WriteToBuffer(leftColX + 2, infoY++, "Labrys/Xiphos: Base dmg only");
+            WriteToBuffer(leftColX + 2, infoY++, "Dory: Base");
+            WriteToBuffer(leftColX + 2, infoY++, "Labrys/Xiphos: 1");
 
             // ==========================================
             // RIGHT COLUMN
@@ -383,7 +385,7 @@ namespace RpgGame.Engine
 
             // 3. TOP RIGHT - PLAYER
             DrawBox(rightColX, 1, colWidth, 11, " PLAYER ");
-            WriteToBuffer(rightColX + 2, 3, $"❤️: {player.Health}");
+            WriteToBufferColored(rightColX + 2, 3, $"❤️: {player.Health}", System.Drawing.Color.Green);
             WriteToBuffer(rightColX + 2, 4, $"Fortune: {player.Luck}");
             WriteToBuffer(rightColX + 2, 5, $"Might: {player.Strength}");
             WriteToBuffer(rightColX + 2, 6, $"Fury: {player.Aggression}");

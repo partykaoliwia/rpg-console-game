@@ -18,14 +18,14 @@ namespace RpgGame.Items.Modifiers
         public AchillesBaneModifier(IItem decorated) : base(decorated) { }
         public override string Name => _decorated.Name + "(Achilles bane)";
 
-        public override void EquipToLeftHand(Player player)
+        public override void EquipToLeftHand(Player player, IItem instanceToEquip = null)
         {
-            base.EquipToLeftHand(player);
+            base.EquipToLeftHand(player, instanceToEquip ?? this);
             player.Luck += luck;
         }
-        public override void EquipToRightHand(Player player)
+        public override void EquipToRightHand(Player player, IItem instanceToEquip = null)
         {
-            base.EquipToRightHand(player);
+            base.EquipToRightHand(player, instanceToEquip ?? this);
             player.Luck += luck;
 
         }

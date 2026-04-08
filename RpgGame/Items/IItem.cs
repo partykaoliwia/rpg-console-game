@@ -13,8 +13,8 @@ namespace RpgGame.Items
     {
         string Name { get; }
         bool PickUp(Player player);
-        void EquipToLeftHand(Player player);
-        void EquipToRightHand(Player player);
+        void EquipToLeftHand(Player player, IItem instanceToEquip = null);
+        void EquipToRightHand(Player player, IItem instanceToEquip = null);
         void Unequip(Player player);
         CombatStats Accept(IAttackVisitor visitor, Player player);
     }

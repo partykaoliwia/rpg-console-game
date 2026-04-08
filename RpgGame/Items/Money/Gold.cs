@@ -11,7 +11,7 @@ namespace RpgGame.Items.Money
     {
         public override string Symbol => "¤";
         public override string Name => CurrencyName;
-        public static string CurrencyName = "Złota Drachma";
+        public static string CurrencyName = "Drachmae";
 
         public Gold(int value) : base(value) { }
 

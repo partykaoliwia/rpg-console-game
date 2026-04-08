@@ -1,6 +1,7 @@
 ﻿using System;
-using RpgGame.Engine.States;
 using RpgGame.Combat;
+using RpgGame.Engine.Input;
+using RpgGame.Engine.States;
 
 namespace RpgGame.Engine.Commands
 {
@@ -32,7 +33,12 @@ namespace RpgGame.Engine.Commands
             {
                 // Przełączamy stan interfejsu na nasłuchiwanie L i R
                 _state.IsChoosingWeapon = true;
-                _state.BattleLog = "Masz broń w obu dłoniach! Którą uderzyć? [L] - Lewa, [R] - Prawa (lub ESC by anulować)";
+                // change battlelog to english 
+                string left = KeybindManager.Instance.GetKey("Combat", "ChooseLeft").ToString();
+                string right = KeybindManager.Instance.GetKey("Combat", "ChooseRight").ToString();
+                string flee = KeybindManager.Instance.GetKey("Combat", "Flee").ToString();
+
+                _state.BattleLog = $"You have a weapon in both hands! Which one to strike? [{left}] - Left, [{right}] - Right (or [{flee}] to cancel)";
             }
             else
             {

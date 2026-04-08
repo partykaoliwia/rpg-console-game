@@ -88,6 +88,7 @@ namespace RpgGame.Characters
             }
             else if (LeftHand != null)
             {
+                LeftHand.Unequip(this);
                 Inventory.Add(LeftHand);
             }
 
@@ -102,6 +103,7 @@ namespace RpgGame.Characters
             }
             else if (RightHand != null)
             {
+                RightHand.Unequip(this);
                 Inventory.Add(RightHand);
             }
 
@@ -120,9 +122,9 @@ namespace RpgGame.Characters
                 {
                     if (!TryAddToInventory(LeftHand))
                     {
-                        // Nie wypisuj tutaj - pozwól state'owi obsługić komunikat
                         return;
                     }
+                    LeftHand.Unequip(this);
                     LeftHand = null;
                 }
             }
@@ -141,23 +143,47 @@ namespace RpgGame.Characters
                     {
                         return;
                     }
+                    RightHand.Unequip(this);
                     RightHand = null;
                 }
             }
         }
         public void ClearHands()
         {
-            if (LeftHand != null && !TryAddToInventory(LeftHand))
-            {
-                // Handle gracefully without printing
-            }
-            if (RightHand != null && RightHand != LeftHand && !TryAddToInventory(RightHand))
-            {
-                // Handle gracefully without printing
-            }
+            // 1. Sprawdzamy, czy w obu rękach jest ten sam obiekt (broń dwuręczna)
+            bool isTwoHanded = (LeftHand != null && LeftHand == RightHand);
 
-            LeftHand = null;
-            RightHand = null;
+            if (isTwoHanded)
+            {
+                // Obsługa broni dwuręcznej (to jeden fizyczny przedmiot)
+                if (TryAddToInventory(LeftHand))
+                {
+                    LeftHand.Unequip(this);
+                    LeftHand = null;
+                    RightHand = null; // Czyścimy od razu obie ręce!
+                }
+            }
+            else
+            {
+                // Obsługa dwóch osobnych przedmiotów (np. miecz + tarcza)
+                if (LeftHand != null)
+                {
+                    if (TryAddToInventory(LeftHand))
+                    {
+                        LeftHand.Unequip(this);
+                        LeftHand = null;
+                    }
+                }
+
+                if (RightHand != null)
+                {
+                    if (TryAddToInventory(RightHand))
+                    {
+                        RightHand.Unequip(this);
+                        RightHand = null;
+                    }
+                }
+            }
         }
         public void CollectSpecific(int index, Board board)
         {

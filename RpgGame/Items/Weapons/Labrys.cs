@@ -14,13 +14,13 @@ namespace RpgGame.Items
         public override string Symbol => "T";
         public override string Name => "Labrys";
         public Labrys(int damage) : base(damage) { }
-        public override void EquipToLeftHand(Player player)
+        public override void EquipToLeftHand(Player player, IItem instanceToEquip = null)
         {
-            player.EquipToBothHands(this);
+            player.EquipToBothHands(instanceToEquip ?? this);
         }
-        public override void EquipToRightHand(Player player)
+        public override void EquipToRightHand(Player player, IItem instanceToEquip = null)
         {
-            player.EquipToBothHands(this);
+            player.EquipToBothHands(instanceToEquip ?? this);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace RpgGame.Engine.Input
             }
 
             // koniec łańcucha, nikt nie obsłużył klawisza
-            errorMessage = $"Klawisz '{key}' nie ma przypisanej akcji.";
+            errorMessage = $"Invalid key! No action assigned to [{key}].";
             return false;
         }
     }

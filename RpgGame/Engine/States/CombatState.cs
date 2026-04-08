@@ -49,7 +49,7 @@ namespace RpgGame.Engine.States
             // Używamy boola: true = lewa ręka, false = prawa ręka
             var leftKey = new KeyCommandHandler(s, "ChooseLeft", new PerformAttackCommand(this, true));
             var rightKey = new KeyCommandHandler(s, "ChooseRight", new PerformAttackCommand(this, false));
-            var cancelKey = new KeyCommandHandler(s, "Flee", new CancelWeaponChoiceCommand(this)); // Flee tutaj tylko cofa wybór
+            var cancelKey = new KeyCommandHandler(s, "Flee", new CancelWeaponChoiceCommand(this));
 
             leftKey.SetNext(rightKey).SetNext(cancelKey);
             _weaponChain = leftKey;
