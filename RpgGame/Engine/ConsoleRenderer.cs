@@ -19,7 +19,7 @@ namespace RpgGame.Engine
         private const int BottomX = 0;
         private const int BottomY = 21;
         private const int LeftX = 2;
-        private const int LeftWidth = 30;
+        private const int LeftWidth = 33;
         private const int BoardOffsetX = 35;
         private const int BoardOffsetY = 4;
         private const int RightX = 85;

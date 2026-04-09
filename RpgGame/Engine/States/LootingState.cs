@@ -33,23 +33,13 @@ namespace RpgGame.Engine.States
             _board = board;
 
             string s = "Looting";
-            // Przesuwanie kursora
-            var upKey = new KeyCommandHandler(s,"MoveUp", new MoveCursorCommand(this, -1));
-            var downKey = new KeyCommandHandler(s,"MoveDown",new MoveCursorCommand(this, 1));
 
-            // Podnoszenie przedmiotu
-            var collectKey = new KeyCommandHandler(s,"Collect", new LootItemCommand(player, board, this));
-
-            // Wyjście z menu
-            var quitKey = new KeyCommandHandler(s,"Quit", new PopStateCommand(engine));
-
-            var reloadKey = new KeyCommandHandler(s, "Reload", new ReloadConfigCommand());
-
-
-            // Złożenie łańcucha
-            upKey.SetNext(downKey).SetNext(collectKey).SetNext(quitKey).SetNext(reloadKey);
-
-            _inputChainHead = upKey;
+            _inputChainHead = new InputChainBuilder().AddKey(s,"MoveUp", new MoveCursorCommand(this, -1))
+                                                      .AddKey(s,"MoveDown",new MoveCursorCommand(this, 1))
+                                                      .AddKey(s,"Collect", new LootItemCommand(player, board, this))
+                                                      .AddKey(s,"Quit", new PopStateCommand(engine))
+                                                      .AddKey(s,"Reload", new ReloadConfigCommand())
+                                                      .Build();
         }        
 
         public void HandleInput(ConsoleKey key)

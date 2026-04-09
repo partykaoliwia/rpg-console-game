@@ -34,23 +34,18 @@ namespace RpgGame.Engine.States
 
             string s = "Combat";
 
-            // ŁAŃCUCH WYBORU ATAKU
-            var normalAttackKey = new KeyCommandHandler(s, "NormalAttack", new ChooseAttackCommand(this, new NormalAttack()));
-            var stealthAttackKey = new KeyCommandHandler(s, "StealthAttack", new ChooseAttackCommand(this, new StealthAttack()));
-            var magicAttackKey = new KeyCommandHandler(s, "MagicAttack", new ChooseAttackCommand(this, new MagicAttack()));
-            var fleeKey1 = new KeyCommandHandler(s, "Flee", new PopStateCommand(engine));
-
-            normalAttackKey.SetNext(stealthAttackKey).SetNext(magicAttackKey).SetNext(fleeKey1);
-            _attackChain = normalAttackKey;
+            // ŁAŃCUCH WYBORU ATAKU (1-3)
+            _attackChain = new InputChainBuilder().AddKey(s,"NormalAttack", new ChooseAttackCommand(this, new NormalAttack()))
+                                              .AddKey(s, "StealthAttack", new ChooseAttackCommand(this, new StealthAttack()))
+                                              .AddKey(s, "MagicAttack", new ChooseAttackCommand(this, new MagicAttack()))
+                                              .AddKey(s, "Flee", new PopStateCommand(engine))
+                                              .Build();
 
             // ŁAŃCUCH WYBORU BRONI (L/R)
-            // true = lewa ręka, false = prawa ręka
-            var leftKey = new KeyCommandHandler(s, "ChooseLeft", new PerformAttackCommand(this, true));
-            var rightKey = new KeyCommandHandler(s, "ChooseRight", new PerformAttackCommand(this, false));
-            var cancelKey = new KeyCommandHandler(s, "Flee", new CancelWeaponChoiceCommand(this));
-
-            leftKey.SetNext(rightKey).SetNext(cancelKey);
-            _weaponChain = leftKey;
+            _weaponChain = new InputChainBuilder().AddKey(s, "ChooseLeft", new PerformAttackCommand(this, true))
+                                                 .AddKey(s, "ChooseRight", new PerformAttackCommand(this, false))
+                                                 .AddKey(s, "Flee", new CancelWeaponChoiceCommand(this))
+                                                 .Build();
         }
 
         public void HandleInput(ConsoleKey key)

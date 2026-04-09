@@ -23,18 +23,16 @@ namespace RpgGame.Engine.States
             _board = board;
             _player = player;
             string s = "Playing";
-            var upKey = new KeyCommandHandler(s, "MoveUp", new MoveCommand(engine, player, board, 0, -1));
-            var downKey = new KeyCommandHandler(s, "MoveDown", new MoveCommand(engine, player, board, 0, 1));
-            var leftKey = new KeyCommandHandler(s,"MoveLeft",new MoveCommand(engine, player, board, -1, 0));
-            var rightKey = new KeyCommandHandler(s,"MoveRight",new MoveCommand(engine,player, board, 1, 0));
-            var collectKey = new KeyCommandHandler(s,"Collect", new CollectCommand(engine, player, board));
-            var inventoryKey = new KeyCommandHandler(s,"OpenInventory",new PushStateCommand(engine, new InventoryState(engine, player, board)));
-            var quitKey = new KeyCommandHandler(s,"Quit",new QuitCommand(engine));
-            var reloadKey = new KeyCommandHandler(s, "Reload", new ReloadConfigCommand());
 
-            upKey.SetNext(downKey).SetNext(leftKey).SetNext(rightKey).SetNext(collectKey).SetNext(inventoryKey).SetNext(quitKey).SetNext(reloadKey);
-
-            _inputChainHead = upKey;
+            _inputChainHead = new InputChainBuilder().AddKey(s, "MoveUp", new MoveCommand(engine, player, board, 0, -1))
+                                                      .AddKey(s, "MoveDown", new MoveCommand(engine, player, board, 0, 1))
+                                                      .AddKey(s,"MoveLeft",new MoveCommand(engine, player, board, -1, 0))
+                                                      .AddKey(s,"MoveRight",new MoveCommand(engine,player, board, 1, 0))
+                                                      .AddKey(s,"Collect", new CollectCommand(engine, player, board))
+                                                      .AddKey(s,"OpenInventory",new PushStateCommand(engine, new InventoryState(engine, player, board)))
+                                                      .AddKey(s,"Quit",new QuitCommand(engine))
+                                                      .AddKey(s,"Reload", new ReloadConfigCommand())
+                                                      .Build(); 
         }
 
         public void HandleInput(ConsoleKey key)

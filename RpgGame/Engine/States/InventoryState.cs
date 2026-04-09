@@ -30,30 +30,16 @@ namespace RpgGame.Engine.States
             _board = board;
             var s = "Inventory";
 
-            // Góra dół
-            var upKey = new KeyCommandHandler(s,"MoveUp", new MoveCursorCommand(this, -1));
-            var downKey = new KeyCommandHandler(s, "MoveDown", new MoveCursorCommand(this, 1));
-
-            // Zakładanie
-            var equipLeftKey = new KeyCommandHandler(s, "EquipLeft", new EquipCommand(player, this, HandSlot.Left));
-            var equipRightKey = new KeyCommandHandler(s,"EquipRight", new EquipCommand(player, this, HandSlot.Right));
-
-            // Zdejmowanie
-            var unequipRightKey = new KeyCommandHandler(s,"UnequipRight", new UnequipCommand(player, HandSlot.Right));
-            var unequipLeftKey = new KeyCommandHandler(s,"UnequipLeft", new UnequipCommand(player, HandSlot.Left));
-
-            // Wyrzucanie
-            var dropKey = new KeyCommandHandler(s,"Drop", new DropItemCommand(player, board, this));
-
-            // Zamykanie
-            var quitKey = new KeyCommandHandler(s,"Quit",new PopStateCommand(engine));
-            var reloadKey = new KeyCommandHandler(s, "Reload", new ReloadConfigCommand());
-
-
-            // Budowanie łańcucha
-            upKey.SetNext(downKey).SetNext(equipLeftKey).SetNext(equipRightKey).SetNext(unequipLeftKey).SetNext(unequipRightKey).SetNext(dropKey).SetNext(quitKey).SetNext(reloadKey);
-
-            _inputChainHead = upKey;
+            _inputChainHead = new InputChainBuilder().AddKey(s, "MoveUp", new MoveCursorCommand(this, -1))
+                                                      .AddKey(s, "MoveDown", new MoveCursorCommand(this, 1))
+                                                      .AddKey(s, "EquipLeft", new EquipCommand(player, this, HandSlot.Left))
+                                                      .AddKey(s,"EquipRight", new EquipCommand(player, this, HandSlot.Right))
+                                                      .AddKey(s,"UnequipLeft", new UnequipCommand(player, HandSlot.Left))
+                                                      .AddKey(s,"UnequipRight", new UnequipCommand(player, HandSlot.Right))
+                                                      .AddKey(s,"Drop", new DropItemCommand(player, board, this))
+                                                      .AddKey(s,"Quit",new PopStateCommand(engine))
+                                                      .AddKey(s,"Reload", new ReloadConfigCommand())
+                                                      .Build();
         }
         public void HandleInput(ConsoleKey key)
         {

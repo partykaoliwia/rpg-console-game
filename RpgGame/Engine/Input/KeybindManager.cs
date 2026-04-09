@@ -82,5 +82,23 @@ namespace RpgGame.Engine.Input
 
             return ConsoleKey.None;
         }
+        public string GetKeyName(string state, string action)
+        {
+            ConsoleKey key = GetKey(state, action);
+            if (key == ConsoleKey.None) return "?";
+
+            string keyName = key.ToString();
+
+            // D1 -> 1, D2 -> 2 itd.
+            if (keyName.StartsWith("D") && keyName.Length == 2 && char.IsDigit(keyName[1]))
+            {
+                return keyName.Substring(1);
+            }
+
+            if (keyName.StartsWith("NumPad")) return keyName.Replace("NumPad", "");
+            if (keyName == "Oem3") return "~";
+
+            return keyName;
+        }
     }
 }
