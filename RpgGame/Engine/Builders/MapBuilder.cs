@@ -182,7 +182,7 @@ namespace RpgGame.Engine.Builders
         }
         private IItem CreateWeaponForSequence(int index)
         {
-            int damage = 10;
+            int damage = 10 + _random.Next(0, 4);
             IItem weapon;
             // losowanie broni, ale tak zeby jesli jest ich wiecej niz 1 to byla gwarancja na dwureczna
             if (index == 0 || index == 2)
@@ -203,11 +203,12 @@ namespace RpgGame.Engine.Builders
                 else if (roll == 1) weapon = new Dory(damage);
                 else weapon = new Labrys(damage);
             }
-            int modRoll = _random.Next(0, 3);
+            int modRoll = _random.Next(0, 4);
 
             if (modRoll == 0) return new SpartanModifier(weapon);
             if (modRoll == 1) return new MidasTouchModifier(weapon);
-            return new AthenianModifier(weapon); // Ensure all code paths return a value
+            if(modRoll==2) return new IcarianModifier(new DionysianModifier(weapon));
+            return new AthenianModifier(weapon); 
         }
         //public void AddEnemies(int count)
         //{
@@ -260,7 +261,6 @@ namespace RpgGame.Engine.Builders
             int y = _board.Height / 2;
             var tile = _board.GetTile(x, y);
             
-            // Boss na środku mapy
             enemy = new Enemy(80, 15, 5, "Minotaur"); 
             enemy.ItemColor = Color.SaddleBrown;
             if (tile.IsWalkable)
@@ -275,34 +275,32 @@ namespace RpgGame.Engine.Builders
                 y = _random.Next(0, _board.Height);
                 tile = _board.GetTile(x, y);
 
-                // Obliczamy dystans od punktu startowego (1,1)
                 int distanceFromStart = Math.Abs(x - 1) + Math.Abs(y - 1);
 
-                // 1. STREFA BEZPIECZEŃSTWA: Brak wrogów w promieniu 15 pól od startu
                 if (distanceFromStart < 10)
                 {
-                    continue; // Zbyt blisko startu, losujemy współrzędne ponownie!
+                    continue;
                 }
 
                 if (tile.IsWalkable && tile.Entity == null)
                 {
-                    // 2. SKALOWANIE WROGÓW zależnie od odległości
+                    // Moc wrogów zależnie od odległości
                     if (distanceFromStart < 25)
                     {
                         // Blisko - słabi wrogowie
-                        enemy = new Enemy(30, 10, 2, "Słaby Szkielet");
+                        enemy = new Enemy(30, 20, 2);
                         //enemy.ItemColor = Color.LightGray;
                     }
                     else if (distanceFromStart < 40)
                     {
                         // Środek mapy - średni wrogowie
-                        enemy = new Enemy( 40, 13, 4,"Hoplita");
+                        enemy = new Enemy( 40, 13, 4);
                         //enemy.ItemColor = Color.DarkOrange;
                     }
                     else
                     {
                         // Krawędzie i koniec mapy - trudni wrogowie
-                        enemy = new Enemy(50, 18, 8, "Cyklop");
+                        enemy = new Enemy(50, 18, 8);
                        // enemy.ItemColor = Color.Gray;
                     }
 

@@ -5,12 +5,10 @@ using RpgGame.Engine.Builders;
 using RpgGame.Engine.States;
 
 // TO DO
-// kolorki dodac
-// poprawic estetyke instrukcji
-// layout
+// poprawic estetyke combatstate
 // poprawic labirynt zeby dol nie byl rozjechany
-// logike dodawania itemkow (zeby byla gwarancja ze niektore blisko startu)
-// popraw tez np nazwa pieniedzy
+// dodac lepsza obsluge logow
+// w main poprawic
 class Program
 {
     static void Main(string[] args)

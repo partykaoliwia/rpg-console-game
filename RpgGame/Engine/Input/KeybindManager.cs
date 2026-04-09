@@ -38,12 +38,10 @@ namespace RpgGame.Engine.Input
                 var trimmedLine = line.Trim();
                 if (string.IsNullOrWhiteSpace(trimmedLine)) continue;
 
-                // Wykrywanie sekcji (kontekstu), np. [Playing]
+                // wykrywanie state'u
                 if (trimmedLine.StartsWith("[") && trimmedLine.EndsWith("]"))
                 {
-                    // Pobieramy nazwę ze środka nawiasów (usuwamy [ i ])
                     currentState = trimmedLine.Substring(1, trimmedLine.Length - 2);
-
                     if (!_keybinds.ContainsKey(currentState))
                     {
                         _keybinds[currentState] = new Dictionary<string, ConsoleKey>();
@@ -51,7 +49,7 @@ namespace RpgGame.Engine.Input
                     continue;
                 }
 
-                // Parsowanie akcji i klawisza, np. MoveUp=W
+                // parsowanie akcji i klawisza
                 var parts = trimmedLine.Split('=');
                 if (parts.Length == 2)
                 {
@@ -66,7 +64,6 @@ namespace RpgGame.Engine.Input
                         }
                         if (_keybinds[currentState].ContainsValue(consoleKey))
                         {
-                            // Rzucamy wyjątek, który przerwie działanie i jasno poinformuje o błędzie
                             throw new InvalidOperationException($"Konflikt klawiszy! Klawisz '{consoleKey}' jest już przypisany do innej akcji w sekcji [{currentState}]. Popraw plik {filePath}.");
                         }
 
@@ -76,7 +73,6 @@ namespace RpgGame.Engine.Input
             }
         }
 
-        // Metoda do pobierania przypisanego klawisza
         public ConsoleKey GetKey(string state, string action)
         {
             if (_keybinds.ContainsKey(state) && _keybinds[state].ContainsKey(action))
@@ -84,7 +80,6 @@ namespace RpgGame.Engine.Input
                 return _keybinds[state][action];
             }
 
-            // Domyślny fallback, jeśli brakuje klawisza w pliku
             return ConsoleKey.None;
         }
     }

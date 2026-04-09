@@ -101,7 +101,7 @@ namespace RpgGame.Engine
             WriteToBuffer(RightX + 2, currentY + 7, $"Strength: {player.Strength}");
             WriteToBuffer(RightX + 2, currentY + 8, $"Fury: {player.Aggression}");
             WriteToBuffer(RightX + 2, currentY + 9, $"Wisdom: {player.Wisdom}");
-            WriteToBuffer(RightX + 2, currentY + 9, $"Dexterity: {player.Dexterity}");
+            WriteToBuffer(RightX + 2, currentY + 10, $"Dexterity: {player.Dexterity}");
 
             // BOX 2: INVENTORY
             currentY += 12;
@@ -171,7 +171,7 @@ namespace RpgGame.Engine
             DrawMessage(errorMessage, ScreenHeight - 1);
         }
 
-        // DRAWING LOOTING MENU
+        // RYSOWANIE LOOTING MENU
         public void DrawLootingMenu(Player player, ITile currentTile, int cursorIndex, string errorMessage)
         {
             DrawBox(LeftX, 1, LeftWidth, 10, " CONTROLS ");
@@ -190,7 +190,7 @@ namespace RpgGame.Engine
             DrawMessage(errorMessage, ScreenHeight - 1);
         }
 
-        // MAIN DRAWING OF CONTROLS, STATES ETC
+        // CONTROLS + BOARD + STATS + GROUND ITEMS, CALY DEFAULT SCREEN
         public void DrawPlayingView(Board board, Player player, string errorMessage = "")
         {
             DrawBox(LeftX, 1, LeftWidth, 10, " CONTROLS ");
@@ -215,7 +215,7 @@ namespace RpgGame.Engine
             DrawMessage(errorMessage, ScreenHeight - 1);
         }
 
-        // DRAWING MESSAGES
+        // MESSAGES
         public void DrawMessage(string message, int line)
         {
             if (!string.IsNullOrEmpty(message))
@@ -250,9 +250,8 @@ namespace RpgGame.Engine
                 WriteToBufferColored(Math.Max(0, startX), currentY++, line, System.Drawing.Color.Gold);
             }
 
-            currentY++; // Pusta linia pod tytułem
+            currentY++;
 
-            // 3. Dynamiczne centrowanie każdej linii z listy instrukcji
             foreach (var line in instructions)
             {
                 int startX = (ScreenWidth - line.Length) / 2;
@@ -264,7 +263,6 @@ namespace RpgGame.Engine
             string continueText = $"Press [{continueKey}] to enter the labyrinth...";
             
             WriteToBufferColored((ScreenWidth - continueText.Length) / 2, currentY, continueText, System.Drawing.Color.DarkGoldenrod);
-            // Display errors (DrawMessage has built-in centering)
             DrawMessage(errorMessage, currentY + 2);
         }
 
@@ -340,16 +338,13 @@ namespace RpgGame.Engine
         // RYSOWANIE EKRANU WALKI
         public void DrawCombatScreen(Player player, Enemy enemy, string battleLog, bool isChoosingWeapon, string errorMessage = "")
         {
-            // Wymiary i pozycje poszczególnych kolumn
-            int leftColX = LeftX;           // 2
-            int rightColX = RightX;         // 85
+            int leftColX = LeftX;
+            int rightColX = RightX;
             int colWidth = 32;
-            int centerColX = 36;            // Pomiędzy lewą a prawą (2+32+2 = 36)
-            int centerColWidth = 47;        // Szerokość środka (85 - 36 - 2 = 47)
+            int centerColX = 36; 
+            int centerColWidth = 47; 
 
-            // ==========================================
             // KOLUMNA LEWA
-            // ==========================================
 
             // 1. LEWY GÓRNY - PRZECIWNIK
             DrawBox(leftColX, 1, colWidth, 10, $" {enemy.Name} ".ToUpper());
@@ -360,30 +355,28 @@ namespace RpgGame.Engine
             string enemyIcon = $"[ {enemy.Symbol} ]";
             WriteToBufferColored(leftColX + (colWidth - enemyIcon.Length) / 2, 8, enemyIcon, enemy.ItemColor);
 
-            // 2. BOTTOM LEFT - COMBAT KNOWLEDGE
+            // 2. LEWY DOLNY - COMBAT GUIDE
             string atk1 = KeybindManager.Instance.GetKey("Combat", "NormalAttack").ToString();
             string atk2 = KeybindManager.Instance.GetKey("Combat", "StealthAttack").ToString();
             string atk3 = KeybindManager.Instance.GetKey("Combat", "MagicAttack").ToString();
             DrawBox(leftColX, 12, colWidth, 15, " COMBAT GUIDE ");
             int infoY = 14;
-            WriteToBufferColored(leftColX + 2, infoY++, $"[{atk1}] Normal Attack", System.Drawing.Color.DarkGray);
+            WriteToBufferColored(leftColX + 2, infoY++, $"Normal Attack", System.Drawing.Color.DarkGray);
             WriteToBuffer(leftColX + 2, infoY++, "Labrys/Xiphos: Base");
             WriteToBuffer(leftColX + 2, infoY++, "Dory: 1");
             infoY++;
-            WriteToBufferColored(leftColX + 2, infoY++, $"[{atk2}] Stealth Attack", System.Drawing.Color.DarkGray);
+            WriteToBufferColored(leftColX + 2, infoY++, $"Stealth Attack", System.Drawing.Color.DarkGray);
             WriteToBuffer(leftColX + 2, infoY++, "Xiphos: 2 * base");
             WriteToBuffer(leftColX + 2, infoY++, "Labrys: 0.5 * base");
             WriteToBuffer(leftColX + 2, infoY++, "Dory: 1");
             infoY++;
-            WriteToBufferColored(leftColX + 2, infoY++, $"[{atk3}] Magic Attack", System.Drawing.Color.DarkGray);
+            WriteToBufferColored(leftColX + 2, infoY++, $"Magic Attack", System.Drawing.Color.DarkGray);
             WriteToBuffer(leftColX + 2, infoY++, "Dory: Base");
             WriteToBuffer(leftColX + 2, infoY++, "Labrys/Xiphos: 1");
 
-            // ==========================================
-            // RIGHT COLUMN
-            // ==========================================
+            // PRAWA KOLUMNA
 
-            // 3. TOP RIGHT - PLAYER
+            // PRAWY GÓRNY - PLAYER
             DrawBox(rightColX, 1, colWidth, 11, " PLAYER ");
             WriteToBufferColored(rightColX + 2, 3, $"❤️: {player.Health}", System.Drawing.Color.Green);
             WriteToBuffer(rightColX + 2, 4, $"Fortune: {player.Luck}");
@@ -391,19 +384,18 @@ namespace RpgGame.Engine
             WriteToBuffer(rightColX + 2, 6, $"Fury: {player.Aggression}");
             WriteToBuffer(rightColX + 2, 7, $"Wisdom: {player.Wisdom}");
 
-            // 4. BELOW PLAYER - HANDS
+            // ŚRODEK - HANDS
             DrawBox(rightColX, 13, colWidth, 5, " HANDS ");
             string leftHandName = player.LeftHand != null ? player.LeftHand.Name : "Empty";
             string rightHandName = player.RightHand != null ? player.RightHand.Name : "Empty";
 
-            // Shorten names if they are too long to fit in box
             if (leftHandName.Length > 25) leftHandName = leftHandName.Substring(0, 22) + "...";
             if (rightHandName.Length > 25) rightHandName = rightHandName.Substring(0, 22) + "...";
 
             WriteToBuffer(rightColX + 2, 15, $"L: {leftHandName}");
             WriteToBuffer(rightColX + 2, 16, $"R: {rightHandName}");
 
-            // 5. BOTTOM RIGHT - CONTROLS
+            // PRAWY DOLNY - CONTROLS
             DrawBox(rightColX, 19, colWidth, 8, " CONTROLS ");
             int ctrlY = 21;
             if (isChoosingWeapon)
@@ -429,24 +421,19 @@ namespace RpgGame.Engine
                 WriteToBuffer(rightColX + 2, ctrlY++, $"[{esc}] Flee");
             }
 
-            // ==========================================
-            // CENTER
-            // ==========================================
+            // ŚRODEK BATTLE LOG
 
-            // 6. CENTER PANEL - BATTLE LOG
             DrawBox(centerColX, 1, centerColWidth, 26, " BATTLE LOG ");
 
             if (!string.IsNullOrEmpty(battleLog))
             {
                 int logY = 3;
-                // Split logs by " | "
                 var logs = battleLog.Split(new[] { " | " }, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var log in logs)
                 {
                     string remaining = log.Trim();
 
-                    // Wrap rows if text is longer than box width
                     while (remaining.Length > 0)
                     {
                         int maxLen = centerColWidth - 4;
@@ -459,7 +446,6 @@ namespace RpgGame.Engine
                         }
                         else
                         {
-                            // Find space to not cut words in half
                             int spaceIndex = remaining.LastIndexOf(' ', maxLen);
                             if (spaceIndex == -1) spaceIndex = maxLen;
 
@@ -471,13 +457,11 @@ namespace RpgGame.Engine
                         var color = logY % 3 == 0 ? System.Drawing.Color.Gold : System.Drawing.Color.LightCoral;
                         WriteToBufferColored(centerColX + 2, logY++, lineToPrint, color);
                     }
-                    logY++; // Empty line between entries
+                    logY++;
                 }
             }
 
-            // ==========================================
             // ERRORS
-            // ==========================================
             DrawMessage(errorMessage, ScreenHeight - 1);
         }
         //public void DrawGameOverScreen()
@@ -532,7 +516,6 @@ namespace RpgGame.Engine
             string info = "Press any key to exit...";
             int infoX = (ScreenWidth - info.Length) / 2;
 
-            // ANIMATION PLAYED ONLY ONCE:
             if (animate)
             {
                 ClearBuffer();
@@ -564,7 +547,6 @@ namespace RpgGame.Engine
                 }
             }
 
-            // THIS ALWAYS EXECUTES (fills buffer for Engine, so screen doesn't flicker)
             for (int i = 0; i < asciiDeath.Length; i++)
             {
                 WriteToBufferColored(startX, startY + i, asciiDeath[i], System.Drawing.Color.DarkRed);

@@ -21,11 +21,11 @@ namespace RpgGame.Characters
         public int Y { get; private set; }
 
         // atrybuty
-        public int Strength { get; set; } = 20; // Krzepa Heraklesa
-        public int Health { get; set; } = 20; // Wigor Witalny
-        public int Luck { get; set; } = 20; // Fortuna
-        public int Aggression { get; set; } = 20; // Furia Aresa
-        public int Wisdom { get; set; } = 20; // Mądrość Ateny
+        public int Strength { get; set; } = 20; 
+        public int Health { get; set; } = 20; 
+        public int Luck { get; set; } = 20;
+        public int Aggression { get; set; } = 20;
+        public int Wisdom { get; set; } = 20; 
         public int Dexterity { get; set; } = 20;
 
         // waluta
@@ -150,22 +150,19 @@ namespace RpgGame.Characters
         }
         public void ClearHands()
         {
-            // 1. Sprawdzamy, czy w obu rękach jest ten sam obiekt (broń dwuręczna)
             bool isTwoHanded = (LeftHand != null && LeftHand == RightHand);
 
             if (isTwoHanded)
             {
-                // Obsługa broni dwuręcznej (to jeden fizyczny przedmiot)
                 if (TryAddToInventory(LeftHand))
                 {
                     LeftHand.Unequip(this);
                     LeftHand = null;
-                    RightHand = null; // Czyścimy od razu obie ręce!
+                    RightHand = null;
                 }
             }
             else
             {
-                // Obsługa dwóch osobnych przedmiotów (np. miecz + tarcza)
                 if (LeftHand != null)
                 {
                     if (TryAddToInventory(LeftHand))

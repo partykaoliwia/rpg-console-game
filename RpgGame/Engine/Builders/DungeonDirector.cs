@@ -29,7 +29,7 @@ namespace RpgGame.Engine.Builders
         {
             _builder.BuildEmptyDungeon();
             _builder.AddItems(50);
-            _builder.AddWeapons(50);
+            _builder.AddWeapons(150);
             _builder.AddMoney(50);
         }
 
