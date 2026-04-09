@@ -17,23 +17,16 @@ namespace RpgGame.Items.Modifiers
         public MidasTouchModifier(IItem decorated) : base(decorated) { }
         public override string Name => _decorated.Name + "(Midas touch)";
 
-        public override void EquipToLeftHand(Player player, IItem instanceToEquip = null)
+        public override PlayerStats Bonuses
         {
-            base.EquipToLeftHand(player, instanceToEquip ?? this);
-            player.Luck += luck;
+            get
+            {
+                var b = _decorated.Bonuses;
+                b.Luck += luck;
+                return b;
+            }
         }
-        public override void EquipToRightHand(Player player, IItem instanceToEquip = null)
-        {
-            base.EquipToRightHand(player, instanceToEquip ?? this);
-            player.Luck += luck;
 
-        }
-        public override void Unequip(Player player)
-        {
-            base.Unequip(player);
-            player.Luck -= luck;
-
-        }
         public override CombatStats Accept(IAttackVisitor visitor, Player player)
         {
             var stats = base.Accept(visitor, player);

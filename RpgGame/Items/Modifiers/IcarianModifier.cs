@@ -21,26 +21,17 @@ namespace RpgGame.Items.Modifiers
         public IcarianModifier(IItem decorated) : base(decorated) { }
         public override string Name => _decorated.Name + "(Icarian)";
 
-        public override void EquipToLeftHand(Player player, IItem instanceToEquip = null)
+        public override PlayerStats Bonuses
         {
-            base.EquipToLeftHand(player, instanceToEquip ?? this);
-            player.Luck += luck;
-            player.Dexterity += dexterity;
+            get
+            {
+                var b = _decorated.Bonuses;
+                b.Dexterity += dexterity;
+                b.Luck += luck;
+                return b;
+            }
         }
-        public override void EquipToRightHand(Player player, IItem instanceToEquip = null)
-        {
-            base.EquipToRightHand(player, instanceToEquip ?? this);
-            player.Luck += luck;
-            player.Dexterity += dexterity;
 
-        }
-        public override void Unequip(Player player)
-        {
-            base.Unequip(player);
-            player.Luck -= luck;
-            player.Dexterity -= dexterity;
-
-        }
         public override CombatStats Accept(IAttackVisitor visitor, Player player)
         {
             var stats = base.Accept(visitor, player);

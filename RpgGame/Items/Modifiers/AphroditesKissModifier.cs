@@ -17,25 +17,15 @@ namespace RpgGame.Items.Modifiers
         public AphroditesKissModifier(IItem decorated) : base(decorated) { }
         public override string Name => _decorated.Name + "(Kissed by Aphrodite)";
 
-        public override void EquipToLeftHand(Player player, IItem instanceToEquip = null)
+        public override PlayerStats Bonuses
         {
-            base.EquipToLeftHand(player, instanceToEquip ?? this);
-            player.Health += health;
-            player.Aggression += aggression;
-        }
-        public override void EquipToRightHand(Player player, IItem instanceToEquip = null)
-        {
-            base.EquipToRightHand(player, instanceToEquip ?? this);
-            player.Health += health;
-            player.Aggression += aggression;
-
-        }
-        public override void Unequip(Player player)
-        {
-            base.Unequip(player);
-            player.Health -= health;
-            player.Aggression -= aggression;
-
+            get
+            {
+                var b = _decorated.Bonuses;
+                b.Health += health;
+                b.Aggression += aggression;
+                return b;
+            }
         }
         public override CombatStats Accept(IAttackVisitor visitor, Player player)
         {

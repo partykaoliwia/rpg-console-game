@@ -17,26 +17,16 @@ namespace RpgGame.Items.Modifiers
         public PrometheanModifier(IItem decorated) : base(decorated) { }
         public override string Name => _decorated.Name + "(Promethean)";
 
-        public override void EquipToLeftHand(Player player, IItem instanceToEquip = null)
+        public override PlayerStats Bonuses
         {
-            base.EquipToLeftHand(player, instanceToEquip ?? this);
-            player.Wisdom += wisdom;
-            player.Health += health;
+            get
+            {
+                var b = _decorated.Bonuses;
+                b.Wisdom += wisdom;
+                return b;
+            }
         }
-        public override void EquipToRightHand(Player player, IItem instanceToEquip = null)
-        {
-            base.EquipToRightHand(player, instanceToEquip ?? this);
-            player.Wisdom += wisdom;
-            player.Health += health;
 
-        }
-        public override void Unequip(Player player)
-        {
-            base.Unequip(player);
-            player.Wisdom -= wisdom;
-            player.Health -= health;
-
-        }
         public override CombatStats Accept(IAttackVisitor visitor, Player player)
         {
             return base.Accept(visitor,player);

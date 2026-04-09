@@ -17,23 +17,16 @@ namespace RpgGame.Items.Modifiers
         public HydrasVenomModifier(IItem decorated) : base(decorated) { }
         public override string Name => _decorated.Name + "(Hydra's venom)";
 
-        public override void EquipToLeftHand(Player player, IItem instanceToEquip = null)
+        public override PlayerStats Bonuses
         {
-            base.EquipToLeftHand(player, instanceToEquip ?? this);
-            player.Health += health;
+            get
+            {
+                var b = _decorated.Bonuses;
+                b.Health += health;
+                return b;
+            }
         }
-        public override void EquipToRightHand(Player player, IItem instanceToEquip = null)
-        {
-            base.EquipToRightHand(player, instanceToEquip ?? this);
-            player.Health += health;
 
-        }
-        public override void Unequip(Player player)
-        {
-            base.Unequip(player);
-            player.Health -= health;
-
-        }
         public override CombatStats Accept(IAttackVisitor visitor, Player player)
         {
             var stats = base.Accept(visitor, player);

@@ -12,6 +12,8 @@ namespace RpgGame.Items.Unusables
     public abstract class Junk : IItem
     {
         public abstract string Symbol { get; }
+        public virtual PlayerStats Bonuses => new PlayerStats();
+
         public abstract string Name { get; }
 
         public abstract Color ItemColor { get; set; }

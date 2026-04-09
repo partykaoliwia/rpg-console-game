@@ -12,6 +12,7 @@ namespace RpgGame.Items
     public abstract class Weapon : IItem
     {
         public Color ItemColor { get; set; } = Color.DarkSeaGreen;
+        public virtual PlayerStats Bonuses => new PlayerStats();
         public abstract string Symbol { get; }
         public abstract string Name { get; }
         public int Damage { get; set; }

@@ -12,6 +12,7 @@ namespace RpgGame.Items.Modifiers
     public abstract class ItemDecorator : IItem
     {
         protected IItem _decorated;
+        public virtual PlayerStats Bonuses => _decorated.Bonuses;
         protected ItemDecorator(IItem decorated)
         {
             _decorated = decorated;
@@ -30,8 +31,8 @@ namespace RpgGame.Items.Modifiers
         {
             return player.TryAddToInventory(this);
         }
-        public virtual void EquipToLeftHand(Player player, IItem instanceToEquip = null) => _decorated.EquipToLeftHand(player, instanceToEquip ?? this);
-        public virtual void EquipToRightHand(Player player, IItem instanceToEquip = null) => _decorated.EquipToRightHand(player, instanceToEquip ?? this);
-        public virtual void Unequip(Player player) => _decorated.Unequip(player);
+        public void EquipToLeftHand(Player player, IItem instanceToEquip = null) => _decorated.EquipToLeftHand(player, instanceToEquip ?? this);
+        public void EquipToRightHand(Player player, IItem instanceToEquip = null) => _decorated.EquipToRightHand(player, instanceToEquip ?? this);
+        public void Unequip(Player player) => _decorated.Unequip(player);
     }
 }

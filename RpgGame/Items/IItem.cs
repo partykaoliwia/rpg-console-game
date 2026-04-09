@@ -12,6 +12,7 @@ namespace RpgGame.Items
     public interface IItem : IDrawable
     {
         string Name { get; }
+        PlayerStats Bonuses { get; }
         bool PickUp(Player player);
         void EquipToLeftHand(Player player, IItem instanceToEquip = null);
         void EquipToRightHand(Player player, IItem instanceToEquip = null);

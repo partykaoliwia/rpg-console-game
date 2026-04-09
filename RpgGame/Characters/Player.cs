@@ -21,12 +21,40 @@ namespace RpgGame.Characters
         public int Y { get; private set; }
 
         // atrybuty
-        public int Strength { get; set; } = 20; 
-        public int Health { get; set; } = 20; 
-        public int Luck { get; set; } = 20;
-        public int Aggression { get; set; } = 20;
-        public int Wisdom { get; set; } = 20; 
-        public int Dexterity { get; set; } = 20;
+        public int BaseStrength { get; set; } = 20; 
+        public int BaseHealth { get; set; } = 20; 
+        public int BaseLuck { get; set; } = 20;
+        public int BaseAggression { get; set; } = 20;
+        public int BaseWisdom { get; set; } = 20; 
+        public int BaseDexterity { get; set; } = 20;
+
+        public int Strength => BaseStrength + GetBonusStats().Strength;
+        public int Health => BaseHealth + GetBonusStats().Health;
+        public int Luck => BaseLuck + GetBonusStats().Luck;
+        public int Aggression => BaseAggression + GetBonusStats().Aggression;
+        public int Wisdom => BaseWisdom + GetBonusStats().Wisdom;
+        public int Dexterity => BaseDexterity + GetBonusStats().Dexterity;
+
+
+        private PlayerStats GetBonusStats()
+        {
+            PlayerStats bonusStats = new PlayerStats();
+            if (LeftHand != null)
+            {
+                bonusStats += LeftHand.Bonuses;
+            }
+            if (RightHand != null && RightHand != LeftHand)
+            {
+                bonusStats += RightHand.Bonuses;
+            }
+            return bonusStats;
+        }
+
+        public void TakeDamage(int damage)
+        {
+            BaseHealth -= damage;
+            if (BaseHealth < 0) BaseHealth = 0; //TODO
+        }
 
         // waluta
         public Dictionary<string, int> Wallet { get; private set; } = new Dictionary<string, int>()
@@ -187,11 +215,6 @@ namespace RpgGame.Characters
             if (Inventory.Count >= MaxInventorySize) return false;
             Inventory.Add(item);
             return true;
-        }
-        public void TakeDamage(int damage)
-        {
-            Health -= damage;
-            if(Health < 0) Health = 0;
         }
     }
 }
