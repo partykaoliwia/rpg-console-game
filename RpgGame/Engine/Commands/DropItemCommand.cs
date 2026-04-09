@@ -22,12 +22,18 @@ namespace RpgGame.Engine.Commands
         {
             if (_player.Inventory.Count > 0)
             {
-                _player.DropItem(_menu.CursorIndex, _board);
-
-                // poprawa kursora
-                if (_menu.CursorIndex >= _player.Inventory.Count && _player.Inventory.Count > 0)
+                var droppedItem = _player.DropItem(_menu.CursorIndex);
+                if (droppedItem != null)
                 {
-                    _menu.CursorIndex = _player.Inventory.Count - 1;
+                    var currentTile = _board.GetTile(_player.X, _player.Y);
+                    currentTile.Items.Add(droppedItem);
+                    //TODO logi?
+
+                    // poprawa kursora
+                    if (_menu.CursorIndex >= _player.Inventory.Count && _player.Inventory.Count > 0)
+                    {
+                        _menu.CursorIndex = _player.Inventory.Count - 1;
+                    }
                 }
             }
         }

@@ -50,17 +50,10 @@ namespace RpgGame.Characters
         }
 
         // metody
-        public void Move(int dx, int dy, Board board) 
-        {
-            int newX = X + dx;
-            int newY = Y + dy;
-
-            ITile target = board.GetTile(newX, newY);
-            if(target.IsWalkable)
-            {
-                X = newX;
-                Y = newY;
-            }    
+        public void SetPosition(int x, int y)
+        {             
+            X = x;
+            Y = y;
         }
         public void AddCurrency(string currencyName, int amount)
         {
@@ -182,23 +175,12 @@ namespace RpgGame.Characters
                 }
             }
         }
-        public void CollectSpecific(int index, Board board)
+        public IItem DropItem(int index)
         {
-            ITile currentTile = board.GetTile(X, Y);
-            if (index < 0 || index >= currentTile.Items.Count) return;
-            var item = currentTile.Items[index];
-            bool success = item.PickUp(this);
-            if (success)
-            {
-                currentTile.Items.RemoveAt(index);
-            }
-        }
-        public void DropItem(int index, Board board)
-        {
-            if (index < 0 || index >= Inventory.Count) return;
+            if (index < 0 || index >= Inventory.Count) return null;
             var item = Inventory[index];
             Inventory.RemoveAt(index);
-            board.GetTile(X, Y).Items.Add(item);
+            return item;
         }
         public bool TryAddToInventory(IItem item)
         {

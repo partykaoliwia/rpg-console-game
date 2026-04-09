@@ -28,15 +28,24 @@ namespace RpgGame.Engine.Commands
 
         public void Execute()
         {
-
-            if(_board.GetTile(_player.X + _dx, _player.Y + _dy).Entity!=null)
-            { 
-                ITile tile = _board.GetTile(_player.X + _dx, _player.Y + _dy);
-                var command = new PushStateCommand(_engine,new CombatState(_engine,_player, tile.Entity, tile)); 
+            int newX = _player.X + _dx;
+            int newY = _player.Y + _dy;
+            ITile targetTile = _board.GetTile(newX, newY);
+            if(targetTile.Entity != null)
+            {
+                var command = new PushStateCommand(_engine, new CombatState(_engine, _player, targetTile.Entity, targetTile));
                 command.Execute();
                 return;
             }
-            _player.Move(_dx, _dy, _board);
+            if (targetTile.IsWalkable)
+            { 
+                _player.SetPosition(newX, newY); 
+            }
+            else
+            {
+                // Tile is not walkable, do nothing // TODO
+                return;
+            }
         }
     }
 }

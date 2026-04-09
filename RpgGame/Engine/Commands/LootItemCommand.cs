@@ -23,7 +23,12 @@ namespace RpgGame.Engine.Commands
             var tile = _board.GetTile(_player.X, _player.Y);
             if (tile.Items.Count == 0) return;
 
-            _player.CollectSpecific(_menu.CursorIndex, _board);
+            var item = tile.Items[_menu.CursorIndex];
+            if(item.PickUp(_player))
+            {
+                tile.Items.RemoveAt(_menu.CursorIndex);
+                // TODO logi?
+            }
 
             // poprawa kursora
             if (_menu.CursorIndex >= tile.Items.Count && tile.Items.Count > 0)

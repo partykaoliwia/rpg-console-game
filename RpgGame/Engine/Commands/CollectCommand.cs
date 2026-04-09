@@ -14,7 +14,6 @@ namespace RpgGame.Engine.Commands
         private readonly GameEngine _engine;
         private readonly Player _player;
         private readonly Board _board;
-        private ITile CurrentTile => _board.GetTile(_player.X, _player.Y);
         public CollectCommand(GameEngine engine, Player player, Board board)
         {
             _engine = engine;
@@ -23,11 +22,18 @@ namespace RpgGame.Engine.Commands
         }
         public void Execute()
         {
-            if (CurrentTile.Items.Count == 1)
+            var tile = _board.GetTile(_player.X, _player.Y);
+
+            if (tile.Items.Count == 1)
             {
-                _player.CollectSpecific(0, _board);
+                var item = tile.Items[0];
+                if(item.PickUp(_player))
+                {
+                    tile.Items.RemoveAt(0);
+                    // TODO log?
+                }
             }
-            else if (CurrentTile.Items.Count > 1)
+            else if (tile.Items.Count > 1)
             {
                 _engine.PushState(new LootingState(_engine, _player, _board));
             }
