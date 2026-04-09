@@ -46,7 +46,7 @@ namespace RpgGame.Engine.Commands
             // wróg zginął
             if (!enemy.IsAlive)
             {
-                string flee = KeybindManager.Instance.GetKey("Combat", "Flee").ToString();
+                string flee = KeybindManager.Instance.GetKeyName("Combat", "Flee");
                 _state.BattleLog += $" The enemy has been defeated! Press [{flee}] to return to the board.";
                 _state.IsChoosingWeapon = false;
                 _state.EnemyTile.Entity = null;

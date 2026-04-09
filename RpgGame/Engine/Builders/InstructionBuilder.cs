@@ -40,14 +40,14 @@ namespace RpgGame.Engine.Builders
 
         public void AddItems(int count)
         {
-            string collect = KeybindManager.Instance.GetKey("Playing", "Collect").ToString();
+            string collect = KeybindManager.Instance.GetKeyName("Playing", "Collect");
             _instructions.Add($"The gods have left here {count} ancient artifacts, which you can pick up by pressing [{collect}].");
         }
 
         public void AddWeapons(int count)
         {
-            string collect = KeybindManager.Instance.GetKey("Playing", "Collect").ToString();
-            string inv = KeybindManager.Instance.GetKey("Playing", "OpenInventory").ToString();
+            string collect = KeybindManager.Instance.GetKeyName("Playing", "Collect");
+            string inv = KeybindManager.Instance.GetKeyName("Playing", "OpenInventory");
             _instructions.Add($"Previous adventurers have left {count} pieces of powerful weapons here - use [{collect}] to pick up and [{inv}] to manage your equipment.");
         }
 
