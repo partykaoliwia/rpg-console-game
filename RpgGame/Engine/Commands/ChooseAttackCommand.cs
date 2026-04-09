@@ -31,9 +31,9 @@ namespace RpgGame.Engine.Commands
             {
                 _state.IsChoosingWeapon = true;
 
-                string left = KeybindManager.Instance.GetKeyName("Combat", "ChooseLeft");
-                string right =  KeybindManager.Instance.GetKeyName("Combat", "ChooseRight");
-                string flee = KeybindManager.Instance.GetKeyName("Combat", "Flee");
+                string left = _state.Engine.Keybinds.GetKeyName("Combat", "ChooseLeft");
+                string right = _state.Engine.Keybinds.GetKeyName("Combat", "ChooseRight");
+                string flee = _state.Engine.Keybinds.GetKeyName("Combat", "Flee");
                 _state.BattleLog = $"You have a weapon in both hands! Which one to strike? [{left}] - Left, [{right}] - Right (or [{flee}] to cancel)";
             }
             else

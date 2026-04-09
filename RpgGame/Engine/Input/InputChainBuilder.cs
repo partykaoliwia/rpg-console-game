@@ -24,9 +24,9 @@ namespace RpgGame.Engine.Input
         }
 
         // Metoda pomocnicza - automatycznie tworzy KeyCommandHandler i dodaje do łańcucha
-        public InputChainBuilder AddKey(string state, string action, ICommand command)
+        public InputChainBuilder AddKey(string state, string action, ICommand command, KeybindManager keybinds)
         {
-            return AddHandler(new KeyCommandHandler(state, action, command));
+            return AddHandler(new KeyCommandHandler(state, action, command, keybinds));
         }
 
         // Zwraca gotowy, połączony łańcuch

@@ -19,8 +19,8 @@ namespace RpgGame.Engine.States
             _engine = engine;
             _instructions = instructions;
             string s = "Instruction";
-            _inputChainHead = new InputChainBuilder().AddKey(s, "Continue", new PopStateCommand(engine))
-                                                      .AddKey(s, "Reload", new ReloadConfigCommand())
+            _inputChainHead = new InputChainBuilder().AddKey(s, "Continue", new PopStateCommand(engine), engine.Keybinds)
+                                                      .AddKey(s, "Reload", new ReloadConfigCommand(engine.Keybinds), engine.Keybinds)
                                                       .Build();
         }
         public void Draw(ConsoleRenderer renderer)

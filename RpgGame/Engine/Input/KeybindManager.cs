@@ -8,23 +8,11 @@ namespace RpgGame.Engine.Input
 {
     public class KeybindManager
     {
-        private static KeybindManager _instance;
         private readonly Dictionary<string, Dictionary<string, ConsoleKey>> _keybinds;
-        private KeybindManager()
+        public KeybindManager()
         {
             _keybinds = new Dictionary<string, Dictionary<string, ConsoleKey>>();
             LoadKeybinds("keybinds.txt");
-        }
-        public static KeybindManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new KeybindManager();
-                }
-                return _instance;
-            }
         }
         public void LoadKeybinds(string filePath)
         {

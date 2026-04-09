@@ -35,16 +35,16 @@ namespace RpgGame.Engine.States
             string s = "Combat";
 
             // ŁAŃCUCH WYBORU ATAKU (1-3)
-            _attackChain = new InputChainBuilder().AddKey(s,"NormalAttack", new ChooseAttackCommand(this, new NormalAttack()))
-                                              .AddKey(s, "StealthAttack", new ChooseAttackCommand(this, new StealthAttack()))
-                                              .AddKey(s, "MagicAttack", new ChooseAttackCommand(this, new MagicAttack()))
-                                              .AddKey(s, "Flee", new PopStateCommand(engine))
+            _attackChain = new InputChainBuilder().AddKey(s,"NormalAttack", new ChooseAttackCommand(this, new NormalAttack()), engine.Keybinds)
+                                              .AddKey(s, "StealthAttack", new ChooseAttackCommand(this, new StealthAttack()), engine.Keybinds)
+                                              .AddKey(s, "MagicAttack", new ChooseAttackCommand(this, new MagicAttack()), engine.Keybinds)
+                                              .AddKey(s, "Flee", new PopStateCommand(engine), engine.Keybinds)
                                               .Build();
 
             // ŁAŃCUCH WYBORU BRONI (L/R)
-            _weaponChain = new InputChainBuilder().AddKey(s, "ChooseLeft", new PerformAttackCommand(this, true))
-                                                 .AddKey(s, "ChooseRight", new PerformAttackCommand(this, false))
-                                                 .AddKey(s, "Flee", new CancelWeaponChoiceCommand(this))
+            _weaponChain = new InputChainBuilder().AddKey(s, "ChooseLeft", new PerformAttackCommand(this, true), engine.Keybinds)
+                                                 .AddKey(s, "ChooseRight", new PerformAttackCommand(this, false), engine.Keybinds)
+                                                 .AddKey(s, "Flee", new CancelWeaponChoiceCommand(this), engine.Keybinds)
                                                  .Build();
         }
 

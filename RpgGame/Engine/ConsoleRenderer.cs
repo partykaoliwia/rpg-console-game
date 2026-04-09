@@ -26,10 +26,11 @@ namespace RpgGame.Engine
         private const int RightWidth = 32;
 
         private readonly string[,] _buffer = new string[ScreenWidth, ScreenHeight];
+        private readonly KeybindManager _keybinds;
 
-        public ConsoleRenderer()
+        public ConsoleRenderer(KeybindManager keybinds)
         {
-
+            _keybinds = keybinds;
             Console.CursorVisible = false;
             ClearBuffer();
         }
@@ -150,14 +151,14 @@ namespace RpgGame.Engine
         public void DrawInventoryMenu(Player player, int cursorIndex, string errorMessage, ITile currentTile)
         {
             DrawBox(LeftX, 1, LeftWidth, 10, " CONTROLS ");
-            string up = KeybindManager.Instance.GetKeyName("Inventory", "MoveUp");
-            string down = KeybindManager.Instance.GetKeyName("Inventory", "MoveDown");
-            string quit = KeybindManager.Instance.GetKeyName("Inventory", "Quit");
-            string drop = KeybindManager.Instance.GetKeyName("Inventory", "Drop");
-            string eqL = KeybindManager.Instance.GetKeyName("Inventory", "EquipLeft");
-            string eqR = KeybindManager.Instance.GetKeyName("Inventory", "EquipRight");
-            string uneqL = KeybindManager.Instance.GetKeyName("Inventory", "UnequipLeft");
-            string uneqR = KeybindManager.Instance.GetKeyName("Inventory", "UnequipRight");
+            string up = _keybinds.GetKeyName("Inventory", "MoveUp");
+            string down = _keybinds.GetKeyName("Inventory", "MoveDown");
+            string quit = _keybinds.GetKeyName("Inventory", "Quit");
+            string drop = _keybinds.GetKeyName("Inventory", "Drop");
+            string eqL = _keybinds.GetKeyName("Inventory", "EquipLeft");
+            string eqR = _keybinds.GetKeyName("Inventory", "EquipRight");
+            string uneqL = _keybinds.GetKeyName("Inventory", "UnequipLeft");
+            string uneqR = _keybinds.GetKeyName("Inventory", "UnequipRight");
 
             int y = 3;
             WriteToBuffer(LeftX + 2, y++, $"[{up}/{down}] Up/Down");
@@ -175,10 +176,10 @@ namespace RpgGame.Engine
         public void DrawLootingMenu(Player player, ITile currentTile, int cursorIndex, string errorMessage)
         {
             DrawBox(LeftX, 1, LeftWidth, 10, " CONTROLS ");
-            string up = KeybindManager.Instance.GetKeyName("Looting", "MoveUp");
-            string down = KeybindManager.Instance.GetKeyName("Looting", "MoveDown");
-            string quit = KeybindManager.Instance.GetKeyName("Looting", "Quit");
-            string collect = KeybindManager.Instance.GetKeyName("Looting", "Collect");
+            string up = _keybinds.GetKeyName("Looting", "MoveUp");
+            string down = _keybinds.GetKeyName("Looting", "MoveDown");
+            string quit = _keybinds.GetKeyName("Looting", "Quit");
+            string collect = _keybinds.GetKeyName("Looting", "Collect");
 
             int y = 3;
             WriteToBuffer(LeftX + 2, y++, $"[{up}/{down}] Up/Down");
@@ -194,13 +195,12 @@ namespace RpgGame.Engine
         public void DrawPlayingView(Board board, Player player, string errorMessage = "")
         {
             DrawBox(LeftX, 1, LeftWidth, 10, " CONTROLS ");
-            string up = KeybindManager.Instance.GetKeyName("Playing", "MoveUp");
-            string down = KeybindManager.Instance.GetKeyName("Playing", "MoveDown");
-            string left = KeybindManager.Instance.GetKeyName("Playing", "MoveLeft");
-            string right = KeybindManager.Instance.GetKeyName("Playing", "MoveRight");
-            string inv = KeybindManager.Instance.GetKeyName("Playing", "OpenInventory");
-            string collect = KeybindManager.Instance.GetKeyName("Playing", "Collect");
-
+            string up = _keybinds.GetKeyName("Playing", "MoveUp");
+            string down = _keybinds.GetKeyName("Playing", "MoveDown");
+            string left = _keybinds.GetKeyName("Playing", "MoveLeft");
+            string right = _keybinds.GetKeyName("Playing", "MoveRight");
+            string inv = _keybinds.GetKeyName("Playing", "OpenInventory");
+            string collect = _keybinds.GetKeyName("Playing", "Collect");    
             int y = 3;
             WriteToBuffer(LeftX + 2, y++, $"[{up}/{left}/{down}/{right}] Move");
             WriteToBuffer(LeftX + 2, y++, $"[{inv}] Open inventory");
@@ -259,7 +259,7 @@ namespace RpgGame.Engine
             }
 
             currentY += 2;
-            string continueKey = KeybindManager.Instance.GetKeyName("Instruction", "Continue");
+            string continueKey = _keybinds.GetKeyName("Instruction", "Continue");
             string continueText = $"Press [{continueKey}] to enter the labyrinth...";
             
             WriteToBufferColored((ScreenWidth - continueText.Length) / 2, currentY, continueText, System.Drawing.Color.DarkGoldenrod);
@@ -356,9 +356,9 @@ namespace RpgGame.Engine
             WriteToBufferColored(leftColX + (colWidth - enemyIcon.Length) / 2, 8, enemyIcon, enemy.ItemColor);
 
             // 2. LEWY DOLNY - COMBAT GUIDE
-            string atk1 = KeybindManager.Instance.GetKeyName("Combat", "NormalAttack");
-            string atk2 = KeybindManager.Instance.GetKeyName("Combat", "StealthAttack");
-            string atk3 = KeybindManager.Instance.GetKeyName("Combat", "MagicAttack");
+            string atk1 = _keybinds.GetKeyName("Combat", "NormalAttack");
+            string atk2 = _keybinds.GetKeyName("Combat", "StealthAttack");
+            string atk3 = _keybinds.GetKeyName("Combat", "MagicAttack");
             DrawBox(leftColX, 12, colWidth, 15, " COMBAT GUIDE ");
             int infoY = 14;
             WriteToBufferColored(leftColX + 2, infoY++, $"Normal Attack", System.Drawing.Color.DarkGray);
@@ -400,9 +400,9 @@ namespace RpgGame.Engine
             int ctrlY = 21;
             if (isChoosingWeapon)
             {
-                string left = KeybindManager.Instance.GetKeyName("Combat", "ChooseLeft");
-                string right = KeybindManager.Instance.GetKeyName("Combat", "ChooseRight");
-                string esc = KeybindManager.Instance.GetKeyName("Combat", "Flee");
+                string left = _keybinds.GetKeyName("Combat", "ChooseLeft");
+                string right = _keybinds.GetKeyName("Combat", "ChooseRight");
+                string esc = _keybinds.GetKeyName("Combat", "Flee");
 
                 WriteToBufferColored(rightColX + 2, ctrlY++, "Choose weapon to strike with:", System.Drawing.Color.Gold);
                 WriteToBuffer(rightColX + 2, ctrlY++, $"[{left}] Left Hand");
@@ -412,7 +412,7 @@ namespace RpgGame.Engine
             }
             else
             {
-                string esc = KeybindManager.Instance.GetKeyName("Combat", "Flee");
+                string esc = _keybinds.GetKeyName("Combat", "Flee");
 
                 WriteToBuffer(rightColX + 2, ctrlY++, $"[{atk1}] Normal Attack");
                 WriteToBuffer(rightColX + 2, ctrlY++, $"[{atk2}] Stealth Attack");

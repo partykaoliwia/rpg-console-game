@@ -8,17 +8,19 @@ namespace RpgGame.Engine.Input
         private readonly string _state;
         private readonly string _action;
         private readonly ICommand _command;
+        private readonly KeybindManager _keybinds;
 
-        public KeyCommandHandler(string state, string action, ICommand command)
+        public KeyCommandHandler(string state, string action, ICommand command, KeybindManager keybinds)
         {
             _state = state;
             _action = action;
             _command = command;
+            _keybinds = keybinds;
         }
 
         public override bool Handle(ConsoleKey key, out string errorMessage)
         {
-            ConsoleKey currentKey = KeybindManager.Instance.GetKey(_state, _action);
+            ConsoleKey currentKey = _keybinds.GetKey(_state, _action);
             if (key == currentKey && currentKey != ConsoleKey.None)
             {
                 _command.Execute();

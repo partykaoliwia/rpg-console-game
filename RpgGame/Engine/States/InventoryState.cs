@@ -30,15 +30,15 @@ namespace RpgGame.Engine.States
             _board = board;
             var s = "Inventory";
 
-            _inputChainHead = new InputChainBuilder().AddKey(s, "MoveUp", new MoveCursorCommand(this, -1))
-                                                      .AddKey(s, "MoveDown", new MoveCursorCommand(this, 1))
-                                                      .AddKey(s, "EquipLeft", new EquipCommand(player, this, HandSlot.Left))
-                                                      .AddKey(s,"EquipRight", new EquipCommand(player, this, HandSlot.Right))
-                                                      .AddKey(s,"UnequipLeft", new UnequipCommand(player, HandSlot.Left))
-                                                      .AddKey(s,"UnequipRight", new UnequipCommand(player, HandSlot.Right))
-                                                      .AddKey(s,"Drop", new DropItemCommand(player, board, this))
-                                                      .AddKey(s,"Quit",new PopStateCommand(engine))
-                                                      .AddKey(s,"Reload", new ReloadConfigCommand())
+            _inputChainHead = new InputChainBuilder().AddKey(s, "MoveUp", new MoveCursorCommand(this, -1), engine.Keybinds)
+                                                      .AddKey(s, "MoveDown", new MoveCursorCommand(this, 1), engine.Keybinds)
+                                                      .AddKey(s, "EquipLeft", new EquipCommand(player, this, HandSlot.Left), engine.Keybinds)
+                                                      .AddKey(s,"EquipRight", new EquipCommand(player, this, HandSlot.Right), engine.Keybinds)
+                                                      .AddKey(s,"UnequipLeft", new UnequipCommand(player, HandSlot.Left), engine.Keybinds)
+                                                      .AddKey(s,"UnequipRight", new UnequipCommand(player, HandSlot.Right), engine.Keybinds)
+                                                      .AddKey(s,"Drop", new DropItemCommand(player, board, this), engine.Keybinds)
+                                                      .AddKey(s,"Quit",new PopStateCommand(engine), engine.Keybinds)
+                                                      .AddKey(s,"Reload", new ReloadConfigCommand(engine.Keybinds), engine.Keybinds)
                                                       .Build();
         }
         public void HandleInput(ConsoleKey key)

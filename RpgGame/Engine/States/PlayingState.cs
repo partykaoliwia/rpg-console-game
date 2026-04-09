@@ -24,14 +24,14 @@ namespace RpgGame.Engine.States
             _player = player;
             string s = "Playing";
 
-            _inputChainHead = new InputChainBuilder().AddKey(s, "MoveUp", new MoveCommand(engine, player, board, 0, -1))
-                                                      .AddKey(s, "MoveDown", new MoveCommand(engine, player, board, 0, 1))
-                                                      .AddKey(s,"MoveLeft",new MoveCommand(engine, player, board, -1, 0))
-                                                      .AddKey(s,"MoveRight",new MoveCommand(engine,player, board, 1, 0))
-                                                      .AddKey(s,"Collect", new CollectCommand(engine, player, board))
-                                                      .AddKey(s,"OpenInventory",new PushStateCommand(engine, new InventoryState(engine, player, board)))
-                                                      .AddKey(s,"Quit",new QuitCommand(engine))
-                                                      .AddKey(s,"Reload", new ReloadConfigCommand())
+            _inputChainHead = new InputChainBuilder().AddKey(s, "MoveUp", new MoveCommand(engine, player, board, 0, -1),engine.Keybinds)
+                                                      .AddKey(s, "MoveDown", new MoveCommand(engine, player, board, 0, 1),engine.Keybinds)
+                                                      .AddKey(s,"MoveLeft",new MoveCommand(engine, player, board, -1, 0),engine.Keybinds)
+                                                      .AddKey(s,"MoveRight",new MoveCommand(engine,player, board, 1, 0),engine.Keybinds)
+                                                      .AddKey(s,"Collect", new CollectCommand(engine, player, board),engine.Keybinds)
+                                                      .AddKey(s,"OpenInventory",new PushStateCommand(engine, new InventoryState(engine, player, board)),engine.Keybinds)
+                                                      .AddKey(s,"Quit",new QuitCommand(engine),engine.Keybinds)
+                                                      .AddKey(s,"Reload", new ReloadConfigCommand(engine.Keybinds),engine.Keybinds)
                                                       .Build(); 
         }
 

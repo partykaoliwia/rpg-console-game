@@ -3,10 +3,9 @@
 namespace RpgGame.Engine.Commands
 {
     public class ReloadConfigCommand : ICommand
-    {
-        public void Execute()
-        {
-            KeybindManager.Instance.LoadKeybinds("keybinds.txt");
-        }
-    }
+{
+    private readonly KeybindManager _keybinds;
+    public ReloadConfigCommand(KeybindManager keybinds) { _keybinds = keybinds; }
+    public void Execute() { _keybinds.LoadKeybinds("keybinds.txt"); }
+}
 }

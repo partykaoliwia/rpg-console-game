@@ -34,11 +34,11 @@ namespace RpgGame.Engine.States
 
             string s = "Looting";
 
-            _inputChainHead = new InputChainBuilder().AddKey(s,"MoveUp", new MoveCursorCommand(this, -1))
-                                                      .AddKey(s,"MoveDown",new MoveCursorCommand(this, 1))
-                                                      .AddKey(s,"Collect", new LootItemCommand(player, board, this))
-                                                      .AddKey(s,"Quit", new PopStateCommand(engine))
-                                                      .AddKey(s,"Reload", new ReloadConfigCommand())
+            _inputChainHead = new InputChainBuilder().AddKey(s,"MoveUp", new MoveCursorCommand(this, -1),engine.Keybinds)
+                                                      .AddKey(s,"MoveDown",new MoveCursorCommand(this, 1),engine.Keybinds)
+                                                      .AddKey(s,"Collect", new LootItemCommand(player, board, this),engine.Keybinds)
+                                                      .AddKey(s,"Quit", new PopStateCommand(engine),engine.Keybinds)
+                                                      .AddKey(s,"Reload", new ReloadConfigCommand(engine.Keybinds),engine.Keybinds)
                                                       .Build();
         }        
 

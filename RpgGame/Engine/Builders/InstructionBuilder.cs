@@ -12,6 +12,11 @@ namespace RpgGame.Engine.Builders
         private List<string> _instructions = new List<string>();
 
         public List<string> BuildResult() => _instructions;
+        private readonly KeybindManager _keybinds;
+        public InstructionBuilder(KeybindManager keybinds)
+        {
+            _keybinds = keybinds;
+        }
 
         public void BuildEmptyDungeon()
         {
@@ -40,14 +45,14 @@ namespace RpgGame.Engine.Builders
 
         public void AddItems(int count)
         {
-            string collect = KeybindManager.Instance.GetKeyName("Playing", "Collect");
+            string collect = _keybinds.GetKeyName("Playing", "Collect");
             _instructions.Add($"The gods have left here {count} ancient artifacts, which you can pick up by pressing [{collect}].");
         }
 
         public void AddWeapons(int count)
         {
-            string collect = KeybindManager.Instance.GetKeyName("Playing", "Collect");
-            string inv = KeybindManager.Instance.GetKeyName("Playing", "OpenInventory");
+            string collect = _keybinds.GetKeyName("Playing", "Collect");
+            string inv = _keybinds.GetKeyName("Playing", "OpenInventory");
             _instructions.Add($"Previous adventurers have left {count} pieces of powerful weapons here - use [{collect}] to pick up and [{inv}] to manage your equipment.");
         }
 
