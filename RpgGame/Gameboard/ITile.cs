@@ -13,6 +13,6 @@ namespace RpgGame.Gameboard
     {
         bool IsWalkable { get; }
         List<IItem> Items { get; }
-        Enemy Entity { get; set; }
+        IAttackable Entity { get; set; }
     }
 }

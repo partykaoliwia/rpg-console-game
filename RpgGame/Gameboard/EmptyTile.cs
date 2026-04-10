@@ -15,7 +15,7 @@ namespace RpgGame.Gameboard
         public string Symbol => " ";
         public bool IsWalkable => true;
         public List<IItem> Items { get; } = new List<IItem>();
-        public Enemy Entity { get; set; } = null;
+        public IAttackable Entity { get; set; } = null;
 
     }
 }

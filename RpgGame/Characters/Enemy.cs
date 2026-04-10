@@ -28,6 +28,7 @@ namespace RpgGame.Characters
         {
             int actualDamage = Math.Max(0, damage - Armor);
             Health -= actualDamage;
+            if(Health< 0) Health = 0;
             return actualDamage;
         }
 

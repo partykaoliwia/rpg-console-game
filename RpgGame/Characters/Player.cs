@@ -32,7 +32,7 @@ namespace RpgGame.Characters
         public int BaseDexterity { get; set; } = 20;
 
         public int Strength => BaseStrength + GetBonusStats().Strength;
-        public int Health => BaseHealth + GetBonusStats().Health;
+        public int Health => Math.Max(0,BaseHealth + GetBonusStats().Health);
         public int Luck => BaseLuck + GetBonusStats().Luck;
         public int Aggression => BaseAggression + GetBonusStats().Aggression;
         public int Wisdom => BaseWisdom + GetBonusStats().Wisdom;
@@ -57,7 +57,6 @@ namespace RpgGame.Characters
         {
             int actualDamage = Math.Max(0, damage - Armor);
             BaseHealth -= damage;
-            if (BaseHealth < 0) BaseHealth = 0; //TODO
             return actualDamage;
         }
 
