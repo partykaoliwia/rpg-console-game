@@ -16,12 +16,13 @@ class Program
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         var keybinds = new KeybindManager();
+        IFactory factory = new StandardFactory();
 
         // kierownik budowy:)
         var director = new DungeonDirector();
 
         // budowa plansza
-        var mapBuilder = new MapBuilder();
+        var mapBuilder = new MapBuilder(factory);
         director.SetBuilder(mapBuilder);
         //director.ConstructTestItemkow();
         director.ConstructMinotaursLabyrinth(); 
