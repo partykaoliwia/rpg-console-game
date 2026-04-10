@@ -8,18 +8,18 @@ using RpgGame.Common;
 
 namespace RpgGame.Characters
 {
-    public class Enemy : IDrawable
+    public class Enemy : IAttackable
     {
         public string Symbol { get; set; } = "■";
         public Color ItemColor { get; set; } = Color.DarkRed;
         public string Name { get; set; }
-        public int HP { get; set; }
+        public int Health { get; set; }
         public int Strength { get; set; }
         public int Armor { get; set; }
-        public bool IsAlive => HP > 0;
-        public Enemy(int hp, int strength, int armor, string name = "Enemy")
+        public bool IsAlive => Health > 0;
+        public Enemy(int health, int strength, int armor, string name = "Enemy")
         {
-            HP = hp;
+            Health = health;
             Strength = strength;
             Armor = armor;
             Name = name;
@@ -27,7 +27,7 @@ namespace RpgGame.Characters
         public int TakeDamage(int damage)
         {
             int actualDamage = Math.Max(0, damage - Armor);
-            HP -= actualDamage;
+            Health -= actualDamage;
             return actualDamage;
         }
 

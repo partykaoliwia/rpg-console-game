@@ -12,8 +12,8 @@ namespace RpgGame.Engine.States
         public GameEngine Engine { get; }
 
         public Player Player { get; }
-        public Enemy CurrentEnemy { get; }
-        public ITile EnemyTile { get; }
+        public IAttackable Target { get; }
+        public ITile TargetTile { get; }
 
         private readonly InputHandler _attackChain;
         private readonly InputHandler _weaponChain;
@@ -24,12 +24,12 @@ namespace RpgGame.Engine.States
 
         public string BattleLog { get; set; } = "An enemy approaches! Choose your attack.";
 
-        public CombatState(GameEngine engine, Player player, Enemy enemy, ITile enemyTile)
+        public CombatState(GameEngine engine, Player player, IAttackable target, ITile targetTile)
         {
             Engine = engine;
             Player = player;
-            CurrentEnemy = enemy;
-            EnemyTile = enemyTile;
+            Target = target;
+            TargetTile = targetTile;
 
 
             string s = "Combat";
@@ -69,7 +69,7 @@ namespace RpgGame.Engine.States
 
         public void Draw(ConsoleRenderer renderer)
         {
-            renderer.DrawCombatScreen(Player, CurrentEnemy, BattleLog, IsChoosingWeapon);
+            renderer.DrawCombatScreen(Player, Target, BattleLog, IsChoosingWeapon);
         }
     }
 }

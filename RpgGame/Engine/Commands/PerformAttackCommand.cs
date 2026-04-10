@@ -20,7 +20,7 @@ namespace RpgGame.Engine.Commands
         public void Execute()
         {
             var player = _state.Player;
-            var enemy = _state.CurrentEnemy;
+            var target = _state.Target;
             var attackVisitor = _state.PendingAttack;
 
             IItem weapon = _useLeftHand ? player.LeftHand : player.RightHand;
@@ -40,25 +40,25 @@ namespace RpgGame.Engine.Commands
             }
 
             // atakowanie wroga
-            int dealtDamage = enemy.TakeDamage(stats.Damage);
+            int dealtDamage = target.TakeDamage(stats.Damage);
             _state.BattleLog = $"You strike with: {attackName}! You dealt {dealtDamage} damage.";
 
             // wróg zginął
-            if (!enemy.IsAlive)
+            if (!target.IsAlive)
             {
                 string flee = _state.Engine.Keybinds.GetKeyName("Combat", "Flee");
                 _state.BattleLog += $" The enemy has been defeated! Press [{flee}] to return to the board.";
-                _state.IsChoosingWeapon = false;
-                _state.EnemyTile.Entity = null;
+                _state.IsChoosingWeapon = false; // jakos fajniej tu zeby automatycznie wychodzilo z combat state
+                _state.TargetTile.Entity = null; //TODO: lepiej byłoby usunąć wroga z mapy, ale to wymagałoby zmian w strukturze mapy, więc na razie po prostu usuwamy go z pola bitwy
                 return;
             }
 
-            int receivedDamage = Math.Max(0, enemy.Strength - stats.Defense);
-            player.TakeDamage(receivedDamage);
+            int receivedDamage = Math.Max(0, target.Strength - stats.Defense);
+            int actualReceivedDamage = player.TakeDamage(receivedDamage);
 
-            _state.BattleLog += $" | {enemy.Name} counterattacks for {receivedDamage}! You have {player.Health} HP.";
+            _state.BattleLog += $" | {target.Name} counterattacks for {actualReceivedDamage}! You have {player.Health} HP.";
 
-            if (player.Health <= 0)
+            if (!player.IsAlive)
             {
                 _state.Engine.PushState(new GameOverState());
                 return; 

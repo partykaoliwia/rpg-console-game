@@ -336,7 +336,7 @@ namespace RpgGame.Engine
         }
 
         // RYSOWANIE EKRANU WALKI
-        public void DrawCombatScreen(Player player, Enemy enemy, string battleLog, bool isChoosingWeapon, string errorMessage = "")
+        public void DrawCombatScreen(Player player, IAttackable target, string battleLog, bool isChoosingWeapon, string errorMessage = "")
         {
             int leftColX = LeftX;
             int rightColX = RightX;
@@ -347,13 +347,13 @@ namespace RpgGame.Engine
             // KOLUMNA LEWA
 
             // 1. LEWY GÓRNY - PRZECIWNIK
-            DrawBox(leftColX, 1, colWidth, 10, $" {enemy.Name} ".ToUpper());
-            WriteToBufferColored(leftColX + 2, 3, $"❤️: {Math.Max(0, enemy.HP)}", System.Drawing.Color.Red);
-            WriteToBuffer(leftColX + 2, 4, $"Strength: {enemy.Strength}");
-            WriteToBuffer(leftColX + 2, 5, $"Armor: {enemy.Armor}");
+            DrawBox(leftColX, 1, colWidth, 10, $" {target.Name} ".ToUpper());
+            WriteToBufferColored(leftColX + 2, 3, $"❤️: {Math.Max(0, target.Health)}", System.Drawing.Color.Red);
+            WriteToBuffer(leftColX + 2, 4, $"Strength: {target.Strength}");
+            WriteToBuffer(leftColX + 2, 5, $"Armor: {target.Armor}");
 
-            string enemyIcon = $"[ {enemy.Symbol} ]";
-            WriteToBufferColored(leftColX + (colWidth - enemyIcon.Length) / 2, 8, enemyIcon, enemy.ItemColor);
+            string enemyIcon = $"[ {target.Symbol} ]";
+            WriteToBufferColored(leftColX + (colWidth - enemyIcon.Length) / 2, 8, enemyIcon, target.ItemColor);
 
             // 2. LEWY DOLNY - COMBAT GUIDE
             string atk1 = _keybinds.GetKeyName("Combat", "NormalAttack");

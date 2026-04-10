@@ -18,7 +18,7 @@ namespace RpgGame.Engine.Commands
 
         public void Execute()
         {
-            if (!_state.CurrentEnemy.IsAlive || _state.Player.Health <= 0) return;
+            if (!_state.Target.IsAlive || _state.Player.Health <= 0) return;
 
             var p = _state.Player;
             _state.PendingAttack = _attack;

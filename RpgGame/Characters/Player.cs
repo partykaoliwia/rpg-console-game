@@ -11,10 +11,13 @@ using RpgGame.Items.Money;
 
 namespace RpgGame.Characters
 {
-    public class Player : IDrawable
+    public class Player : IAttackable
     {
         public Color ItemColor { get; set; } = Color.White;
         public string Symbol => "¶";
+        public string Name { get; set; } = "Tezeusz";
+        public int Armor => 0;
+        public bool IsAlive => Health > 0;
 
         // wspolrzedne
         public int X { get; private set; }
@@ -50,10 +53,12 @@ namespace RpgGame.Characters
             return bonusStats;
         }
 
-        public void TakeDamage(int damage)
+        public int TakeDamage(int damage)
         {
+            int actualDamage = Math.Max(0, damage - Armor);
             BaseHealth -= damage;
             if (BaseHealth < 0) BaseHealth = 0; //TODO
+            return actualDamage;
         }
 
         // waluta
