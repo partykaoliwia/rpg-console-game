@@ -18,16 +18,15 @@ namespace RpgGame.Engine.Input
             _keybinds = keybinds;
         }
 
-        public override bool Handle(ConsoleKey key, out string errorMessage)
+        public override bool Handle(ConsoleKey key)
         {
             ConsoleKey currentKey = _keybinds.GetKey(_state, _action);
             if (key == currentKey && currentKey != ConsoleKey.None)
             {
                 _command.Execute();
-                errorMessage = string.Empty;
                 return true;
             }
-            return base.Handle(key, out errorMessage);
+            return base.Handle(key);
         }
     }
 }

@@ -18,7 +18,6 @@ namespace RpgGame.Engine.States
         private readonly Player _player;
         private readonly Board _board;
         private readonly InputHandler _inputChainHead;
-        private string _errorMessage = string.Empty;
         public int CursorIndex { get; set; } = 0;
         public int ItemCount => _player.Inventory.Count;
         private ITile CurrentTile => _board.GetTile(_player.X, _player.Y);
@@ -43,8 +42,7 @@ namespace RpgGame.Engine.States
         }
         public void HandleInput(ConsoleKey key)
         {
-            _errorMessage = string.Empty;
-            _inputChainHead.Handle(key, out _errorMessage);
+            _inputChainHead.Handle(key);
 
             if (ItemCount == 0)
             {
@@ -55,7 +53,7 @@ namespace RpgGame.Engine.States
         public void Draw(ConsoleRenderer renderer)
         {
             renderer.DrawBoard(_board, _player);
-            renderer.DrawInventoryMenu(_player, CursorIndex, _errorMessage,CurrentTile);
+            renderer.DrawInventoryMenu(_player, CursorIndex,CurrentTile);
         }
     }
 }

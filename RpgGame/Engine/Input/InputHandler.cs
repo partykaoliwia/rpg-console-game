@@ -14,13 +14,12 @@ namespace RpgGame.Engine.Input
             return handler;
         }
 
-        public virtual bool Handle(ConsoleKey key, out string errorMessage)
+        public virtual bool Handle(ConsoleKey key)
         {
-            errorMessage = string.Empty;
 
             if (_nextHandler != null)
             {
-                return _nextHandler.Handle(key, out errorMessage);
+                return _nextHandler.Handle(key);
             }
 
             // koniec łańcucha, nikt nie obsłużył klawisza

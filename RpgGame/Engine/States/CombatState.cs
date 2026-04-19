@@ -3,6 +3,7 @@ using RpgGame.Characters;
 using RpgGame.Combat;
 using RpgGame.Engine.Commands;
 using RpgGame.Engine.Input;
+using RpgGame.Engine.Logging;
 using RpgGame.Gameboard;
 
 namespace RpgGame.Engine.States
@@ -22,7 +23,6 @@ namespace RpgGame.Engine.States
         public IAttackVisitor PendingAttack { get; set; }
 
 
-        public string BattleLog { get; set; } = "An enemy approaches! Choose your attack.";
 
         public CombatState(GameEngine engine, Player player, IAttackable target, ITile targetTile)
         {
@@ -30,7 +30,7 @@ namespace RpgGame.Engine.States
             Player = player;
             Target = target;
             TargetTile = targetTile;
-
+            Logger.Instance.Log("An enemy approached! Entering combat state.");
 
             string s = "Combat";
 
@@ -54,22 +54,17 @@ namespace RpgGame.Engine.States
 
             if (IsChoosingWeapon)
             {
-                _weaponChain.Handle(key, out error);
+                _weaponChain.Handle(key);
             }
             else
             {
-                _attackChain.Handle(key, out error);
-            }
-
-            if (!string.IsNullOrEmpty(error))
-            {
-                BattleLog = error;
+                _attackChain.Handle(key);
             }
         }
 
         public void Draw(ConsoleRenderer renderer)
         {
-            renderer.DrawCombatScreen(Player, Target, BattleLog, IsChoosingWeapon);
+            renderer.DrawCombatScreen(Player, Target, IsChoosingWeapon);
         }
     }
 }

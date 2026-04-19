@@ -57,7 +57,7 @@ namespace RpgGame.Engine.Commands
             int receivedDamage = Math.Max(0, target.Strength - stats.Defense);
             int actualReceivedDamage = player.TakeDamage(receivedDamage);
 
-            _state.BattleLog += $" | {target.Name} counterattacks for {actualReceivedDamage}! You have {player.Health} HP.";
+            //_state.BattleLog += $" | {target.Name} counterattacks for {actualReceivedDamage}! You have {player.Health} HP.";
 
             if (!player.IsAlive)
             {

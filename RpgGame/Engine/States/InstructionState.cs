@@ -13,7 +13,6 @@ namespace RpgGame.Engine.States
         private readonly GameEngine _engine;
         private readonly List<string> _instructions;
         private readonly InputHandler _inputChainHead;
-        private string _errorMessage = string.Empty;
         public InstructionState(GameEngine engine, List<string> instructions)
         {
             _engine = engine;
@@ -25,12 +24,12 @@ namespace RpgGame.Engine.States
         }
         public void Draw(ConsoleRenderer renderer)
         {
-            renderer.DrawInstructionScreen(_instructions,_errorMessage);
+            renderer.DrawInstructionScreen(_instructions);
         }
 
         public void HandleInput(ConsoleKey key)
         {
-            _inputChainHead.Handle(key, out _errorMessage);
+            _inputChainHead.Handle(key);
         }
     }
 }

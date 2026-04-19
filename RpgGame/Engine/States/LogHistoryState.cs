@@ -30,7 +30,7 @@ namespace RpgGame.Engine.States
 
         public void HandleInput(ConsoleKey key)
         {
-            _inputChainHead.Handle(key, out _);
+            _inputChainHead.Handle(key);
         }
     }
 }

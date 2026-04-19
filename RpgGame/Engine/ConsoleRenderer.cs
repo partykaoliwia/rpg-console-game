@@ -5,6 +5,7 @@ using Pastel;
 using RpgGame.Characters;
 using RpgGame.Common;
 using RpgGame.Engine.Input;
+using RpgGame.Engine.Logging;
 using RpgGame.Gameboard;
 using RpgGame.Items.Money;
 
@@ -135,8 +136,8 @@ namespace RpgGame.Engine
         // RYSOWANIE ITEMÓW NA ZIEMI
         public void DrawGroundItems(ITile tile, int currentY, int lootCursorIndex = -1)
         {
-            int startY = 12;
-            DrawBox(LeftX, startY, LeftWidth, 14, " ON THE GROUND ");
+            int startY = 11;
+            DrawBox(LeftX, startY, LeftWidth, 12, " ON THE GROUND ");
             if (tile.Items.Count > 0)
             {
                 for (int i = 0; i < tile.Items.Count; i++)
@@ -148,7 +149,7 @@ namespace RpgGame.Engine
         }
 
         // RYSOWANIE MENU INVENTORY
-        public void DrawInventoryMenu(Player player, int cursorIndex, string errorMessage, ITile currentTile)
+        public void DrawInventoryMenu(Player player, int cursorIndex, ITile currentTile)
         {
             DrawBox(LeftX, 1, LeftWidth, 10, " CONTROLS ");
             string up = _keybinds.GetKeyName("Inventory", "MoveUp");
@@ -160,6 +161,7 @@ namespace RpgGame.Engine
             string uneqL = _keybinds.GetKeyName("Inventory", "UnequipLeft");
             string uneqR = _keybinds.GetKeyName("Inventory", "UnequipRight");
 
+
             int y = 3;
             WriteToBuffer(LeftX + 2, y++, $"[{up}/{down}] Up/Down");
             WriteToBuffer(LeftX + 2, y++, $"[{eqL}/{eqR}] Equip to L/R hand");
@@ -169,11 +171,10 @@ namespace RpgGame.Engine
 
             DrawPlayerStats(player, cursorIndex); 
             DrawGroundItems(currentTile, 0);
-            DrawMessage(errorMessage, ScreenHeight - 1);
         }
 
         // RYSOWANIE LOOTING MENU
-        public void DrawLootingMenu(Player player, ITile currentTile, int cursorIndex, string errorMessage)
+        public void DrawLootingMenu(Player player, ITile currentTile, int cursorIndex)
         {
             DrawBox(LeftX, 1, LeftWidth, 10, " CONTROLS ");
             string up = _keybinds.GetKeyName("Looting", "MoveUp");
@@ -188,11 +189,10 @@ namespace RpgGame.Engine
 
             DrawPlayerStats(player);
             DrawGroundItems(currentTile, 0, cursorIndex);
-            DrawMessage(errorMessage, ScreenHeight - 1);
         }
 
         // CONTROLS + BOARD + STATS + GROUND ITEMS, CALY DEFAULT SCREEN
-        public void DrawPlayingView(Board board, Player player, string errorMessage = "")
+        public void DrawPlayingView(Board board, Player player)
         {
             DrawBox(LeftX, 1, LeftWidth, 10, " CONTROLS ");
             string up = _keybinds.GetKeyName("Playing", "MoveUp");
@@ -200,10 +200,12 @@ namespace RpgGame.Engine
             string left = _keybinds.GetKeyName("Playing", "MoveLeft");
             string right = _keybinds.GetKeyName("Playing", "MoveRight");
             string inv = _keybinds.GetKeyName("Playing", "OpenInventory");
-            string collect = _keybinds.GetKeyName("Playing", "Collect");    
+            string collect = _keybinds.GetKeyName("Playing", "Collect");  
+            string logs = _keybinds.GetKeyName("Playing", "LogHistory");
             int y = 3;
             WriteToBuffer(LeftX + 2, y++, $"[{up}/{left}/{down}/{right}] Move");
             WriteToBuffer(LeftX + 2, y++, $"[{inv}] Open inventory");
+            WriteToBuffer(LeftX + 2, y++, $"[{logs}] Show logs");
 
             var tile = board.GetTile(player.X, player.Y);
             if (tile.Items.Count >= 1)
@@ -211,13 +213,69 @@ namespace RpgGame.Engine
 
             DrawBoard(board, player);
             DrawPlayerStats(player); 
-            DrawGroundItems(tile, 0); 
-            DrawMessage(errorMessage, ScreenHeight - 1);
+            DrawGroundItems(tile, 0);
+            DrawRecentLogs();
+        }
+        public void DrawRecentLogs()
+        {
+            DrawBox(LeftX, 23, LeftWidth, 5, " RECENT LOG ");
+
+            // Pobieramy 1 najnowszy log z Singletona (upewnij się, że masz u góry: using RpgGame.Engine.Logging;)
+            var logs = Logger.Instance.GetRecentLogs(1);
+            if (logs.Count == 0) return;
+
+            string lastLog = logs[0];
+            int maxLen = LeftWidth - 4; // Bezpieczna szerokość dla tekstu (ok. 29 znaków)
+            int maxLines = 3; // Mamy miejsce na 3 linijki w boxie o wysokości 5
+
+            List<string> wrappedLines = new List<string>();
+            string[] words = lastLog.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            string currentLine = "";
+
+            // Algorytm Word-Wrap (zawijanie wierszy po słowach)
+            foreach (var word in words)
+            {
+                // Sprawdzamy, czy jeśli dodamy to słowo (plus ewentualną spację), to przekroczymy limit
+                if (currentLine.Length + word.Length + (currentLine.Length > 0 ? 1 : 0) <= maxLen)
+                {
+                    currentLine += (currentLine.Length > 0 ? " " : "") + word;
+                }
+                else
+                {
+                    // Linijka jest pełna, zapisujemy ją
+                    if (currentLine.Length > 0)
+                    {
+                        wrappedLines.Add(currentLine);
+                    }
+
+                    // Zaczynamy nową linijkę od bieżącego słowa
+                    currentLine = word;
+
+                    // Zabezpieczenie: jeśli pojedyncze słowo jest dłuższe niż cały box (mało prawdopodobne, ale chroni przed błędem)
+                    if (currentLine.Length > maxLen)
+                    {
+                        currentLine = currentLine.Substring(0, maxLen);
+                    }
+                }
+            }
+
+            // Dodajemy to, co zostało na końcu
+            if (currentLine.Length > 0)
+            {
+                wrappedLines.Add(currentLine);
+            }
+
+            // Rysowanie wyliczonych linijek na ekranie
+            int startY = 24; // Y zaraz pod górną ramką (która jest na 23)
+            for (int i = 0; i < wrappedLines.Count && i < maxLines; i++)
+            {
+                WriteToBufferColored(LeftX + 2, startY + i, wrappedLines[i], System.Drawing.Color.DarkGray);
+            }
         }
         // LOG HISTORY
         public void DrawLogHistoryScreen(IReadOnlyList<string> logs)
         {
-            DrawBox(10,2,ScreenWidth-20,ScreenHeight-4," LOG HISTORY ");
+            DrawBox(6,2,ScreenWidth-12,ScreenHeight-4," LOG HISTORY ");
             int startY = 4;
             int maxLines = ScreenHeight - 8;
             // Jeśli logów jest więcej niż mieści się na ekranie, pokaż tylko najnowsze z końca
@@ -229,24 +287,9 @@ namespace RpgGame.Engine
             string closeKey = _keybinds.GetKeyName("LogHistory", "CloseLogs");
             string closeText = $"Press [{closeKey}] to close log history";
             WriteToBufferColored((ScreenWidth - closeText.Length) / 2, ScreenHeight - 2, closeText, System.Drawing.Color.DarkGray);
-
-            int logStartY = ScreenHeight - 5;
-            for (int i = 0; i < logs.Count && i < 5; i++)
-            {
-                WriteToBuffer(BottomX, logStartY + i, logs[logs.Count - 1 - i]);
-            }
         }
 
         // MESSAGES
-        public void DrawMessage(string message, int line)
-        {
-            if (!string.IsNullOrEmpty(message))
-            {
-                string formatted = $"  {message}  ";
-                int startX = (ScreenWidth - formatted.Length) / 2;
-                WriteToBufferColored(startX, line, formatted, System.Drawing.Color.Red);
-            }
-        }
         public void DrawInstructionScreen(List<string> instructions, string errorMessage = "")
         {
             string[] asciiTitle = new string[]
@@ -285,7 +328,6 @@ namespace RpgGame.Engine
             string continueText = $"Press [{continueKey}] to enter the labyrinth...";
             
             WriteToBufferColored((ScreenWidth - continueText.Length) / 2, currentY, continueText, System.Drawing.Color.DarkGoldenrod);
-            DrawMessage(errorMessage, currentY + 2);
         }
 
         private void DrawBox(int x, int y, int width, int height, string title)
@@ -358,7 +400,7 @@ namespace RpgGame.Engine
         }
 
         // RYSOWANIE EKRANU WALKI
-        public void DrawCombatScreen(Player player, IAttackable target, string battleLog, bool isChoosingWeapon, string errorMessage = "")
+        public void DrawCombatScreen(Player player, IAttackable target, bool isChoosingWeapon)
         {
             int leftColX = LeftX;
             int rightColX = RightX;
@@ -447,76 +489,45 @@ namespace RpgGame.Engine
 
             DrawBox(centerColX, 1, centerColWidth, 26, " BATTLE LOG ");
 
-            if (!string.IsNullOrEmpty(battleLog))
-            {
-                int logY = 3;
-                var logs = battleLog.Split(new[] { " | " }, StringSplitOptions.RemoveEmptyEntries);
+            //if (!string.IsNullOrEmpty(battleLog))
+            //{
+            //    int logY = 3;
+            //    var logs = battleLog.Split(new[] { " | " }, StringSplitOptions.RemoveEmptyEntries);
 
-                foreach (var log in logs)
-                {
-                    string remaining = log.Trim();
+            //    foreach (var log in logs)
+            //    {
+            //        string remaining = log.Trim();
 
-                    while (remaining.Length > 0)
-                    {
-                        int maxLen = centerColWidth - 4;
-                        string lineToPrint;
+            //        while (remaining.Length > 0)
+            //        {
+            //            int maxLen = centerColWidth - 4;
+            //            string lineToPrint;
 
-                        if (remaining.Length <= maxLen)
-                        {
-                            lineToPrint = remaining;
-                            remaining = "";
-                        }
-                        else
-                        {
-                            int spaceIndex = remaining.LastIndexOf(' ', maxLen);
-                            if (spaceIndex == -1) spaceIndex = maxLen;
+            //            if (remaining.Length <= maxLen)
+            //            {
+            //                lineToPrint = remaining;
+            //                remaining = "";
+            //            }
+            //            else
+            //            {
+            //                int spaceIndex = remaining.LastIndexOf(' ', maxLen);
+            //                if (spaceIndex == -1) spaceIndex = maxLen;
 
-                            lineToPrint = remaining.Substring(0, spaceIndex);
-                            remaining = remaining.Substring(spaceIndex).Trim();
-                        }
+            //                lineToPrint = remaining.Substring(0, spaceIndex);
+            //                remaining = remaining.Substring(spaceIndex).Trim();
+            //            }
 
-                        // Player attacks in gold, enemy attacks in red
-                        var color = logY % 3 == 0 ? System.Drawing.Color.Gold : System.Drawing.Color.LightCoral;
-                        WriteToBufferColored(centerColX + 2, logY++, lineToPrint, color);
-                    }
-                    logY++;
-                }
-            }
+            //            // Player attacks in gold, enemy attacks in red
+            //            var color = logY % 3 == 0 ? System.Drawing.Color.Gold : System.Drawing.Color.LightCoral;
+            //            WriteToBufferColored(centerColX + 2, logY++, lineToPrint, color);
+            //        }
+            //        logY++;
+            //    }
+            //}
 
             // ERRORS
-            DrawMessage(errorMessage, ScreenHeight - 1);
+            //DrawMessage(errorMessage, ScreenHeight - 1);
         }
-        //public void DrawGameOverScreen()
-        //{
-        //    ClearBuffer(); // Czyści wszystko!
-
-        //    // ASCII Art z podwójnymi ukośnikami (by C# ich nie pomylił ze znakami specjalnymi)
-        //    string[] asciiDeath = new string[]
-        //    {
-        //        @"  _____          __  __  ______    ____ __      __ ______  _____  ",
-        //        @" / ____|   /\   |  \/  ||  ____|  / __ \\ \    / /|  ____||  __ \ ",
-        //        @"| |  __   /  \  | \  / || |__    | |  | |\ \  / / | |__   | |__) |",
-        //        @"| | |_ | / /\ \ | |\/| ||  __|   | |  | | \ \/ /  |  __|  |  _  / ",
-        //        @"| |__| |/ ____ \| |  | || |____  | |__| |  \  /   | |____ | | \ \ ",
-        //        @" \_____/_/    \_\_|  |_||______|  \____/    \/    |______||_|  \_\",
-        //        @"",
-        //        @"                           YOU DIED.                            "
-        //    };
-
-        //    // Wyliczanie środka ekranu
-        //    int startY = (ScreenHeight - asciiDeath.Length) / 2;
-        //    int startX = (ScreenWidth - asciiDeath[0].Length) / 2;
-
-        //    // Rysowanie na krwisto czerwono
-        //    for (int i = 0; i < asciiDeath.Length; i++)
-        //    {
-        //        WriteToBufferColored(startX, startY + i, asciiDeath[i], System.Drawing.Color.DarkRed);
-        //    }
-
-        //    // Instrukcja na dole
-        //    string info = "Wciśnij dowolny klawisz, aby zakończyć...";
-        //    WriteToBuffer((ScreenWidth - info.Length) / 2, startY + asciiDeath.Length + 2, info);
-        //}
         public void DrawGameOverScreen(bool animate)
         {
             string[] asciiDeath = new string[]

@@ -16,7 +16,6 @@ namespace RpgGame.Engine.States
         private readonly Board _board;
         private readonly Player _player;
         private readonly InputHandler _inputChainHead;
-        private string _errorMessage = string.Empty;
         public PlayingState(GameEngine engine, Board board, Player player)
         {
             _engine = engine;
@@ -38,12 +37,12 @@ namespace RpgGame.Engine.States
 
         public void HandleInput(ConsoleKey key)
         {
-            _inputChainHead.Handle(key, out _errorMessage);
+            _inputChainHead.Handle(key);
         }
        public void Draw(ConsoleRenderer renderer)
         {
             renderer.DrawBoard(_board, _player);
-            renderer.DrawPlayingView(_board, _player, _errorMessage); 
+            renderer.DrawPlayingView(_board, _player); 
         }
     }
 }
