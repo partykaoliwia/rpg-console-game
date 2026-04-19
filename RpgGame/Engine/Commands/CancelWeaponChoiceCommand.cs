@@ -1,4 +1,5 @@
-﻿using RpgGame.Engine.States;
+﻿using RpgGame.Engine.Logging;
+using RpgGame.Engine.States;
 
 namespace RpgGame.Engine.Commands
 {
@@ -14,7 +15,7 @@ namespace RpgGame.Engine.Commands
         public void Execute()
         {
             _state.IsChoosingWeapon = false;
-            _state.BattleLog = "Weapon choice cancelled. Choose your attack again.";
+            Logger.Instance.Log("Weapon choice cancelled.");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using RpgGame.Characters;
+using RpgGame.Engine.Logging;
 
 namespace RpgGame.Engine.Commands
 {
@@ -18,10 +19,12 @@ namespace RpgGame.Engine.Commands
         {
             if (_slot == HandSlot.Left)
             {
+                Logger.Instance.Log($"{_player.Name} unequipped the item in the left hand.");
                 _player.UnequipLeft();
             }
             else
             {
+                Logger.Instance.Log($"{_player.Name} unequipped the item in the right hand.");
                 _player.UnequipRight();
             }
         }

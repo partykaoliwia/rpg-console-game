@@ -32,6 +32,7 @@ namespace RpgGame.Engine.States
                                                       .AddKey(s,"OpenInventory",new PushStateCommand(engine, new InventoryState(engine, player, board)),engine.Keybinds)
                                                       .AddKey(s,"Quit",new QuitCommand(engine),engine.Keybinds)
                                                       .AddKey(s,"Reload", new ReloadConfigCommand(engine.Keybinds),engine.Keybinds)
+                                                      .AddKey(s,"LogHistory", new PushStateCommand(engine, new LogHistoryState(engine)),engine.Keybinds)
                                                       .Build(); 
         }
 

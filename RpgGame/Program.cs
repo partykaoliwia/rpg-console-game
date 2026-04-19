@@ -2,7 +2,9 @@
 using RpgGame.Characters;
 using RpgGame.Engine;
 using RpgGame.Engine.Builders;
+using RpgGame.Engine.Configuration;
 using RpgGame.Engine.Input;
+using RpgGame.Engine.Logging;
 using RpgGame.Engine.States;
 
 // TO DO
@@ -15,6 +17,17 @@ class Program
     static void Main(string[] args)
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
+        var config = ConfigLoader.LoadConfig("config.json");
+        if(!Directory.Exists(config.LogDirectory))
+        {
+            Directory.CreateDirectory(config.LogDirectory);
+        }
+        string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        string logFilePath = Path.Combine(config.LogDirectory, $"{config.PlayerName}_{timestamp}.txt");
+
+        Logger.Instance.AddWriter(new FileLogWriter(logFilePath));
+        Logger.Instance.SetMemoryWriter(new MemoryLogWriter());
+
         var keybinds = new KeybindManager();
         IFactory factory = new StandardFactory();
 

@@ -2,6 +2,7 @@
 using RpgGame.Characters;
 using RpgGame.Gameboard;
 using RpgGame.Engine.States;
+using RpgGame.Engine.Logging;
 
 namespace RpgGame.Engine.Commands
 {
@@ -27,7 +28,7 @@ namespace RpgGame.Engine.Commands
                 {
                     var currentTile = _board.GetTile(_player.X, _player.Y);
                     currentTile.Items.Add(droppedItem);
-                    //TODO logi?
+                    Logger.Instance.Log($"Player dropped {droppedItem.Name}. Added to tile ({_player.X}, {_player.Y}).");
 
                     // poprawa kursora
                     if (_menu.CursorIndex >= _player.Inventory.Count && _player.Inventory.Count > 0)

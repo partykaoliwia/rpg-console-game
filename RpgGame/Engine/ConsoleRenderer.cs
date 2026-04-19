@@ -214,6 +214,28 @@ namespace RpgGame.Engine
             DrawGroundItems(tile, 0); 
             DrawMessage(errorMessage, ScreenHeight - 1);
         }
+        // LOG HISTORY
+        public void DrawLogHistoryScreen(IReadOnlyList<string> logs)
+        {
+            DrawBox(10,2,ScreenWidth-20,ScreenHeight-4," LOG HISTORY ");
+            int startY = 4;
+            int maxLines = ScreenHeight - 8;
+            // Jeśli logów jest więcej niż mieści się na ekranie, pokaż tylko najnowsze z końca
+            var logsToShow = logs.Skip(Math.Max(0, logs.Count - maxLines)).ToList();
+            for(int i =0; i<logsToShow.Count; i++)
+            {
+                WriteToBuffer(12, startY + i, logsToShow[i]);
+            }
+            string closeKey = _keybinds.GetKeyName("LogHistory", "CloseLogs");
+            string closeText = $"Press [{closeKey}] to close log history";
+            WriteToBufferColored((ScreenWidth - closeText.Length) / 2, ScreenHeight - 2, closeText, System.Drawing.Color.DarkGray);
+
+            int logStartY = ScreenHeight - 5;
+            for (int i = 0; i < logs.Count && i < 5; i++)
+            {
+                WriteToBuffer(BottomX, logStartY + i, logs[logs.Count - 1 - i]);
+            }
+        }
 
         // MESSAGES
         public void DrawMessage(string message, int line)

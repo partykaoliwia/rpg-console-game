@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RpgGame.Engine.Logging;
 
 namespace RpgGame.Engine.Commands
 {
@@ -15,6 +16,7 @@ namespace RpgGame.Engine.Commands
         }
         public void Execute()
         {
+            Logger.Instance.Log("Player chose to quit the game.");
             _engine.QuitGame();
         }
     }

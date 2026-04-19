@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RpgGame.Characters;
+using RpgGame.Engine.Logging;
 using RpgGame.Engine.States;
 using RpgGame.Gameboard;
 
@@ -30,7 +31,7 @@ namespace RpgGame.Engine.Commands
                 if(item.PickUp(_player))
                 {
                     tile.Items.RemoveAt(0);
-                    // TODO log?
+                    Logger.Instance.Log($"Player picked up {item.Name}. Removed from tile ({_player.X}, {_player.Y}).");
                 }
             }
             else if (tile.Items.Count > 1)

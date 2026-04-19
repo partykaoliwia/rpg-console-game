@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RpgGame.Characters;
+using RpgGame.Engine.Logging;
 using RpgGame.Engine.States;
 using RpgGame.Gameboard;
 
@@ -43,7 +44,7 @@ namespace RpgGame.Engine.Commands
             }
             else
             {
-                // Tile is not walkable, do nothing // TODO
+                Logger.Instance.Log("Player tried to move to a non-walkable tile.");
                 return;
             }
         }

@@ -2,6 +2,7 @@
 using RpgGame.Characters;
 using RpgGame.Gameboard;
 using RpgGame.Engine.States;
+using RpgGame.Engine.Logging;
 
 namespace RpgGame.Engine.Commands
 {
@@ -27,7 +28,7 @@ namespace RpgGame.Engine.Commands
             if(item.PickUp(_player))
             {
                 tile.Items.RemoveAt(_menu.CursorIndex);
-                // TODO logi?
+                Logger.Instance.Log($"Player picked up {item.Name}. Removed from tile ({_player.X}, {_player.Y}).");
             }
 
             // poprawa kursora

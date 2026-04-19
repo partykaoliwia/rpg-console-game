@@ -1,4 +1,5 @@
 ﻿using System;
+using RpgGame.Engine.Logging;
 
 namespace RpgGame.Engine.Input
 {
@@ -23,7 +24,7 @@ namespace RpgGame.Engine.Input
             }
 
             // koniec łańcucha, nikt nie obsłużył klawisza
-            errorMessage = $"Invalid key! No action assigned to [{key}].";
+            Logger.Instance.Log($"Invalid key, no action assigned to [{key}].");
             return false;
         }
     }

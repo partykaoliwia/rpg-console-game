@@ -3,6 +3,7 @@ using RpgGame.Engine.States;
 using RpgGame.Items;
 using RpgGame.Combat;
 using RpgGame.Engine.Input;
+using RpgGame.Engine.Logging;
 
 namespace RpgGame.Engine.Commands
 {
@@ -41,13 +42,13 @@ namespace RpgGame.Engine.Commands
 
             // atakowanie wroga
             int dealtDamage = target.TakeDamage(stats.Damage);
-            _state.BattleLog = $"You strike with: {attackName}! You dealt {dealtDamage} damage.";
+            Logger.Instance.Log($"Player attacked with {attackName}, dealing {dealtDamage} damage to {target.Name}.");
 
             // wróg zginął
             if (!target.IsAlive)
             {
                 string flee = _state.Engine.Keybinds.GetKeyName("Combat", "Flee");
-                _state.BattleLog += $" The enemy has been defeated! Press [{flee}] to return to the board.";
+                Logger.Instance.Log("Enemy defeated! Player can flee back to the board.");
                 _state.IsChoosingWeapon = false; // jakos fajniej tu zeby automatycznie wychodzilo z combat state
                 _state.TargetTile.Entity = null; //TODO: lepiej byłoby usunąć wroga z mapy, ale to wymagałoby zmian w strukturze mapy, więc na razie po prostu usuwamy go z pola bitwy
                 return;
@@ -60,6 +61,7 @@ namespace RpgGame.Engine.Commands
 
             if (!player.IsAlive)
             {
+                Logger.Instance.Log("Player has been defeated! Game over.");
                 _state.Engine.PushState(new GameOverState());
                 return; 
             }

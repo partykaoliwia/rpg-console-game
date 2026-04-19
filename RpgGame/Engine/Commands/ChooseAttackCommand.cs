@@ -1,6 +1,7 @@
 ﻿using System;
 using RpgGame.Combat;
 using RpgGame.Engine.Input;
+using RpgGame.Engine.Logging;
 using RpgGame.Engine.States;
 
 namespace RpgGame.Engine.Commands
@@ -34,7 +35,7 @@ namespace RpgGame.Engine.Commands
                 string left = _state.Engine.Keybinds.GetKeyName("Combat", "ChooseLeft");
                 string right = _state.Engine.Keybinds.GetKeyName("Combat", "ChooseRight");
                 string flee = _state.Engine.Keybinds.GetKeyName("Combat", "Flee");
-                _state.BattleLog = $"You have a weapon in both hands! Which one to strike? [{left}] - Left, [{right}] - Right (or [{flee}] to cancel)";
+                Logger.Instance.Log($"Player has a weapon in both hands. Prompting for choice: [{left}] - Left, [{right}] - Right, [{flee}] - Cancel");
             }
             else
             {

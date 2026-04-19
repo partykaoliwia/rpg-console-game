@@ -1,5 +1,6 @@
 ﻿using System;
 using RpgGame.Characters;
+using RpgGame.Engine.Logging;
 using RpgGame.Engine.States;
 
 namespace RpgGame.Engine.Commands
@@ -28,10 +29,12 @@ namespace RpgGame.Engine.Commands
             if (_slot == HandSlot.Left)
             {
                 item.EquipToLeftHand(_player);
+                Logger.Instance.Log($"Player equipped {item.Name} to left hand.");
             }
             else
             {
                 item.EquipToRightHand(_player);
+                Logger.Instance.Log($"Player equipped {item.Name} to right hand.");
             }
 
             // poprawa kursora
