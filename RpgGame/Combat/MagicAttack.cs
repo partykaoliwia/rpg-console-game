@@ -33,7 +33,7 @@ namespace RpgGame.Combat
         {
             return new CombatStats
             {
-                Damage = weapon.Damage,
+                Damage = weapon.GetFullDamage(player),
                 Defense = player.Wisdom*2
 };
         }

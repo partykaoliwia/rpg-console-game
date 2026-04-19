@@ -10,7 +10,7 @@ namespace RpgGame.Combat
         {
             return new CombatStats
             {
-                Damage = weapon.Damage,
+                Damage = weapon.GetFullDamage(player),
                 Defense = player.Luck + player.Strength // siła + szczęście
             };
         }
@@ -19,7 +19,7 @@ namespace RpgGame.Combat
         {
             return new CombatStats
             {
-                Damage = weapon.Damage,
+                Damage = weapon.GetFullDamage(player),
                 Defense = player.Luck + player.Dexterity // zręczność + szczęście
             }; 
         }

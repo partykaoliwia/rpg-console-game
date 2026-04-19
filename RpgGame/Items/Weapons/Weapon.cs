@@ -22,6 +22,7 @@ namespace RpgGame.Items
         {
             Damage = damage;
         }
+        public abstract int GetFullDamage(Player player);
         public virtual bool PickUp(Player player)
         {
             return player.TryAddToInventory(this);

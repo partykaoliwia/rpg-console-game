@@ -15,7 +15,7 @@ namespace RpgGame.Combat
         {
             return new CombatStats
             {
-                Damage = weapon.Damage/2, // zredukowane do połowy
+                Damage = weapon.GetFullDamage(player)/2, // zredukowane do połowy
                 Defense = player.Strength // siła
             };
         }
@@ -24,7 +24,7 @@ namespace RpgGame.Combat
         {
             return new CombatStats
             {
-                Damage = weapon.Damage*2, // podwojone
+                Damage = weapon.GetFullDamage(player)*2, // podwojone
                 Defense = player.Dexterity // zręczność
             };
         }

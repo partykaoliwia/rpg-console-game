@@ -11,6 +11,8 @@ namespace RpgGame.Items.Weapons
     public abstract class LightWeapon : Weapon
     {
         public LightWeapon(int damage) : base(damage) { }
+        public override int GetFullDamage(Player player) => Damage + player.Luck + player.Dexterity;
+
         public override CombatStats Accept(IAttackVisitor visitor, Player player)
         {
             return visitor.Visit(this, player);
