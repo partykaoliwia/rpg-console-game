@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="bin\debug\net9.0\config.json" />
+    <Content Include="bin\debug\net9.0\config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="bin\Debug\net9.0\keybinds.txt" />
   </ItemGroup>
 	

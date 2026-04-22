@@ -317,6 +317,12 @@ namespace RpgGame.Engine
             string continueText = $"Press [{continueKey}] to enter the labyrinth...";
             
             WriteToBufferColored((ScreenWidth - continueText.Length) / 2, currentY, continueText, System.Drawing.Color.DarkGoldenrod);
+            var logs = Logger.Instance.GetRecentLogs(1);
+            if (logs.Count > 0 && logs[0].Contains("Invalid key"))
+            {
+                string errorMsg = logs[0];
+                WriteToBufferColored((ScreenWidth - errorMsg.Length) / 2, currentY + 2, errorMsg, System.Drawing.Color.Red);
+            }
         }
 
         private void DrawBox(int x, int y, int width, int height, string title)
@@ -394,8 +400,8 @@ namespace RpgGame.Engine
             int leftColX = LeftX;
             int rightColX = RightX;
             int colWidth = 32;
-            int centerColX = 36; 
-            int centerColWidth = 47; 
+            int centerColX = 36;
+            int centerColWidth = 47;
 
             // KOLUMNA LEWA
 
@@ -476,46 +482,64 @@ namespace RpgGame.Engine
 
             // ŚRODEK BATTLE LOG
 
+            // FILE: ConsoleRenderer.cs (fragment z DrawCombatScreen)
+
+            // ŚRODEK BATTLE LOG
             DrawBox(centerColX, 1, centerColWidth, 26, " BATTLE LOG ");
+            var allLogs = Logger.Instance.GetRecentLogs(50);
+            var battleLogs = new List<string>();
 
-            //if (!string.IsNullOrEmpty(battleLog))
-            //{
-            //    int logY = 3;
-            //    var logs = battleLog.Split(new[] { " | " }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var log in allLogs)
+            {
+                // Akceptujemy tylko logi zawierające te słowa:
+                if (log.Contains("attacked") || log.Contains("counterattacks") || log.Contains("defeated") || log.Contains("approached"))
+                {
+                    battleLogs.Add(log);
+                }
+            }
 
-            //    foreach (var log in logs)
-            //    {
-            //        string remaining = log.Trim();
+            int maxBattleLogs = 15;
+            var logsToDraw = battleLogs.Skip(Math.Max(0, battleLogs.Count - maxBattleLogs)).ToList();
 
-            //        while (remaining.Length > 0)
-            //        {
-            //            int maxLen = centerColWidth - 4;
-            //            string lineToPrint;
+            int logY = 3;
+            int maxLen = centerColWidth - 4;
 
-            //            if (remaining.Length <= maxLen)
-            //            {
-            //                lineToPrint = remaining;
-            //                remaining = "";
-            //            }
-            //            else
-            //            {
-            //                int spaceIndex = remaining.LastIndexOf(' ', maxLen);
-            //                if (spaceIndex == -1) spaceIndex = maxLen;
+            foreach (var log in logsToDraw)
+            {
+                if (logY >= 26) break;
 
-            //                lineToPrint = remaining.Substring(0, spaceIndex);
-            //                remaining = remaining.Substring(spaceIndex).Trim();
-            //            }
+                // Przypisanie koloru na podstawie akcji
+                var color = System.Drawing.Color.DarkGray;
+                if (log.Contains("attacked")) color = System.Drawing.Color.Gold;
+                else if (log.Contains("counterattacks")) color = System.Drawing.Color.LightCoral;
+                else if (log.Contains("approached")) color = System.Drawing.Color.Cyan;
 
-            //            // Player attacks in gold, enemy attacks in red
-            //            var color = logY % 3 == 0 ? System.Drawing.Color.Gold : System.Drawing.Color.LightCoral;
-            //            WriteToBufferColored(centerColX + 2, logY++, lineToPrint, color);
-            //        }
-            //        logY++;
-            //    }
-            //}
+                string remaining = log.Trim();
+                while (remaining.Length > 0 && logY < 26)
+                {
+                    string lineToPrint = remaining;
+                    if (remaining.Length > maxLen)
+                    {
+                        int lastSpace = remaining.Substring(0, maxLen).LastIndexOf(' ');
+                        if (lastSpace > 0)
+                        {
+                            lineToPrint = remaining.Substring(0, lastSpace);
+                            remaining = remaining.Substring(lastSpace + 1).Trim();
+                        }
+                        else
+                        {
+                            lineToPrint = remaining.Substring(0, maxLen);
+                            remaining = remaining.Substring(maxLen).Trim();
+                        }
+                    }
+                    else
+                    {
+                        remaining = "";
+                    }
 
-            // ERRORS
-            //DrawMessage(errorMessage, ScreenHeight - 1);
+                    WriteToBufferColored(centerColX + 2, logY++, lineToPrint, color);
+                }
+            }
         }
         public void DrawGameOverScreen(bool animate, string logFilePath)
         {

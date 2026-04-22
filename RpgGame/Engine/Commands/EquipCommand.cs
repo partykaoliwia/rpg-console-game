@@ -29,12 +29,26 @@ namespace RpgGame.Engine.Commands
             if (_slot == HandSlot.Left)
             {
                 item.EquipToLeftHand(_player);
-                Logger.Instance.Log($"Player equipped {item.Name} to left hand.");
+                if (_player.LeftHand == item)
+                {
+                    Logger.Instance.Log($"Player equipped {item.Name} to left hand.");
+                }
+                else
+                {
+                    Logger.Instance.Log($"You cannot equip {item.Name}!");
+                }
             }
             else
             {
                 item.EquipToRightHand(_player);
-                Logger.Instance.Log($"Player equipped {item.Name} to right hand.");
+                if (_player.RightHand == item)
+                {
+                    Logger.Instance.Log($"Player equipped {item.Name} to right hand.");
+                }
+                else
+                {
+                    Logger.Instance.Log($"You cannot equip {item.Name}!");
+                }
             }
 
             // poprawa kursora

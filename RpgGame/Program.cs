@@ -35,10 +35,9 @@ class Program
         Random rnd = new Random();
         int themeChoice = rnd.Next(0, 3);
 
-        //if (themeChoice == 0) factory = new LibraryFactory();
-        //else if (themeChoice == 1) factory = new ArenaFactory();
-        //else factory = new LabyrinthFactory();
-        factory = new ArenaFactory();
+        if (themeChoice == 0) factory = new LibraryFactory();
+        else if (themeChoice == 1) factory = new ArenaFactory();
+        else factory = new LabyrinthFactory();
         // kierownik budowy:)
         var director = new DungeonDirector();
         director.SetStrategy(factory.GenerationStrategy);
@@ -56,6 +55,7 @@ class Program
         var instructions = instructionBuilder.BuildResult();
 
         Player player = new Player();
+        player.Name = config.PlayerName;
         GameEngine engine = new GameEngine(finalBoard, player, keybinds, logFilePath);
         engine.PushState(new InstructionState(engine, instructions,factory.Title));
 

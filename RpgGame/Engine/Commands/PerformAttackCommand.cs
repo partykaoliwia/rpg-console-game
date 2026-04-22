@@ -58,6 +58,7 @@ namespace RpgGame.Engine.Commands
             int actualReceivedDamage = player.TakeDamage(receivedDamage);
 
             //_state.BattleLog += $" | {target.Name} counterattacks for {actualReceivedDamage}! You have {player.Health} HP.";
+            Logger.Instance.Log($"{target.Name} counterattacks for {actualReceivedDamage} damage! Player has {player.Health} HP left.");
 
             if (!player.IsAlive)
             {
