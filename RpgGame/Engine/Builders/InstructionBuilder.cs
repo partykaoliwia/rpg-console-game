@@ -13,19 +13,21 @@ namespace RpgGame.Engine.Builders
 
         public List<string> BuildResult() => _instructions;
         private readonly KeybindManager _keybinds;
-        public InstructionBuilder(KeybindManager keybinds)
+        private readonly IFactory _factory;
+        public InstructionBuilder(KeybindManager keybinds, IFactory factory)
         {
             _keybinds = keybinds;
+            _factory = factory;
         }
 
         public void BuildEmptyDungeon()
         {
-            _instructions.Add("You have entered an open arena filled with sand and blood, where a merciless battle rages.");
+            _instructions.Add(_factory.IntroMessage);
         }
 
         public void BuildFilledDungeon()
         {
-            _instructions.Add("You stand before the entrance to a dark labyrinth carved by Daedalus, full of hidden paths and mysteries.");
+            _instructions.Add(_factory.IntroMessage);
         }
 
         public void AddCorridors()
@@ -63,12 +65,12 @@ namespace RpgGame.Engine.Builders
 
         public void AddEnemies(int count)
         {
-            if(count == 0)
+            if (count == 0)
             {
-                _instructions.Add("In this dreadful labyrinth lurks a minotaur, threatening your life.");
+                _instructions.Add("A powerful Boss lurks in the shadows, threatening your life.");
                 return;
             }
-            _instructions.Add($"In this dreadful labyrinth lurks {count} powerful enemies and a minotaur, threatening your life.");
+            _instructions.Add($"Beware! {count} enemies and a powerful Boss lurk in the shadows, threatening your life.");
         }
     }
 }

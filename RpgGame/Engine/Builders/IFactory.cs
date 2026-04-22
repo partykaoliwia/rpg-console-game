@@ -11,6 +11,11 @@ namespace RpgGame.Engine.Builders
 {
     public interface IFactory
     {
+        string[] Title { get; }
+        string IntroMessage { get; }
+        string ThemeName { get; }
+        IGenerationStrategy GenerationStrategy { get; }
+
         IItem CreateRandomJunk();
         Currency CreateRandomCurrency();
         IItem CreateRandomWeapon(int index);

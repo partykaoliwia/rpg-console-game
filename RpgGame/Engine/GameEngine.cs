@@ -13,12 +13,14 @@ namespace RpgGame.Engine
         private readonly Stack<IGameState> _stateStack = new();
         private readonly ConsoleRenderer _renderer;
         private bool _isRunning = true;
+        public string LogFilePath { get; }
         public KeybindManager Keybinds { get; }
-        public GameEngine(Board board, Player player, KeybindManager keybinds)
+        public GameEngine(Board board, Player player, KeybindManager keybinds, string logFilePath)
         {
             _renderer = new ConsoleRenderer(keybinds);
             Keybinds = keybinds;
             _stateStack.Push(new PlayingState(this, board, player));
+            LogFilePath = logFilePath;
         }
         public void PushState(IGameState state)
         {

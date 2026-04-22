@@ -29,28 +29,35 @@ class Program
         Logger.Instance.SetMemoryWriter(new MemoryLogWriter());
 
         var keybinds = new KeybindManager();
-        IFactory factory = new StandardFactory();
 
+
+        IFactory factory;
+        Random rnd = new Random();
+        int themeChoice = rnd.Next(0, 3);
+
+        //if (themeChoice == 0) factory = new LibraryFactory();
+        //else if (themeChoice == 1) factory = new ArenaFactory();
+        //else factory = new LabyrinthFactory();
+        factory = new ArenaFactory();
         // kierownik budowy:)
         var director = new DungeonDirector();
+        director.SetStrategy(factory.GenerationStrategy);
 
         // budowa plansza
         var mapBuilder = new MapBuilder(factory);
         director.SetBuilder(mapBuilder);
-        //director.ConstructTestItemkow();
-        director.ConstructMinotaursLabyrinth(); 
+        director.ConstructDungeon();
         var finalBoard = mapBuilder.BuildResult();
 
         // budowa instrukcji
-        var instructionBuilder = new InstructionBuilder(keybinds);
+        var instructionBuilder = new InstructionBuilder(keybinds,factory);
         director.SetBuilder(instructionBuilder);
-        //director.ConstructTestItemkow();
-        director.ConstructMinotaursLabyrinth();
+        director.ConstructDungeon();
         var instructions = instructionBuilder.BuildResult();
 
         Player player = new Player();
-        GameEngine engine = new GameEngine(finalBoard, player, keybinds);
-        engine.PushState(new InstructionState(engine, instructions));
+        GameEngine engine = new GameEngine(finalBoard, player, keybinds, logFilePath);
+        engine.PushState(new InstructionState(engine, instructions,factory.Title));
 
         engine.RunGame();
     }

@@ -171,6 +171,8 @@ namespace RpgGame.Engine
 
             DrawPlayerStats(player, cursorIndex); 
             DrawGroundItems(currentTile, 0);
+            DrawRecentLogs();
+
         }
 
         // RYSOWANIE LOOTING MENU
@@ -189,6 +191,8 @@ namespace RpgGame.Engine
 
             DrawPlayerStats(player);
             DrawGroundItems(currentTile, 0, cursorIndex);
+            DrawRecentLogs();
+
         }
 
         // CONTROLS + BOARD + STATS + GROUND ITEMS, CALY DEFAULT SCREEN
@@ -290,26 +294,11 @@ namespace RpgGame.Engine
         }
 
         // MESSAGES
-        public void DrawInstructionScreen(List<string> instructions, string errorMessage = "")
+        public void DrawInstructionScreen(List<string> instructions, string[] title)
         {
-            string[] asciiTitle = new string[]
-            {
-                "  ██████╗  █████╗ ███████╗██████╗  █████╗ ██╗     ██╗   ██╗███████╗",
-                "  ██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔══██╗██║     ██║   ██║██╔════╝",
-                "  ██║  ██║███████║█████╗  ██║  ██║███████║██║     ██║   ██║███████╗",
-                "  ██║  ██║██╔══██║██╔══╝  ██║  ██║██╔══██║██║     ██║   ██║╚════██║",
-                "  ██████╔╝██║  ██║███████╗██████╔╝██║  ██║███████╗╚██████╔╝███████║",
-                "  ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚══════╝",
-                "██╗      █████╗ ██████╗ ██╗   ██╗██████╗ ██╗ ███╗   ██╗████████╗██╗  ██╗",
-                "██║     ██╔══██╗██╔══██╗╚██╗ ██╔╝██╔══██╗██║ ████╗  ██║╚══██╔══╝██║  ██║",
-                "██║     ███████║██████╔╝ ╚████╔╝ ██████╔╝██║ ██╔██╗ ██║   ██║   ███████║",
-                "██║     ██╔══██║██╔══██╗  ╚██╔╝  ██╔══██╗██║ ██║╚██╗██║   ██║   ██╔══██║",
-                "███████╗██║  ██║██████╔╝   ██║   ██║  ██║██║ ██║ ╚████║   ██║   ██║  ██║",
-                "╚══════╝╚═╝  ╚═╝╚═════╝    ╚═╝   ╚═╝  ╚═╝╚═╝ ╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝"
-            };
-            int totalHeight = asciiTitle.Length + 1 + instructions.Count + 2 + 1;
+            int totalHeight = title.Length + 1 + instructions.Count + 2 + 1;
             int currentY = Math.Max(1, (ScreenHeight - totalHeight) / 2);
-            foreach (string line in asciiTitle)
+            foreach (string line in title)
             {
                 int startX = (ScreenWidth - line.Length) / 2;
                 WriteToBufferColored(Math.Max(0, startX), currentY++, line, System.Drawing.Color.Gold);
@@ -528,7 +517,7 @@ namespace RpgGame.Engine
             // ERRORS
             //DrawMessage(errorMessage, ScreenHeight - 1);
         }
-        public void DrawGameOverScreen(bool animate)
+        public void DrawGameOverScreen(bool animate, string logFilePath)
         {
             string[] asciiDeath = new string[]
             {
@@ -545,6 +534,7 @@ namespace RpgGame.Engine
 
             string youDied = "YOU DIED.";
             int youDiedX = (ScreenWidth - youDied.Length) / 2;
+            int logX = (ScreenWidth - logFilePath.Length) / 2;
 
             string info = "Press any key to exit...";
             int infoX = (ScreenWidth - info.Length) / 2;
@@ -567,10 +557,15 @@ namespace RpgGame.Engine
                 foreach (char c in youDied)
                 {
                     Console.Write(c.ToString().Pastel(System.Drawing.Color.Red));
-                    Thread.Sleep(120);
+                    Thread.Sleep(90);
                 }
+                //Console.SetCursorPosition(logX, startY -2);
+                //foreach(char c in logFilePath)
+                //{
+                //    Console.Write(c.ToString().Pastel(System.Drawing.Color.Maroon));
+                //    Thread.Sleep(50);
+                //}
 
-                Thread.Sleep(800);
 
                 Console.SetCursorPosition(infoX, startY + asciiDeath.Length + 8);
                 foreach (char c in info)
@@ -580,11 +575,13 @@ namespace RpgGame.Engine
                 }
             }
 
+            Thread.Sleep(200);
             for (int i = 0; i < asciiDeath.Length; i++)
             {
                 WriteToBufferColored(startX, startY + i, asciiDeath[i], System.Drawing.Color.DarkRed);
             }
             WriteToBufferColored(youDiedX, startY + asciiDeath.Length + 2, youDied, System.Drawing.Color.Red);
+            WriteToBufferColored(logX, startY -1, logFilePath, System.Drawing.Color.Maroon);
             WriteToBufferColored(infoX, startY + asciiDeath.Length + 8, info, System.Drawing.Color.White);
         }
     }

@@ -62,7 +62,7 @@ namespace RpgGame.Engine.Commands
             if (!player.IsAlive)
             {
                 Logger.Instance.Log("Player has been defeated! Game over.");
-                _state.Engine.PushState(new GameOverState());
+                _state.Engine.PushState(new GameOverState(_state.Engine.LogFilePath));
                 return; 
             }
 

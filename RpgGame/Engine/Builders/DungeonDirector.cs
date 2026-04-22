@@ -5,32 +5,20 @@ namespace RpgGame.Engine.Builders
     public class DungeonDirector
     {
         private IDungeonBuilder _builder;
+        private IGenerationStrategy _strategy;
 
         public void SetBuilder(IDungeonBuilder builder)
         {
             _builder = builder;
         }
 
-        // default sposob na budowanie mojej planszy
-        public void ConstructMinotaursLabyrinth()
+        public void SetStrategy(IGenerationStrategy strategy)
         {
-            _builder.BuildFilledDungeon();
-            _builder.AddCentralHall(9, 6);
-            _builder.AddRooms();
-            _builder.AddCorridors();
-            _builder.AddItems(10);
-            _builder.AddWeapons(12);
-            _builder.AddMoney(10);
-            _builder.AddEnemies(20);
+            _strategy = strategy;
         }
-
-        // pozostale sposoby
-        public void ConstructTestItemkow()
+        public void ConstructDungeon()
         {
-            _builder.BuildEmptyDungeon();
-            _builder.AddItems(50);
-            _builder.AddWeapons(150);
-            _builder.AddMoney(50);
+            _strategy.GenerateMap(_builder);
         }
 
     }
