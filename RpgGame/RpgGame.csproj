@@ -17,4 +17,13 @@
 	<ItemGroup>
 		<PackageReference Include="Pastel" Version="7.0.0" />
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <None Update="config.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="keybinds.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 </Project>
