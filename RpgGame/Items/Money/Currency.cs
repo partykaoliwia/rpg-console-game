@@ -17,6 +17,8 @@ namespace RpgGame.Items.Money
         public abstract string Symbol { get; }
         public abstract string Name { get; }
         public int Value { get; protected set; }
+        public virtual int SoundRange => 4;
+
 
 
         protected Currency(int value)

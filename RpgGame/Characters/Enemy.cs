@@ -21,7 +21,8 @@ namespace RpgGame.Characters
         public int Y { get; private set; }
         public bool IsAlive => Health > 0;
         private readonly SpeciesPublisher _species;
-        public Enemy(int health, int strength, int armor, string symbol, Color itemColor, SpeciesPublisher species, string name = "Enemy")
+        private readonly SoundPublisher _sound;
+        public Enemy(int health, int strength, int armor, string symbol, Color itemColor, SpeciesPublisher species, SoundPublisher sound, string name = "Enemy")
         {
             Health = health;
             Strength = strength;
@@ -32,6 +33,8 @@ namespace RpgGame.Characters
 
             _species = species;
             _species?.Subscribe(this);
+            _sound = sound;
+            _sound?.Subscribe(this);
         }
         public void SetPosition(int x, int y)
         {
@@ -53,8 +56,9 @@ namespace RpgGame.Characters
         }
         public void Die()
         {
-            _species.NotifySubscribers();
             _species.Unsubscribe(this);
+            _sound?.Unsubscribe(this);
+            _species.NotifySubscribers();
         }
 
         public int MoveEveryMs { get; protected set; }

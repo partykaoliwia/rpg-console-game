@@ -21,6 +21,7 @@ namespace RpgGame.Items.Modifiers
         public virtual string Name => _decorated.Name;
 
         public virtual string Symbol => _decorated.Symbol;
+        public virtual int SoundRange => _decorated.SoundRange;
 
         public virtual CombatStats Accept(IAttackVisitor visitor, Player player)
         {

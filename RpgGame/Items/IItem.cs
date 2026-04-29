@@ -17,6 +17,7 @@ namespace RpgGame.Items
         void EquipToLeftHand(Player player, IItem instanceToEquip = null);
         void EquipToRightHand(Player player, IItem instanceToEquip = null);
         void Unequip(Player player);
+        int SoundRange {  get; }
         CombatStats Accept(IAttackVisitor visitor, Player player);
     }
 }

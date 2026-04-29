@@ -16,6 +16,7 @@ namespace RpgGame.Items
         public abstract string Symbol { get; }
         public abstract string Name { get; }
         public int Damage { get; set; }
+        public abstract int SoundRange { get; }
 
 
         protected Weapon(int damage)

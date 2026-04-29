@@ -48,9 +48,10 @@ namespace RpgGame.Engine.Commands
             if (!target.IsAlive)
             {
                 string flee = _state.Engine.Keybinds.GetKeyName("Combat", "Flee");
-                Logger.Instance.Log("Enemy defeated! Player can flee back to the board.");
+                Logger.Instance.Log("Enemy defeated! Returning to exploration.");
                 _state.IsChoosingWeapon = false; // jakos fajniej tu zeby automatycznie wychodzilo z combat state
                 _state.TargetTile.Entity = null; //TODO: lepiej byłoby usunąć wroga z mapy, ale to wymagałoby zmian w strukturze mapy, więc na razie po prostu usuwamy go z pola bitwy
+                _state.Engine.PopState();
                 return;
             }
 

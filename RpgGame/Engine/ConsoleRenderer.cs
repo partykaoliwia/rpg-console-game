@@ -421,17 +421,17 @@ namespace RpgGame.Engine
             DrawBox(leftColX, 12, colWidth, 15, " COMBAT GUIDE ");
             int infoY = 14;
             WriteToBufferColored(leftColX + 2, infoY++, $"Normal Attack", System.Drawing.Color.DarkGray);
-            WriteToBuffer(leftColX + 2, infoY++, "Labrys/Xiphos: Base");
             WriteToBuffer(leftColX + 2, infoY++, "Dory: 1");
+            WriteToBuffer(leftColX + 2, infoY++, "Other: Base");
             infoY++;
             WriteToBufferColored(leftColX + 2, infoY++, $"Stealth Attack", System.Drawing.Color.DarkGray);
-            WriteToBuffer(leftColX + 2, infoY++, "Xiphos: 2 * base");
-            WriteToBuffer(leftColX + 2, infoY++, "Labrys: 0.5 * base");
+            WriteToBuffer(leftColX + 2, infoY++, "Xiphos/Quill: 2 * base");
+            WriteToBuffer(leftColX + 2, infoY++, "Labrys/Kopis: 0.5 * base");
             WriteToBuffer(leftColX + 2, infoY++, "Dory: 1");
             infoY++;
             WriteToBufferColored(leftColX + 2, infoY++, $"Magic Attack", System.Drawing.Color.DarkGray);
+            WriteToBuffer(leftColX + 2, infoY++, "Other: 1");
             WriteToBuffer(leftColX + 2, infoY++, "Dory: Base");
-            WriteToBuffer(leftColX + 2, infoY++, "Labrys/Xiphos: 1");
 
             // PRAWA KOLUMNA
 

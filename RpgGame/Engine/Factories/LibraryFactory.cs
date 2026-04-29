@@ -16,6 +16,11 @@ namespace RpgGame.Engine.Factories
         private readonly Random _random = new Random();
         private readonly SpeciesPublisher _harpies = new SpeciesPublisher("Harpies");
         private readonly SpeciesPublisher _giants = new SpeciesPublisher("Giants");
+        private readonly SoundPublisher _sound;
+        public LibraryFactory(SoundPublisher sound)
+        {
+            _sound = sound;
+        }
         public string ThemeName => "Library of Alexandria";
         public IGenerationStrategy GenerationStrategy => new LibraryGenStrategy();
         public string[] Title =>  new string[]
@@ -66,19 +71,19 @@ namespace RpgGame.Engine.Factories
         {
             if (distanceFromStart < 25)
             {
-                return new Harpy(30, 20, 2, "h", System.Drawing.Color.MediumPurple, _harpies);
+                return new Harpy(30, 20, 2, "h", System.Drawing.Color.MediumPurple, _harpies, _sound);
             }
             if (distanceFromStart < 40)
             {
-                return new Giant(40, 13, 4, "G", System.Drawing.Color.DarkOrchid, _giants);
+                return new Giant(40, 13, 4, "G", System.Drawing.Color.DarkOrchid, _giants, _sound);
             }
 
-            return new Giant(50, 18, 8, "G", System.Drawing.Color.Purple, _giants);
+            return new Giant(50, 18, 8, "G", System.Drawing.Color.Purple, _giants, _sound);
         }
 
         public IAttackable CreateBoss()
         {
-            return new Harpy(80, 15, 5, "M", System.Drawing.Color.DarkGreen, _harpies) { Name = "Medusa" };
+            return new Harpy(80, 15, 5, "M", System.Drawing.Color.DarkGreen, _harpies, _sound) { Name = "Medusa" };
         }
     }
 }

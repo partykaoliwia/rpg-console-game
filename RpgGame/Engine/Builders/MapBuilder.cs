@@ -158,7 +158,10 @@ namespace RpgGame.Engine.Builders
             
             if (tile.IsWalkable)
             {
-                tile.Entity = _factory.CreateBoss();
+                var boss = _factory.CreateBoss();
+                tile.Entity = boss;
+                boss.SetPosition(x, y);
+               
             }
             
             int placed = 1;
@@ -174,7 +177,9 @@ namespace RpgGame.Engine.Builders
 
                 if (tile.IsWalkable && tile.Entity == null)
                 {
-                    tile.Entity = _factory.CreateEnemy(placed);
+                    var enemy = _factory.CreateEnemy(placed);
+                    tile.Entity = enemy;
+                    enemy.SetPosition(x, y);
                     placed++;
                 }
             }

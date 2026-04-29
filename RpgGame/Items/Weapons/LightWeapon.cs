@@ -12,6 +12,7 @@ namespace RpgGame.Items.Weapons
     {
         public LightWeapon(int damage) : base(damage) { }
         public override int GetFullDamage(Player player) => Damage + player.Luck + player.Dexterity;
+        public override int SoundRange => 5;
 
         public override CombatStats Accept(IAttackVisitor visitor, Player player)
         {

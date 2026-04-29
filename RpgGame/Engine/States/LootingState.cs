@@ -36,7 +36,7 @@ namespace RpgGame.Engine.States
 
             _inputChainHead = new InputChainBuilder().AddKey(s,"MoveUp", new MoveCursorCommand(this, -1),engine.Keybinds)
                                                       .AddKey(s,"MoveDown",new MoveCursorCommand(this, 1),engine.Keybinds)
-                                                      .AddKey(s,"Collect", new LootItemCommand(player, board, this),engine.Keybinds)
+                                                      .AddKey(s,"Collect", new LootItemCommand(player, board, this, engine, engine.SoundSystem),engine.Keybinds)
                                                       .AddKey(s,"Quit", new PopStateCommand(engine),engine.Keybinds)
                                                       .AddKey(s,"Reload", new ReloadConfigCommand(engine.Keybinds),engine.Keybinds)
                                                       .AddKey(s, "LogHistory", new PushStateCommand(engine, new LogHistoryState(engine)), engine.Keybinds)

@@ -12,6 +12,7 @@ namespace RpgGame.Items.Weapons
     {
         public HeavyWeapon(int damage) : base(damage) { }
         public override int GetFullDamage(Player player) => Damage + player.Strength + player.Aggression;
+        public override int SoundRange => 15;
         public override CombatStats Accept(IAttackVisitor visitor, Player player)
         {
             return visitor.Visit(this, player);

@@ -17,12 +17,12 @@ namespace RpgGame.Engine
         public string LogFilePath { get; }
         public KeybindManager Keybinds { get; }
         public SoundPublisher SoundSystem { get; }
-        public GameEngine(Board board, Player player, KeybindManager keybinds, string logFilePath)
+        public GameEngine(Board board, Player player, KeybindManager keybinds, string logFilePath, SoundPublisher soundSystem)
         {
             _renderer = new ConsoleRenderer(keybinds);
             Keybinds = keybinds;
             LogFilePath = logFilePath;
-            SoundSystem = new SoundPublisher();
+            SoundSystem = soundSystem;
             _stateStack.Push(new PlayingState(this, board, player));
         }
         public void PushState(IGameState state)

@@ -6,6 +6,7 @@ using RpgGame.Engine.Configuration;
 using RpgGame.Engine.Factories;
 using RpgGame.Engine.Input;
 using RpgGame.Engine.Logging;
+using RpgGame.Engine.Observers;
 using RpgGame.Engine.States;
 
 class Program
@@ -25,15 +26,16 @@ class Program
         Logger.Instance.SetMemoryWriter(new MemoryLogWriter());
 
         var keybinds = new KeybindManager();
+        var soundSystem = new SoundPublisher();
 
 
         IFactory factory;
         Random rnd = new Random();
         int themeChoice = rnd.Next(0, 3);
 
-        if (themeChoice == 0) factory = new LibraryFactory();
-        else if (themeChoice == 1) factory = new ArenaFactory();
-        else factory = new LabyrinthFactory();
+        if (themeChoice == 0) factory = new LibraryFactory(soundSystem);
+        else if (themeChoice == 1) factory = new ArenaFactory(soundSystem);
+        else factory = new LabyrinthFactory(soundSystem);
         // kierownik budowy:)
         var director = new DungeonDirector();
         director.SetStrategy(factory.GenerationStrategy);
@@ -52,7 +54,7 @@ class Program
 
         Player player = new Player();
         player.Name = config.PlayerName;
-        GameEngine engine = new GameEngine(finalBoard, player, keybinds, logFilePath);
+        GameEngine engine = new GameEngine(finalBoard, player, keybinds, logFilePath, soundSystem);
         engine.PushState(new InstructionState(engine, instructions,factory.Title));
 
         engine.RunGame();

@@ -32,6 +32,11 @@ namespace RpgGame.Engine.Commands
                 {
                     tile.Items.RemoveAt(0);
                     Logger.Instance.Log($"Player picked up {item.Name}. Removed from tile ({_player.X}, {_player.Y}).");
+
+                    if(item.SoundRange>4)
+                    {
+                        _engine.SoundSystem.NotifySubscribers(_player.X,_player.Y,item.SoundRange,_board);
+                    }
                 }
             }
             else if (tile.Items.Count > 1)

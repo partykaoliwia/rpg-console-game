@@ -36,7 +36,7 @@ namespace RpgGame.Engine.States
                                                       .AddKey(s,"EquipRight", new EquipCommand(player, this, HandSlot.Right), engine.Keybinds)
                                                       .AddKey(s,"UnequipLeft", new UnequipCommand(player, HandSlot.Left), engine.Keybinds)
                                                       .AddKey(s,"UnequipRight", new UnequipCommand(player, HandSlot.Right), engine.Keybinds)
-                                                      .AddKey(s,"Drop", new DropItemCommand(player, board, this), engine.Keybinds)
+                                                      .AddKey(s,"Drop", new DropItemCommand(player, board, this, engine.SoundSystem), engine.Keybinds)
                                                       .AddKey(s,"Quit",new PopStateCommand(engine), engine.Keybinds)
                                                       .AddKey(s,"Reload", new ReloadConfigCommand(engine.Keybinds), engine.Keybinds)
                                                       .AddKey(s, "LogHistory", new PushStateCommand(engine, new LogHistoryState(engine)), engine.Keybinds)

@@ -1,8 +1,9 @@
 ﻿using System;
 using RpgGame.Characters;
-using RpgGame.Gameboard;
-using RpgGame.Engine.States;
 using RpgGame.Engine.Logging;
+using RpgGame.Engine.Observers;
+using RpgGame.Engine.States;
+using RpgGame.Gameboard;
 
 namespace RpgGame.Engine.Commands
 {
@@ -11,12 +12,15 @@ namespace RpgGame.Engine.Commands
         private readonly Player _player;
         private readonly Board _board;
         private readonly IMenuState _menu;
+        private readonly SoundPublisher _sound;
 
-        public LootItemCommand(Player player, Board board, IMenuState menu)
+
+        public LootItemCommand(Player player, Board board, IMenuState menu, GameEngine engine, SoundPublisher sound)
         {
             _player = player;
             _board = board;
             _menu = menu;
+            _sound = sound;
         }
 
         public void Execute()
@@ -29,6 +33,10 @@ namespace RpgGame.Engine.Commands
             {
                 tile.Items.RemoveAt(_menu.CursorIndex);
                 Logger.Instance.Log($"Player picked up {item.Name}. Removed from tile ({_player.X}, {_player.Y}).");
+                if (item.SoundRange > 0)
+                {
+                    _sound.NotifySubscribers(_player.X, _player.Y, item.SoundRange,_board);
+                }
             }
 
             // poprawa kursora

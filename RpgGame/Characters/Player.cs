@@ -57,13 +57,19 @@ namespace RpgGame.Characters
 
         public int TakeDamage(int damage)
         {
+            if(!IsAlive) return 0;
             int actualDamage = Math.Max(0, damage - Armor);
-            BaseHealth -= damage;
+            BaseHealth -= actualDamage;
+            if (BaseHealth <= 0)
+            {
+                BaseHealth = 0;
+                Die();
+            }
             return actualDamage;
         }
         public void Die()
         {
-            // TODO
+
         }
 
         // waluta

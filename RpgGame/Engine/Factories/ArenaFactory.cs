@@ -16,6 +16,11 @@ namespace RpgGame.Engine.Factories
         private readonly Random _random = new Random();
         private readonly SpeciesPublisher _harpies = new SpeciesPublisher("Harpies");
         private readonly SpeciesPublisher _giants = new SpeciesPublisher("Giants");
+        private readonly SoundPublisher _sound;
+        public ArenaFactory(SoundPublisher sound)
+        {
+            _sound = sound;
+        }
         public string ThemeName => "Ares' arena";
         public IGenerationStrategy GenerationStrategy => new ArenaGenStrategy();
 
@@ -69,21 +74,21 @@ namespace RpgGame.Engine.Factories
             if (distanceFromStart < 25)
             {
                 // Słabsi wrogowie jako zwinne Harpie
-                return new Harpy(30, 12, 2, "h", System.Drawing.Color.IndianRed, _harpies);
+                return new Harpy(30, 12, 2, "h", System.Drawing.Color.IndianRed, _harpies, _sound);
             }
             if (distanceFromStart < 40)
             {
                 // Średni wrogowie jako Giganci
-                return new Giant(45, 18, 5, "G", System.Drawing.Color.Firebrick, _giants);
+                return new Giant(45, 18, 5, "G", System.Drawing.Color.Firebrick, _giants, _sound);
             }
 
             // Najsilniejsi zwykli wrogowie
-            return new Giant(60, 25, 8, "A", System.Drawing.Color.DarkRed, _giants);
+            return new Giant(60, 25, 8, "A", System.Drawing.Color.DarkRed, _giants, _sound);
         }
 
         public IAttackable CreateBoss()
         {
-            return new Giant(80, 15, 5, "Δ", System.Drawing.Color.Crimson, _harpies) { Name = "Deimos" };
+            return new Giant(80, 15, 5, "Δ", System.Drawing.Color.Crimson, _giants, _sound) { Name = "Deimos" };
         }
     }
 }

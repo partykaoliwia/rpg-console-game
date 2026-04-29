@@ -17,6 +17,7 @@ namespace RpgGame.Items.Unusables
         public abstract string Name { get; }
 
         public abstract Color ItemColor { get; set; }
+        public virtual int SoundRange => 3;
 
         public virtual bool PickUp(Player player)
         {
