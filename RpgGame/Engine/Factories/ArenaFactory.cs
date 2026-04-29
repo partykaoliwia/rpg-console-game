@@ -56,7 +56,7 @@ namespace RpgGame.Engine.Factories
 
         public IItem CreateRandomWeapon(int index)
         {
-            int damage = 15 + _random.Next(0, 8);
+            int damage = 5 + _random.Next(0, 7);
 
             IItem weapon = new Kopis(damage);
 

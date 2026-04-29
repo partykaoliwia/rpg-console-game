@@ -62,7 +62,7 @@ namespace RpgGame.Engine.Factories
 
         public IItem CreateRandomWeapon(int index)
         {
-            int damage = 10 + _random.Next(0, 4);
+            int damage = 6 + _random.Next(0, 8);
             IItem weapon;
 
             if (index == 0 || index == 2)

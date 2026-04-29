@@ -24,12 +24,12 @@ namespace RpgGame.Characters
         public int Y { get; private set; }
 
         // atrybuty
-        public int BaseStrength { get; set; } = 20; 
-        public int BaseHealth { get; set; } = 20; 
-        public int BaseLuck { get; set; } = 20;
-        public int BaseAggression { get; set; } = 20;
-        public int BaseWisdom { get; set; } = 20; 
-        public int BaseDexterity { get; set; } = 20;
+        public int BaseStrength { get; set; } = 5; 
+        public int BaseHealth { get; set; } = 50; 
+        public int BaseLuck { get; set; } = 5;
+        public int BaseAggression { get; set; } = 5;
+        public int BaseWisdom { get; set; } = 5; 
+        public int BaseDexterity { get; set; } = 5;
 
         public int Strength => BaseStrength + GetBonusStats().Strength;
         public int Health => Math.Max(0,BaseHealth + GetBonusStats().Health);

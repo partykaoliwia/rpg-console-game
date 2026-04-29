@@ -54,7 +54,7 @@ namespace RpgGame.Engine.Factories
 
         public IItem CreateRandomWeapon(int index)
         {
-            int damage = 10 + _random.Next(0, 6);
+            int damage = 4 + _random.Next(0, 9);
 
             IItem weapon = new StymphalianQuill(damage);
 
@@ -71,19 +71,19 @@ namespace RpgGame.Engine.Factories
         {
             if (distanceFromStart < 25)
             {
-                return new Harpy(30, 20, 2, "h", System.Drawing.Color.MediumPurple, _harpies, _sound);
+                return new Harpy(30, 15, 2, "h", System.Drawing.Color.MediumPurple, _harpies, _sound);
             }
             if (distanceFromStart < 40)
             {
-                return new Giant(40, 13, 4, "G", System.Drawing.Color.DarkOrchid, _giants, _sound);
+                return new Giant(40, 20, 4, "G", System.Drawing.Color.DarkOrchid, _giants, _sound);
             }
 
-            return new Giant(50, 18, 8, "G", System.Drawing.Color.Purple, _giants, _sound);
+            return new Giant(50, 22, 6, "G", System.Drawing.Color.Purple, _giants, _sound);
         }
 
         public IAttackable CreateBoss()
         {
-            return new Harpy(80, 15, 5, "M", System.Drawing.Color.DarkGreen, _harpies, _sound) { Name = "Medusa" };
+            return new Harpy(80, 30, 7, "M", System.Drawing.Color.DarkGreen, _harpies, _sound) { Name = "Medusa" };
         }
     }
 }
