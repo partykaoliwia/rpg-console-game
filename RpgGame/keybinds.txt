@@ -15,6 +15,7 @@ MoveDown=S
 Collect=E
 Quit=Q
 Reload=F5
+LogHistory=J
 
 [Inventory]
 MoveUp=W
@@ -26,6 +27,7 @@ EquipRight=R
 UnequipLeft=D1
 UnequipRight=D2
 Reload=F5
+LogHistory=J
 
 [Instruction]
 Continue=Enter
@@ -38,6 +40,7 @@ MagicAttack=D3
 ChooseLeft=L
 ChooseRight=R
 Flee=Q
+LogHistory=J
 
 [LogHistory]
 CloseLogs=J

@@ -39,12 +39,14 @@ namespace RpgGame.Engine.States
                                               .AddKey(s, "StealthAttack", new ChooseAttackCommand(this, new StealthAttack()), engine.Keybinds)
                                               .AddKey(s, "MagicAttack", new ChooseAttackCommand(this, new MagicAttack()), engine.Keybinds)
                                               .AddKey(s, "Flee", new PopStateCommand(engine), engine.Keybinds)
+                                              .AddKey(s, "LogHistory", new PushStateCommand(engine, new LogHistoryState(engine)), engine.Keybinds)
                                               .Build();
 
             // ŁAŃCUCH WYBORU BRONI (L/R)
             _weaponChain = new InputChainBuilder().AddKey(s, "ChooseLeft", new PerformAttackCommand(this, true), engine.Keybinds)
                                                  .AddKey(s, "ChooseRight", new PerformAttackCommand(this, false), engine.Keybinds)
                                                  .AddKey(s, "Flee", new CancelWeaponChoiceCommand(this), engine.Keybinds)
+                                                 .AddKey(s, "LogHistory", new PushStateCommand(engine, new LogHistoryState(engine)), engine.Keybinds)
                                                  .Build();
         }
 

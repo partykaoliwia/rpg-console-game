@@ -7,11 +7,6 @@ using RpgGame.Engine.Input;
 using RpgGame.Engine.Logging;
 using RpgGame.Engine.States;
 
-// TO DO
-// poprawic estetyke combatstate
-// poprawic labirynt zeby dol nie byl rozjechany
-// dodac lepsza obsluge logow
-// w main poprawic
 class Program
 {
     static void Main(string[] args)
