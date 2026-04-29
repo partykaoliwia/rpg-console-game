@@ -1,17 +1,21 @@
 ﻿// FILE: ArenaFactory.cs
 using System;
 using RpgGame.Characters;
+using RpgGame.Engine.Builders;
+using RpgGame.Engine.Observers;
 using RpgGame.Items;
 using RpgGame.Items.Modifiers;
 using RpgGame.Items.Money;
 using RpgGame.Items.Unusables;
 using RpgGame.Items.Weapons;
 
-namespace RpgGame.Engine.Builders
+namespace RpgGame.Engine.Factories
 {
     public class ArenaFactory : IFactory
     {
         private readonly Random _random = new Random();
+        private readonly SpeciesPublisher _harpies = new SpeciesPublisher("Harpies");
+        private readonly SpeciesPublisher _giants = new SpeciesPublisher("Giants");
         public string ThemeName => "Ares' arena";
         public IGenerationStrategy GenerationStrategy => new ArenaGenStrategy();
 
@@ -63,20 +67,23 @@ namespace RpgGame.Engine.Builders
         public IAttackable CreateEnemy(int distanceFromStart)
         {
             if (distanceFromStart < 25)
-                return new Enemy(30, 12, 2, "Enslaved Hoplite") { ItemColor = System.Drawing.Color.IndianRed, Symbol = "h" };
-
+            {
+                // Słabsi wrogowie jako zwinne Harpie
+                return new Harpy(30, 12, 2, "h", System.Drawing.Color.IndianRed, _harpies);
+            }
             if (distanceFromStart < 40)
-                return new Enemy(45, 18, 5, "Blood-crazed Gladiator") { ItemColor = System.Drawing.Color.Firebrick, Symbol = "G" };
+            {
+                // Średni wrogowie jako Giganci
+                return new Giant(45, 18, 5, "G", System.Drawing.Color.Firebrick, _giants);
+            }
 
-            return new Enemy(60, 25, 8, "Chosen of Ares") { ItemColor = System.Drawing.Color.DarkRed, Symbol = "A" };
+            // Najsilniejsi zwykli wrogowie
+            return new Giant(60, 25, 8, "A", System.Drawing.Color.DarkRed, _giants);
         }
 
         public IAttackable CreateBoss()
         {
-            var boss = new Enemy(120, 30, 10, "Deimos");
-            boss.ItemColor = System.Drawing.Color.Crimson;
-            boss.Symbol = "Δ"; 
-            return boss;
+            return new Giant(80, 15, 5, "Δ", System.Drawing.Color.Crimson, _harpies) { Name = "Deimos" };
         }
     }
 }

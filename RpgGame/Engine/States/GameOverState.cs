@@ -6,6 +6,7 @@ namespace RpgGame.Engine.States
     {
         private bool _isAnimationPlayed = false;
         private readonly string _logFilePath;
+        public void Update() { }
         public GameOverState(string logFilePath)
         {
             _logFilePath = logFilePath;

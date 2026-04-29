@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RpgGame.Characters;
+using RpgGame.Engine.Builders;
+using RpgGame.Engine.Observers;
 using RpgGame.Items;
 using RpgGame.Items.Modifiers;
 using RpgGame.Items.Money;
 using RpgGame.Items.Unusables;
 
-namespace RpgGame.Engine.Builders
+namespace RpgGame.Engine.Factories
 {
     public class LabyrinthFactory : IFactory
     {
@@ -32,6 +34,9 @@ namespace RpgGame.Engine.Builders
         public string IntroMessage => "You stand before the entrance to a dark labyrinth carved by Daedalus, full of hidden paths and mysteries.";
         public IGenerationStrategy GenerationStrategy => new LabyrinthGenStrategy();
         private readonly Random _random = new Random();
+        private readonly SpeciesPublisher _harpies = new SpeciesPublisher("Harpies");
+        private readonly SpeciesPublisher _giants = new SpeciesPublisher("Giants");
+
         public IItem CreateRandomJunk()
         {
             int roll = _random.Next(0, 3);
@@ -84,18 +89,17 @@ namespace RpgGame.Engine.Builders
         public IAttackable CreateEnemy(int distanceFromStart)
         {
             if (distanceFromStart < 25)
-                return new Enemy(30, 20, 2);
-            if (distanceFromStart < 40)
-                return new Enemy(40, 13, 4);
+                return new Harpy(30, 20, 2, "h", System.Drawing.Color.MediumPurple, _harpies);
 
-            return new Enemy(50, 18, 8);
+            if (distanceFromStart < 40)
+                return new Giant(40, 13, 4, "G", System.Drawing.Color.DarkOrchid, _giants);
+
+            return new Giant(50, 18, 8, "G", System.Drawing.Color.Purple, _giants);
         }
 
         public IAttackable CreateBoss()
         {
-            var boss = new Enemy(80, 15, 5, "Minotaur");
-            boss.ItemColor = System.Drawing.Color.SaddleBrown;
-            return boss;
+            return new Harpy(80, 15, 5, "M", System.Drawing.Color.SaddleBrown, _harpies) { Name = "Minotaur" };
         }
     }
 }

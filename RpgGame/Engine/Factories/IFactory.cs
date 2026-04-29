@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RpgGame.Characters;
+using RpgGame.Engine.Builders;
 using RpgGame.Items;
 using RpgGame.Items.Money;
 
-namespace RpgGame.Engine.Builders
+namespace RpgGame.Engine.Factories
 {
     public interface IFactory
     {

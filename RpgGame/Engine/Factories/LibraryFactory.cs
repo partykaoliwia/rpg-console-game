@@ -1,17 +1,21 @@
 ﻿// FILE: LibraryFactory.cs
 using System;
 using RpgGame.Characters;
+using RpgGame.Engine.Builders;
+using RpgGame.Engine.Observers;
 using RpgGame.Items;
 using RpgGame.Items.Modifiers;
 using RpgGame.Items.Money;
 using RpgGame.Items.Unusables;
 using RpgGame.Items.Weapons;
 
-namespace RpgGame.Engine.Builders
+namespace RpgGame.Engine.Factories
 {
     public class LibraryFactory : IFactory
     {
         private readonly Random _random = new Random();
+        private readonly SpeciesPublisher _harpies = new SpeciesPublisher("Harpies");
+        private readonly SpeciesPublisher _giants = new SpeciesPublisher("Giants");
         public string ThemeName => "Library of Alexandria";
         public IGenerationStrategy GenerationStrategy => new LibraryGenStrategy();
         public string[] Title =>  new string[]
@@ -61,20 +65,20 @@ namespace RpgGame.Engine.Builders
         public IAttackable CreateEnemy(int distanceFromStart)
         {
             if (distanceFromStart < 25)
-                return new Enemy(25, 8, 1, "Ptolemaic Scholar") { ItemColor = System.Drawing.Color.MediumPurple, Symbol = "s" };
-
+            {
+                return new Harpy(30, 20, 2, "h", System.Drawing.Color.MediumPurple, _harpies);
+            }
             if (distanceFromStart < 40)
-                return new Enemy(35, 14, 2, "Cultist of Hecate") { ItemColor = System.Drawing.Color.DarkOrchid, Symbol = "C" };
+            {
+                return new Giant(40, 13, 4, "G", System.Drawing.Color.DarkOrchid, _giants);
+            }
 
-            return new Enemy(45, 18, 4, "Corrupted Oracle") { ItemColor = System.Drawing.Color.Purple, Symbol = "O" };
+            return new Giant(50, 18, 8, "G", System.Drawing.Color.Purple, _giants);
         }
 
         public IAttackable CreateBoss()
         {
-            var boss = new Enemy(90, 22, 6, "Grand Archivist");
-            boss.ItemColor = System.Drawing.Color.DarkMagenta;
-            boss.Symbol = "Ѱ";
-            return boss;
+            return new Harpy(80, 15, 5, "M", System.Drawing.Color.DarkGreen, _harpies) { Name = "Medusa" };
         }
     }
 }

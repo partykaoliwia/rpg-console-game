@@ -13,7 +13,7 @@ namespace RpgGame.Engine.States
     {
         private readonly GameEngine _engine;
         private readonly InputHandler _inputChainHead;
-
+        public void Update() { }
         public LogHistoryState(GameEngine engine)
         {
             _engine = engine;

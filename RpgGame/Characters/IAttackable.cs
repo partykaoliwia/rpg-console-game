@@ -14,8 +14,14 @@ namespace RpgGame.Characters
         int Strength { get; }
         int Armor { get; }
         bool IsAlive { get; }
+        int X { get;}
+        int Y { get;}
+        int MoveEveryMs { get; }
+        DateTime LastMoved { get; set; }
 
         int TakeDamage(int damage);
+        void Die();
+        void SetPosition(int x, int y);
 
     }
 }

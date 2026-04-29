@@ -21,6 +21,7 @@ namespace RpgGame.Engine.States
 
         public bool IsChoosingWeapon { get; set; } = false;
         public IAttackVisitor PendingAttack { get; set; }
+        public void Update() { }
 
 
 

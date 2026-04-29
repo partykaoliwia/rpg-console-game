@@ -10,5 +10,6 @@ namespace RpgGame.Engine.States
     {
         void HandleInput(ConsoleKey key);
         void Draw(ConsoleRenderer renderer);
+        void Update();
     }
 }

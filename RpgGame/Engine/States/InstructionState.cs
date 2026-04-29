@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace RpgGame.Engine.States
         private readonly List<string> _instructions;
         private readonly InputHandler _inputChainHead;
         private readonly string[] _title;
+        public void Update() { }
         public InstructionState(GameEngine engine, List<string> instructions, string[] title)
         {
             _engine = engine;

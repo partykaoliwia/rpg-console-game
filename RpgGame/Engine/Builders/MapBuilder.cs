@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RpgGame.Characters;
+using RpgGame.Engine.Factories;
 using RpgGame.Gameboard;
 using RpgGame.Items;
 using RpgGame.Items.Modifiers;

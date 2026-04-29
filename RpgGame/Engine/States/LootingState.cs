@@ -24,6 +24,7 @@ namespace RpgGame.Engine.States
 
         public int CursorIndex { get; set; } = 0;
         public int ItemCount => CurrentTile.Items.Count;
+        public void Update() { }
 
         public LootingState(GameEngine engine, Player player, Board board)
         {

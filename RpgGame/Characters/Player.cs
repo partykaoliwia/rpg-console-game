@@ -37,6 +37,8 @@ namespace RpgGame.Characters
         public int Aggression => BaseAggression + GetBonusStats().Aggression;
         public int Wisdom => BaseWisdom + GetBonusStats().Wisdom;
         public int Dexterity => BaseDexterity + GetBonusStats().Dexterity;
+        public int MoveEveryMs => 0;
+        public DateTime LastMoved { get; set; } = DateTime.Now;
 
 
         private PlayerStats GetBonusStats()
@@ -58,6 +60,10 @@ namespace RpgGame.Characters
             int actualDamage = Math.Max(0, damage - Armor);
             BaseHealth -= damage;
             return actualDamage;
+        }
+        public void Die()
+        {
+            // TODO
         }
 
         // waluta

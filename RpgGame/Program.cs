@@ -3,6 +3,7 @@ using RpgGame.Characters;
 using RpgGame.Engine;
 using RpgGame.Engine.Builders;
 using RpgGame.Engine.Configuration;
+using RpgGame.Engine.Factories;
 using RpgGame.Engine.Input;
 using RpgGame.Engine.Logging;
 using RpgGame.Engine.States;

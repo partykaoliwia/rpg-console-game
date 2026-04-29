@@ -18,6 +18,7 @@ namespace RpgGame.Engine.States
         private readonly Player _player;
         private readonly Board _board;
         private readonly InputHandler _inputChainHead;
+        public void Update() { }
         public int CursorIndex { get; set; } = 0;
         public int ItemCount => _player.Inventory.Count;
         private ITile CurrentTile => _board.GetTile(_player.X, _player.Y);
