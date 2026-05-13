@@ -49,8 +49,8 @@ namespace RpgGame.Engine.Commands
             {
                 string flee = _state.Engine.Keybinds.GetKeyName("Combat", "Flee");
                 Logger.Instance.Log("Enemy defeated! Returning to exploration.");
-                _state.IsChoosingWeapon = false; // jakos fajniej tu zeby automatycznie wychodzilo z combat state
-                _state.TargetTile.Entity = null; //TODO: lepiej byłoby usunąć wroga z mapy, ale to wymagałoby zmian w strukturze mapy, więc na razie po prostu usuwamy go z pola bitwy
+                _state.IsChoosingWeapon = false;
+                _state.TargetTile.Entity = null;
                 _state.Engine.PopState();
                 return;
             }
@@ -58,7 +58,6 @@ namespace RpgGame.Engine.Commands
             int receivedDamage = Math.Max(0, target.Strength - stats.Defense);
             int actualReceivedDamage = player.TakeDamage(receivedDamage);
 
-            //_state.BattleLog += $" | {target.Name} counterattacks for {actualReceivedDamage}! You have {player.Health} HP.";
             Logger.Instance.Log($"{target.Name} counterattacks for {actualReceivedDamage} damage! Player has {player.Health} HP left.");
 
             if (!player.IsAlive)
