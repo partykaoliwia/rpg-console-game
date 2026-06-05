@@ -27,6 +27,20 @@ internal static class Program
         Client
     }
 
+    private readonly record struct DungeonThemeChoice(
+        ConsoleKey PrimaryKey,
+        ConsoleKey AlternateKey,
+        string Label,
+        Func<IDungeonThemeFactory> CreateFactory);
+
+    private static readonly DungeonThemeChoice[] DungeonThemeChoices =
+    {
+        new(ConsoleKey.D1, ConsoleKey.NumPad1, "Daedalus' labyrinth", () => new LabyrinthFactory()),
+        new(ConsoleKey.D2, ConsoleKey.NumPad2, "Ares' arena", () => new ArenaFactory()),
+        new(ConsoleKey.D3, ConsoleKey.NumPad3, "Library of Alexandria", () => new LibraryFactory()),
+        new(ConsoleKey.R, ConsoleKey.R, "Random", () => CreateRandomDungeonThemeFactory())
+    };
+
     private static async Task Main(string[] args)
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -38,7 +52,7 @@ internal static class Program
             var port = args.Length > 1 && int.TryParse(args[1], out var parsedPort)
                 ? parsedPort
                 : config.DefaultPort;
-            await RunServerAsync(port, config);
+            await RunServerAsync(port, config, CreateDungeonThemeFactory(config));
             return;
         }
 
@@ -52,14 +66,15 @@ internal static class Program
 
         if (args.Length > 0 && IsCommand(args[0], "--single", "-single", "--singleplayer", "-singleplayer"))
         {
-            RunSinglePlayer(config, logFilePath);
+            RunSinglePlayer(config, logFilePath, CreateDungeonThemeFactory(config));
             return;
         }
 
         var startupMode = ReadStartupMode();
         if (startupMode == StartupMode.Server)
         {
-            await RunServerAsync(ReadServerPort(config), config);
+            var factory = ReadDungeonThemeFactory(config);
+            await RunServerAsync(ReadServerPort(config), config, factory);
             return;
         }
 
@@ -73,7 +88,7 @@ internal static class Program
             return;
         }
 
-        RunSinglePlayer(config, logFilePath);
+        RunSinglePlayer(config, logFilePath, ReadDungeonThemeFactory(config));
     }
 
     private static StartupMode ReadStartupMode()
@@ -125,10 +140,35 @@ internal static class Program
         return string.IsNullOrWhiteSpace(input) ? config.ClientPlayerName : input.Trim();
     }
 
-    private static void RunSinglePlayer(GameConfig config, string logFilePath)
+    private static IDungeonThemeFactory ReadDungeonThemeFactory(GameConfig config)
     {
-        Logger.Instance.Log("Starting singleplayer mode.");
-        var factory = CreateDungeonThemeFactory(config);
+        Console.Clear();
+        Console.WriteLine("Choose dungeon theme");
+        Console.WriteLine();
+        Console.WriteLine("[1] Daedalus' labyrinth");
+        Console.WriteLine("[2] Ares' arena");
+        Console.WriteLine("[3] Library of Alexandria");
+        Console.WriteLine("[R] Random");
+        Console.WriteLine();
+        Console.Write($"Choose theme [{config.DungeonTheme}]: ");
+
+        var key = Console.ReadKey(intercept: true).Key;
+        Console.WriteLine();
+
+        foreach (var choice in DungeonThemeChoices)
+        {
+            if (key == choice.PrimaryKey || key == choice.AlternateKey)
+            {
+                return choice.CreateFactory();
+            }
+        }
+
+        return CreateDungeonThemeFactory(config);
+    }
+
+    private static void RunSinglePlayer(GameConfig config, string logFilePath, IDungeonThemeFactory factory)
+    {
+        Logger.Instance.Log($"Starting singleplayer mode with theme {factory.ThemeName}.");
         var gameModel = GameModel.CreateGame(factory);
         gameModel.AddPlayer(config.PlayerName);
         var eventLogger = new GameEventLogForwarder();
@@ -162,10 +202,9 @@ internal static class Program
         Logger.Instance.Log("Singleplayer mode stopped.");
     }
 
-    private static async Task RunServerAsync(int port, GameConfig config)
+    private static async Task RunServerAsync(int port, GameConfig config, IDungeonThemeFactory factory)
     {
-        Logger.Instance.Log($"Starting server on port {port}.");
-        var factory = CreateDungeonThemeFactory(config);
+        Logger.Instance.Log($"Starting server on port {port} with theme {factory.ThemeName}.");
         var gameModel = GameModel.CreateGame(factory);
         var eventLogger = new GameEventLogForwarder();
         eventLogger.Flush(gameModel);
@@ -399,16 +438,9 @@ internal static class Program
 
     private static IDungeonThemeFactory CreateDungeonThemeFactory(string dungeonTheme, GameConfig config)
     {
-        Func<IDungeonThemeFactory>[] randomFactories =
-        {
-            () => new LibraryFactory(),
-            () => new ArenaFactory(),
-            () => new LabyrinthFactory()
-        };
-
         var factories = new Dictionary<string, Func<IDungeonThemeFactory>>(StringComparer.OrdinalIgnoreCase)
         {
-            { "Random", () => randomFactories[Random.Shared.Next(randomFactories.Length)]() },
+            { "Random", () => CreateRandomDungeonThemeFactory() },
             { "Labyrinth", () => new LabyrinthFactory() },
             { "Daedalus", () => new LabyrinthFactory() },
             { "Daedalus' labyrinth", () => new LabyrinthFactory() },
@@ -424,6 +456,18 @@ internal static class Program
         return factories.TryGetValue(theme, out var factory)
             ? factory()
             : new LabyrinthFactory();
+    }
+
+    private static IDungeonThemeFactory CreateRandomDungeonThemeFactory()
+    {
+        Func<IDungeonThemeFactory>[] randomFactories =
+        {
+            () => new LibraryFactory(),
+            () => new ArenaFactory(),
+            () => new LabyrinthFactory()
+        };
+
+        return randomFactories[Random.Shared.Next(randomFactories.Length)]();
     }
 
     private static string ConfigureLogging(GameConfig config)
