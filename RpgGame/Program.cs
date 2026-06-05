@@ -31,14 +31,35 @@ internal static class Program
         ConsoleKey PrimaryKey,
         ConsoleKey AlternateKey,
         string Label,
+        string Description,
         Func<IDungeonThemeFactory> CreateFactory);
 
     private static readonly DungeonThemeChoice[] DungeonThemeChoices =
     {
-        new(ConsoleKey.D1, ConsoleKey.NumPad1, "Daedalus' labyrinth", () => new LabyrinthFactory()),
-        new(ConsoleKey.D2, ConsoleKey.NumPad2, "Ares' arena", () => new ArenaFactory()),
-        new(ConsoleKey.D3, ConsoleKey.NumPad3, "Library of Alexandria", () => new LibraryFactory()),
-        new(ConsoleKey.R, ConsoleKey.R, "Random", () => CreateRandomDungeonThemeFactory())
+        new(
+            ConsoleKey.D1,
+            ConsoleKey.NumPad1,
+            "Daedalus' labyrinth",
+            "Classic exploration through winding corridors and hidden paths.",
+            () => new LabyrinthFactory()),
+        new(
+            ConsoleKey.D2,
+            ConsoleKey.NumPad2,
+            "Ares' arena",
+            "A brutal combat-heavy dungeon with open space and dangerous champions.",
+            () => new ArenaFactory()),
+        new(
+            ConsoleKey.D3,
+            ConsoleKey.NumPad3,
+            "Library of Alexandria",
+            "A more arcane expedition among books, relics and ancient guardians.",
+            () => new LibraryFactory()),
+        new(
+            ConsoleKey.R,
+            ConsoleKey.R,
+            "Random",
+            "Let fate choose one of the available dungeon themes.",
+            () => CreateRandomDungeonThemeFactory())
     };
 
     private static async Task Main(string[] args)
@@ -145,10 +166,10 @@ internal static class Program
         Console.Clear();
         Console.WriteLine("Choose dungeon theme");
         Console.WriteLine();
-        Console.WriteLine("[1] Daedalus' labyrinth");
-        Console.WriteLine("[2] Ares' arena");
-        Console.WriteLine("[3] Library of Alexandria");
-        Console.WriteLine("[R] Random");
+        WriteDungeonThemeChoice("1", DungeonThemeChoices[0]);
+        WriteDungeonThemeChoice("2", DungeonThemeChoices[1]);
+        WriteDungeonThemeChoice("3", DungeonThemeChoices[2]);
+        WriteDungeonThemeChoice("R", DungeonThemeChoices[3]);
         Console.WriteLine();
         Console.Write($"Choose theme [{config.DungeonTheme}]: ");
 
@@ -164,6 +185,12 @@ internal static class Program
         }
 
         return CreateDungeonThemeFactory(config);
+    }
+
+    private static void WriteDungeonThemeChoice(string keyText, DungeonThemeChoice choice)
+    {
+        Console.WriteLine($"[{keyText}] {choice.Label}");
+        Console.WriteLine($"    {choice.Description}");
     }
 
     private static void RunSinglePlayer(GameConfig config, string logFilePath, IDungeonThemeFactory factory)

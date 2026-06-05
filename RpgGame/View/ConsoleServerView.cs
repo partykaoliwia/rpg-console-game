@@ -58,7 +58,7 @@ public sealed class ConsoleServerView
         }
 
         var status = statusModel.CreateSnapshot();
-        List<string> players;
+        List<PlayerRow> players;
         List<string> events;
 
         DrawHeader(frame);
@@ -69,7 +69,9 @@ public sealed class ConsoleServerView
             DrawBoardBox(frame, gameModel);
             players = gameModel.Players
                 .OrderBy(player => player.Id)
-                .Select(player => $"{player.Id,2}  {Trim(player.Name, 18),-18} HP:{player.Health,3}  ({player.X,2},{player.Y,2})")
+                .Select(player => new PlayerRow(
+                    $"{player.Id,2}  {Trim(player.Name, 18),-18} HP:{player.Health,3}  ({player.X,2},{player.Y,2})",
+                    player.Health))
                 .ToList();
             events = gameModel.EventLog.GetRecent(12).ToList();
         }
@@ -129,7 +131,7 @@ public sealed class ConsoleServerView
         }
     }
 
-    private static void DrawPlayersBox(ServerFrame frame, IReadOnlyList<string> players)
+    private static void DrawPlayersBox(ServerFrame frame, IReadOnlyList<PlayerRow> players)
     {
         DrawBox(frame, RightColumnX, BoardBoxY, RightColumnWidth, PlayersBoxHeight, " PLAYERS ");
         var textX = RightColumnX + 2;
@@ -148,7 +150,7 @@ public sealed class ConsoleServerView
 
         for (var index = 0; index < players.Count && index < MaxPlayers; index++)
         {
-            frame.WriteText(textX, BoardBoxY + 5 + index, players[index], textWidth, ConsoleColor.Cyan);
+            frame.WriteText(textX, BoardBoxY + 5 + index, players[index].Text, textWidth, CreatePlayerHealthColor(players[index].Health));
         }
     }
 
@@ -413,6 +415,21 @@ public sealed class ConsoleServerView
         return ConsoleColor.Gray;
     }
 
+    private static ConsoleColor CreatePlayerHealthColor(int health)
+    {
+        if (health <= 15)
+        {
+            return ConsoleColor.Red;
+        }
+
+        if (health <= 30)
+        {
+            return ConsoleColor.Yellow;
+        }
+
+        return ConsoleColor.Green;
+    }
+
     private static Dictionary<BoardPoint, Enemy> CreateEnemyPositionIndex(GameModel gameModel)
     {
         var index = new Dictionary<BoardPoint, Enemy>();
@@ -459,6 +476,8 @@ public sealed class ConsoleServerView
     }
 
     private readonly record struct BoardPoint(int X, int Y);
+
+    private readonly record struct PlayerRow(string Text, int Health);
 
     private readonly record struct ServerCell(char Symbol, ConsoleColor Color)
     {
