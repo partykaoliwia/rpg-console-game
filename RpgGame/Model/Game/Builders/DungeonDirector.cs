@@ -17,7 +17,7 @@ public sealed class DungeonDirector
 
     public void ConstructDungeon()
     {
-        if (_builder is null || _strategy is null)
+        if (_builder == null || _strategy == null)
         {
             throw new InvalidOperationException("Dungeon builder and generation strategy must be configured before construction.");
         }

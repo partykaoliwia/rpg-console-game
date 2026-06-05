@@ -117,7 +117,7 @@ public sealed class SinglePlayerController : IInputModeHandler
         }
 
         var command = _playingInputChain.Handle(key);
-        if (command is null)
+        if (command == null)
         {
             RecordUnhandledKey(key);
             return;
@@ -158,7 +158,7 @@ public sealed class SinglePlayerController : IInputModeHandler
         }
 
         var command = _inventoryInputChain.Handle(key);
-        if (command is null)
+        if (command == null)
         {
             RecordUnhandledKey(key);
             return;
@@ -245,7 +245,7 @@ public sealed class SinglePlayerController : IInputModeHandler
         }
 
         var command = _combatInputChain.Handle(key);
-        if (command is null)
+        if (command == null)
         {
             RecordUnhandledKey(key);
             return;
@@ -274,7 +274,7 @@ public sealed class SinglePlayerController : IInputModeHandler
         }
 
         var command = _weaponInputChain.Handle(key);
-        if (command is null)
+        if (command == null)
         {
             RecordUnhandledKey(key);
             return;
@@ -394,8 +394,8 @@ public sealed class SinglePlayerController : IInputModeHandler
         lock (_gameModel.SyncRoot)
         {
             var player = _gameModel.FindPlayer(_localModel.LocalPlayerId);
-            return player?.LeftHand is not null
-                && player.RightHand is not null
+            return player?.LeftHand != null
+                && player.RightHand != null
                 && !ReferenceEquals(player.LeftHand, player.RightHand);
         }
     }
@@ -405,12 +405,12 @@ public sealed class SinglePlayerController : IInputModeHandler
         lock (_gameModel.SyncRoot)
         {
             var player = _gameModel.FindPlayer(_localModel.LocalPlayerId);
-            if (player?.LeftHand is not null)
+            if (player?.LeftHand != null)
             {
                 return HandSlotKind.Left;
             }
 
-            if (player?.RightHand is not null)
+            if (player?.RightHand != null)
             {
                 return HandSlotKind.Right;
             }
@@ -498,7 +498,7 @@ public sealed class SinglePlayerController : IInputModeHandler
             && !mode.ShowsLoot
             && !mode.ShowsLogHistory
             && !mode.ShowsGameOver
-            && _localModel.PendingAttackTargetId is null;
+            && _localModel.PendingAttackTargetId == null;
     }
 
     private void SyncGameOver()
@@ -523,7 +523,7 @@ public sealed class SinglePlayerController : IInputModeHandler
         lock (_gameModel.SyncRoot)
         {
             var encounter = _gameModel.FindEncounterForPlayer(_localModel.LocalPlayerId);
-            if (encounter is null ||
+            if (encounter == null ||
                 encounter.Sequence <= _localModel.LastHandledEncounterSequence)
             {
                 return;
@@ -558,7 +558,7 @@ public sealed class SinglePlayerController : IInputModeHandler
     private bool CanOpenEncounter()
     {
         var mode = _localModel.CurrentInputMode;
-        return _localModel.PendingAttackTargetId is null &&
+        return _localModel.PendingAttackTargetId == null &&
             !mode.ShowsInstructions &&
             !mode.ShowsInventory &&
             !mode.ShowsLoot &&
@@ -587,7 +587,7 @@ public sealed class SinglePlayerController : IInputModeHandler
         lock (_gameModel.SyncRoot)
         {
             var player = _gameModel.FindPlayer(_localModel.LocalPlayerId);
-            if (player is null)
+            if (player == null)
             {
                 return 0;
             }

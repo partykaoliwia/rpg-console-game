@@ -279,7 +279,7 @@ internal static class Program
                 while (!inputController.ShouldQuit && Volatile.Read(ref serverDisconnected) == 0)
                 {
                     var state = await client.ReadStateAsync(readCancellation.Token);
-                    if (state is null)
+                    if (state == null)
                     {
                         Interlocked.Exchange(ref serverDisconnected, 1);
                         return;

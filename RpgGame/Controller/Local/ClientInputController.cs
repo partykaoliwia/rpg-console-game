@@ -49,7 +49,7 @@ public sealed class ClientInputController : IInputModeHandler
         _pendingCommand = null;
         _localModel.CurrentInputMode.Handle(key, this);
 
-        if (_pendingCommand is not null)
+        if (_pendingCommand != null)
         {
             await _client.SendCommandAsync(_pendingCommand.ToDto(_localModel.LocalPlayerId), cancellationToken);
         }
@@ -115,7 +115,7 @@ public sealed class ClientInputController : IInputModeHandler
         }
 
         _pendingCommand = _playingInputChain.Handle(key);
-        if (_pendingCommand is null)
+        if (_pendingCommand == null)
         {
             RecordUnhandledKey(key);
         }
@@ -153,7 +153,7 @@ public sealed class ClientInputController : IInputModeHandler
         }
 
         _pendingCommand = _inventoryInputChain.Handle(key);
-        if (_pendingCommand is null)
+        if (_pendingCommand == null)
         {
             RecordUnhandledKey(key);
             return;
@@ -223,13 +223,13 @@ public sealed class ClientInputController : IInputModeHandler
         }
 
         _pendingCommand = _combatInputChain.Handle(key);
-        if (_pendingCommand is null)
+        if (_pendingCommand == null)
         {
             RecordUnhandledKey(key);
             return;
         }
 
-        if (_pendingCommand is not null)
+        if (_pendingCommand == null)
         {
             FinishAttackTurn();
         }
@@ -254,13 +254,13 @@ public sealed class ClientInputController : IInputModeHandler
         }
 
         _pendingCommand = _weaponInputChain.Handle(key);
-        if (_pendingCommand is null)
+        if (_pendingCommand == null)
         {
             RecordUnhandledKey(key);
             return;
         }
 
-        if (_pendingCommand is not null)
+        if (_pendingCommand != null)
         {
             FinishAttackTurn();
         }
@@ -376,8 +376,8 @@ public sealed class ClientInputController : IInputModeHandler
         lock (_localGameModel.SyncRoot)
         {
             var player = _localGameModel.FindPlayer(_localModel.LocalPlayerId);
-            return player?.LeftHand is not null
-                && player.RightHand is not null
+            return player?.LeftHand != null
+                && player.RightHand != null
                 && !ReferenceEquals(player.LeftHand, player.RightHand);
         }
     }
@@ -387,12 +387,12 @@ public sealed class ClientInputController : IInputModeHandler
         lock (_localGameModel.SyncRoot)
         {
             var player = _localGameModel.FindPlayer(_localModel.LocalPlayerId);
-            if (player?.LeftHand is not null)
+            if (player?.LeftHand != null)
             {
                 return HandSlotKind.Left;
             }
 
-            if (player?.RightHand is not null)
+            if (player?.RightHand != null)
             {
                 return HandSlotKind.Right;
             }
@@ -485,7 +485,7 @@ public sealed class ClientInputController : IInputModeHandler
         lock (_localGameModel.SyncRoot)
         {
             var player = _localGameModel.FindPlayer(_localModel.LocalPlayerId);
-            if (player is null)
+            if (player == null)
             {
                 return 0;
             }

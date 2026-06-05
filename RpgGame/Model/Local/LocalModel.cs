@@ -49,7 +49,7 @@ public sealed class LocalModel
     public string? GetFreshLocalMessage()
     {
         var latest = _localMessages.LastOrDefault();
-        if (latest is null || DateTime.UtcNow - latest.CreatedUtc > FreshLocalMessageAge)
+        if (latest == null || DateTime.UtcNow - latest.CreatedUtc > FreshLocalMessageAge)
         {
             return null;
         }
@@ -140,7 +140,7 @@ public sealed class LocalModel
 
     public void ReturnToAttackSelection()
     {
-        if (PendingAttackTargetId is null)
+        if (PendingAttackTargetId == null)
         {
             return;
         }

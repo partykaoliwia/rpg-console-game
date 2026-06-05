@@ -16,7 +16,7 @@ public sealed class InputChainBuilder
 
     public InputChainBuilder AddHandler(InputHandler handler)
     {
-        if (_head is null)
+        if (_head == null)
         {
             _head = handler;
             _current = handler;

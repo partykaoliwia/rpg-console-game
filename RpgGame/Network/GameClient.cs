@@ -26,7 +26,7 @@ public sealed class GameClient : IDisposable
 
     public Task SendCommandAsync(ClientCommandDto command, CancellationToken cancellationToken)
     {
-        if (_streamWriter is null)
+        if (_streamWriter == null)
         {
             throw new InvalidOperationException("Client is not connected.");
         }
@@ -36,7 +36,7 @@ public sealed class GameClient : IDisposable
 
     public Task<ServerStateDto?> ReadStateAsync(CancellationToken cancellationToken)
     {
-        if (_streamReader is null)
+        if (_streamReader == null)
         {
             throw new InvalidOperationException("Client is not connected.");
         }

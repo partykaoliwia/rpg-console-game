@@ -82,7 +82,7 @@ public sealed class GameModel
         lock (SyncRoot)
         {
             var player = FindPlayer(playerId);
-            if (player is null)
+            if (player == null)
             {
                 return false;
             }
@@ -124,7 +124,7 @@ public sealed class GameModel
         lock (SyncRoot)
         {
             var player = FindPlayer(playerId);
-            if (player is null || !player.IsAlive)
+            if (player == null || !player.IsAlive)
             {
                 return;
             }
@@ -140,14 +140,14 @@ public sealed class GameModel
             }
 
             var enemy = FindLivingEnemyAt(newX, newY);
-            if (enemy is not null)
+            if (enemy != null)
             {
                 RegisterEncounter(player, enemy);
                 return;
             }
 
             var otherPlayer = FindLivingPlayerAt(newX, newY);
-            if (otherPlayer is not null)
+            if (otherPlayer != null)
             {
                 EventLog.Add($"{player.Name} cannot move onto {otherPlayer.Name}.");
                 return;
@@ -162,13 +162,13 @@ public sealed class GameModel
         lock (SyncRoot)
         {
             var player = FindPlayer(playerId);
-            if (player is null || !player.IsAlive)
+            if (player == null || !player.IsAlive)
             {
                 return;
             }
 
             var enemy = FindFirstAdjacentEnemy(playerId);
-            if (enemy is null)
+            if (enemy == null)
             {
                 EventLog.Add($"{player.Name} found no enemy nearby.");
                 return;
@@ -183,7 +183,7 @@ public sealed class GameModel
         lock (SyncRoot)
         {
             var player = FindPlayer(playerId);
-            if (!_encountersByPlayerId.Remove(playerId) || player is null)
+            if (!_encountersByPlayerId.Remove(playerId) || player == null)
             {
                 return;
             }
@@ -224,14 +224,14 @@ public sealed class GameModel
         lock (SyncRoot)
         {
             var player = FindPlayer(playerId);
-            if (player is null || !player.IsAlive)
+            if (player == null || !player.IsAlive)
             {
                 return;
             }
 
             var tile = Board.GetTile(player.X, player.Y);
             var item = FindTileItem(tile, itemIndex);
-            if (item is null)
+            if (item == null)
             {
                 EventLog.Add($"{player.Name} found nothing to collect.");
                 return;
@@ -280,7 +280,7 @@ public sealed class GameModel
             var player = FindPlayer(playerId);
             var enemy = FindEnemy(enemyId);
 
-            if (player is null || enemy is null || !player.IsAlive || !enemy.IsAlive)
+            if (player == null || enemy == null || !player.IsAlive || !enemy.IsAlive)
             {
                 return;
             }
@@ -348,13 +348,13 @@ public sealed class GameModel
         lock (SyncRoot)
         {
             var player = FindPlayer(playerId);
-            if (player is null || !player.IsAlive)
+            if (player == null || !player.IsAlive)
             {
                 return;
             }
 
             var droppedItem = player.DropItem(inventoryIndex);
-            if (droppedItem is null)
+            if (droppedItem == null)
             {
                 EventLog.Add($"{player.Name} tried to drop an empty inventory slot.");
                 return;
@@ -382,8 +382,8 @@ public sealed class GameModel
         {
             var player = FindPlayer(playerId);
             var enemy = FindEnemy(enemyId);
-            return player is not null &&
-                enemy is not null &&
+            return player != null &&
+                enemy != null &&
                 player.IsAlive &&
                 enemy.IsAlive &&
                 AreAdjacentOrSame(player.X, player.Y, enemy.X, enemy.Y);
@@ -393,7 +393,7 @@ public sealed class GameModel
     public Enemy? FindFirstAdjacentEnemy(int playerId)
     {
         var player = FindPlayer(playerId);
-        if (player is null)
+        if (player == null)
         {
             return null;
         }
@@ -526,13 +526,13 @@ public sealed class GameModel
         var newX = enemy.X + delta.X;
         var newY = enemy.Y + delta.Y;
         var player = FindLivingPlayerAt(newX, newY);
-        if (player is not null)
+        if (player != null)
         {
             return RegisterEncounter(player, enemy);
         }
 
         var targetTile = Board.GetTile(newX, newY);
-        if (!targetTile.IsWalkable || FindLivingEnemyAt(newX, newY) is not null)
+        if (!targetTile.IsWalkable || FindLivingEnemyAt(newX, newY) != null)
         {
             return false;
         }
@@ -553,8 +553,8 @@ public sealed class GameModel
             for (var x = 1; x < Board.Width - 1; x++)
             {
                 if (Board.GetTile(x, y).IsWalkable &&
-                    FindLivingPlayerAt(x, y) is null &&
-                    FindLivingEnemyAt(x, y) is null)
+                    FindLivingPlayerAt(x, y) == null &&
+                    FindLivingEnemyAt(x, y) == null)
                 {
                     return (x, y);
                 }
@@ -613,13 +613,13 @@ public sealed class GameModel
         lock (SyncRoot)
         {
             var player = FindPlayer(playerId);
-            if (player is null || !player.IsAlive)
+            if (player == null || !player.IsAlive)
             {
                 return;
             }
 
             var item = player.FindInventoryItem(inventoryIndex);
-            if (item is null)
+            if (item == null)
             {
                 EventLog.Add($"{player.Name} tried to equip an empty inventory slot.");
                 return;
@@ -640,7 +640,7 @@ public sealed class GameModel
         lock (SyncRoot)
         {
             var player = FindPlayer(playerId);
-            if (player is null || !player.IsAlive)
+            if (player == null || !player.IsAlive)
             {
                 return;
             }

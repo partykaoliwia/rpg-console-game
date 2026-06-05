@@ -150,9 +150,9 @@ public sealed class GameStateMapper
             Armor = player.Armor,
             Wallet = player.Wallet.ToDictionary(pair => pair.Key, pair => pair.Value),
             Inventory = player.Inventory.Select(CreateItemDto).ToList(),
-            LeftHand = player.LeftHand is null ? null : CreateItemDto(player.LeftHand),
-            RightHand = player.RightHand is null ? null : CreateItemDto(player.RightHand),
-            UsesBothHands = player.LeftHand is not null && ReferenceEquals(player.LeftHand, player.RightHand)
+            LeftHand = player.LeftHand == null ? null : CreateItemDto(player.LeftHand),
+            RightHand = player.RightHand == null ? null : CreateItemDto(player.RightHand),
+            UsesBothHands = player.LeftHand != null && ReferenceEquals(player.LeftHand, player.RightHand)
         };
     }
 
@@ -179,8 +179,8 @@ public sealed class GameStateMapper
             player.TryAddToInventory(CreateItem(itemDto));
         }
 
-        var leftHand = dto.LeftHand is null ? null : CreateItem(dto.LeftHand);
-        var rightHand = dto.RightHand is null ? null : CreateItem(dto.RightHand);
+        var leftHand = dto.LeftHand == null ? null : CreateItem(dto.LeftHand);
+        var rightHand = dto.RightHand == null ? null : CreateItem(dto.RightHand);
         if (dto.UsesBothHands)
         {
             var twoHandedItem = leftHand ?? rightHand;

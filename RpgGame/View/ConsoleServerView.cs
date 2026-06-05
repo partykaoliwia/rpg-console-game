@@ -1,14 +1,28 @@
-using System.Text;
+﻿using System.Text;
 using RpgGame.Model.Game;
 using RpgGame.Model.Local;
+using RpgGame.View.Visitors;
 
 namespace RpgGame.View;
 
 public sealed class ConsoleServerView
 {
-    private const int ScreenWidth = 120;
-    private const int ScreenHeight = 29;
+    private const int ScreenWidth = 135;
+    private const int ScreenHeight = 37;
     private const int MaxPlayers = 9;
+    private const int Margin = 2;
+    private const int Gutter = 2;
+    private const int BoardBoxX = Margin;
+    private const int BoardBoxY = 2;
+    private const int BoardBoxWidth = 44;
+    private const int BoardBoxHeight = 22;
+    private const int RightColumnX = BoardBoxX + BoardBoxWidth + Gutter;
+    private const int RightColumnWidth = ScreenWidth - RightColumnX - Margin;
+    private const int BottomRowY = BoardBoxY + BoardBoxHeight + 1;
+    private const int BottomBoxHeight = ScreenHeight - BottomRowY - 1;
+    private const int PlayersBoxHeight = 15;
+    private const int EventLogBoxY = BoardBoxY + PlayersBoxHeight + 1;
+    private const int EventLogBoxHeight = ScreenHeight - EventLogBoxY - 1;
 
     public void Render(GameModel gameModel, ServerStatusModel statusModel)
     {
@@ -26,8 +40,13 @@ public sealed class ConsoleServerView
         var status = statusModel.CreateSnapshot();
         List<string> players;
         List<string> events;
+
+        DrawHeader(frame);
+        DrawStatusBox(frame, status);
+
         lock (gameModel.SyncRoot)
         {
+            DrawBoardBox(frame, gameModel);
             players = gameModel.Players
                 .OrderBy(player => player.Id)
                 .Select(player => $"{player.Id,2}  {Trim(player.Name, 18),-18} HP:{player.Health,3}  ({player.X,2},{player.Y,2})")
@@ -35,8 +54,6 @@ public sealed class ConsoleServerView
             events = gameModel.EventLog.GetRecent(12).ToList();
         }
 
-        DrawHeader(frame);
-        DrawStatusBox(frame, status);
         DrawPlayersBox(frame, players);
         DrawEventsBox(frame, events);
         FlushFrame(frame);
@@ -47,53 +64,109 @@ public sealed class ConsoleServerView
         WriteCentered(frame, ScreenWidth / 2, 0, "RPG GAME SERVER", ScreenWidth - 4);
     }
 
-    private static void DrawStatusBox(ServerFrame frame, ServerStatusSnapshot status)
+    private static void DrawBoardBox(ServerFrame frame, GameModel gameModel)
     {
-        DrawBox(frame, 2, 2, 33, 11, " SERVER ");
-        var uptime = DateTime.UtcNow - status.StartedUtc;
-        var state = status.IsRunning ? "running" : "stopped";
+        DrawBox(frame, BoardBoxX, BoardBoxY, BoardBoxWidth, BoardBoxHeight, " BOARD ");
+        var offsetX = BoardBoxX + 2;
+        var offsetY = BoardBoxY + 1;
+        var enemiesByPosition = CreateEnemyPositionIndex(gameModel);
+        var playersByPosition = CreatePlayerPositionIndex(gameModel);
+        var boardWidth = Math.Min(gameModel.Board.Width, BoardBoxWidth - 4);
+        var boardHeight = Math.Min(gameModel.Board.Height, BoardBoxHeight - 2);
 
-        frame.WriteText(4, 4, $"Port: {status.Port}", 29);
-        frame.WriteText(4, 5, $"Endpoint: 127.0.0.1:{status.Port}", 29);
-        frame.WriteText(4, 6, $"Status: {state}", 29);
-        frame.WriteText(4, 7, $"Clients: {status.ReadyClients}/{status.ConnectedClients} / {MaxPlayers}", 29);
-        frame.WriteText(4, 8, $"Broadcasts: {status.BroadcastCount}", 29);
-        frame.WriteText(4, 9, $"State messages: {status.StateMessageCount}", 29);
-        frame.WriteText(4, 10, $"Uptime: {uptime:hh\\:mm\\:ss}", 29);
-        frame.WriteText(4, 11, "[Q/Esc] Stop server", 29);
+        for (var y = 0; y < boardHeight; y++)
+        {
+            for (var x = 0; x < boardWidth; x++)
+            {
+                var tile = gameModel.Board.GetTile(x, y);
+                var icon = GetTileIcon(tile);
+
+                var topItem = tile.GetTopItem();
+                if (topItem != null)
+                {
+                    var itemVisitor = new ItemVisitor();
+                    topItem.Accept(itemVisitor);
+                    icon = itemVisitor.Icon;
+                }
+
+                var point = new BoardPoint(x, y);
+                if (enemiesByPosition.TryGetValue(point, out var enemy))
+                {
+                    var characterVisitor = new CharacterVisitor(0);
+                    enemy.Accept(characterVisitor);
+                    icon = characterVisitor.Icon;
+                }
+
+                if (playersByPosition.TryGetValue(point, out var player))
+                {
+                    var characterVisitor = new CharacterVisitor(player.Id);
+                    player.Accept(characterVisitor);
+                    icon = characterVisitor.Icon;
+                }
+
+                frame.WriteText(offsetX + x, offsetY + y, IconSymbol(icon), 1);
+            }
+        }
     }
 
     private static void DrawPlayersBox(ServerFrame frame, IReadOnlyList<string> players)
     {
-        DrawBox(frame, 37, 2, 81, 11, " PLAYERS ");
-        frame.WriteText(39, 4, "ID  Name               Health  Position", 77);
+        DrawBox(frame, RightColumnX, BoardBoxY, RightColumnWidth, PlayersBoxHeight, " PLAYERS ");
+        var textX = RightColumnX + 2;
+        var textWidth = RightColumnWidth - 4;
+        frame.WriteText(textX, BoardBoxY + 2, "ID  Name               Health  Position", textWidth);
 
+        for(int i=0; i<9;i++)
+        {
+            frame.WriteText(textX, BoardBoxY + 5 + i,$" {i+1}",textWidth);
+        }
         if (players.Count == 0)
         {
-            frame.WriteText(39, 6, "Waiting for clients...", 77);
+            frame.WriteText(textX, BoardBoxY + 4, "Waiting for clients...", textWidth);
             return;
         }
 
         for (var index = 0; index < players.Count && index < MaxPlayers; index++)
         {
-            frame.WriteText(39, 5 + index, players[index], 77);
+            frame.WriteText(textX, BoardBoxY + 5 + index, players[index], textWidth);
         }
+    }
+
+    private static void DrawStatusBox(ServerFrame frame, ServerStatusSnapshot status)
+    {
+        DrawBox(frame, BoardBoxX, BottomRowY, BoardBoxWidth, BottomBoxHeight, " SERVER ");
+        var uptime = DateTime.UtcNow - status.StartedUtc;
+        var state = status.IsRunning ? "running" : "stopped";
+        var textX = BoardBoxX + 2;
+        var textWidth = BoardBoxWidth - 4;
+        var y = BottomRowY + 1;
+
+        frame.WriteText(textX, y++, $"Endpoint: 127.0.0.1:{status.Port}", textWidth);
+        frame.WriteText(textX, y++, $"Status: {state}    Clients: {status.ReadyClients}/{status.ConnectedClients}/{MaxPlayers}", textWidth);
+        frame.WriteText(textX, y++, $"Broadcasts: {status.BroadcastCount}", textWidth);
+        frame.WriteText(textX, y++, $"State messages: {status.StateMessageCount}", textWidth);
+        frame.WriteText(textX, y++, $"Uptime: {uptime:hh\\:mm\\:ss}", textWidth);
+        frame.WriteText(textX, y, "[Q/Esc] Stop server", textWidth);
     }
 
     private static void DrawEventsBox(ServerFrame frame, IReadOnlyList<string> events)
     {
-        DrawBox(frame, 2, 14, 116, 13, " EVENT LOG ");
+        DrawBox(frame, RightColumnX, EventLogBoxY, RightColumnWidth, EventLogBoxHeight, " EVENT LOG ");
+        var textX = RightColumnX + 2;
+        var textWidth = RightColumnWidth - 4;
+        var bottomY = BottomRowY + BottomBoxHeight - 1;
+
         if (events.Count == 0)
         {
-            frame.WriteText(4, 16, "No events yet.", 112);
+            frame.WriteText(textX, BottomRowY + 1, "No events yet.", textWidth);
             return;
         }
 
-        var y = 16;
+        var y = EventLogBoxY + 1;
         foreach (var entry in events)
         {
-            y = WriteWrapped(frame, 4, y, 112, 26 - y, entry);
-            if (y >= 26)
+            y = WriteWrapped(frame, textX, y, textWidth, bottomY - y, entry);
+            if (y >= bottomY)
             {
                 return;
             }
@@ -103,7 +176,7 @@ public sealed class ConsoleServerView
     private static void DrawResizeMessage(ServerFrame frame)
     {
         WriteCentered(frame, Math.Max(0, frame.Width / 2), Math.Max(0, frame.Height / 2 - 1), "Console window is too small.", frame.Width);
-        WriteCentered(frame, Math.Max(0, frame.Width / 2), Math.Max(0, frame.Height / 2), "Use at least 120 x 29.", frame.Width);
+        WriteCentered(frame, Math.Max(0, frame.Width / 2), Math.Max(0, frame.Height / 2), "Maximise it.", frame.Width);
     }
 
     private static void DrawBox(ServerFrame frame, int x, int y, int width, int height, string title)
@@ -251,6 +324,48 @@ public sealed class ConsoleServerView
 
         return text.Length <= maxLength ? text : text[..maxLength];
     }
+
+    private static Dictionary<BoardPoint, Enemy> CreateEnemyPositionIndex(GameModel gameModel)
+    {
+        var index = new Dictionary<BoardPoint, Enemy>();
+        foreach (var enemy in gameModel.Enemies)
+        {
+            if (enemy.IsAlive)
+            {
+                index[new BoardPoint(enemy.X, enemy.Y)] = enemy;
+            }
+        }
+
+        return index;
+    }
+
+    private static Dictionary<BoardPoint, Player> CreatePlayerPositionIndex(GameModel gameModel)
+    {
+        var index = new Dictionary<BoardPoint, Player>();
+        foreach (var player in gameModel.Players)
+        {
+            if (player.IsAlive)
+            {
+                index[new BoardPoint(player.X, player.Y)] = player;
+            }
+        }
+
+        return index;
+    }
+
+    private static RenderIcon GetTileIcon(ITile tile)
+    {
+        var visitor = new TileVisitor();
+        tile.Accept(visitor);
+        return visitor.Icon;
+    }
+
+    private static string IconSymbol(RenderIcon icon)
+    {
+        return string.IsNullOrEmpty(icon.Symbol) ? " " : icon.Symbol[..1];
+    }
+
+    private readonly record struct BoardPoint(int X, int Y);
 
     private sealed class ServerFrame
     {

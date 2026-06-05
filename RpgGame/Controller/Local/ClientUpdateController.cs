@@ -77,7 +77,7 @@ public sealed class ClientUpdateController
         lock (_localGameModel.SyncRoot)
         {
             var encounter = _localGameModel.FindEncounterForPlayer(_localModel.LocalPlayerId);
-            if (encounter is null ||
+            if (encounter == null ||
                 encounter.Sequence <= _localModel.LastHandledEncounterSequence)
             {
                 return;
@@ -111,7 +111,7 @@ public sealed class ClientUpdateController
     private bool CanOpenEncounter()
     {
         var mode = _localModel.CurrentInputMode;
-        return _localModel.PendingAttackTargetId is null &&
+        return _localModel.PendingAttackTargetId == null &&
             !mode.ShowsInstructions &&
             !mode.ShowsInventory &&
             !mode.ShowsLoot &&
@@ -124,7 +124,7 @@ public sealed class ClientUpdateController
         lock (_localGameModel.SyncRoot)
         {
             var player = _localGameModel.FindPlayer(_localModel.LocalPlayerId);
-            if (player is null || player.IsAlive || _localModel.CurrentInputMode.ShowsGameOver)
+            if (player == null || player.IsAlive || _localModel.CurrentInputMode.ShowsGameOver)
             {
                 return;
             }
@@ -146,7 +146,7 @@ public sealed class ClientUpdateController
         lock (_localGameModel.SyncRoot)
         {
             var player = _localGameModel.FindPlayer(_localModel.LocalPlayerId);
-            if (player is null)
+            if (player == null)
             {
                 return 0;
             }

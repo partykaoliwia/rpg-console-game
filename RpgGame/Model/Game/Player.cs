@@ -112,7 +112,7 @@ public sealed class Player
 
     public bool UnequipLeftHand()
     {
-        if (LeftHand is null || _inventory.Count >= MaxInventorySize)
+        if (LeftHand == null || _inventory.Count >= MaxInventorySize)
         {
             return false;
         }
@@ -130,7 +130,7 @@ public sealed class Player
 
     public bool UnequipRightHand()
     {
-        if (RightHand is null || _inventory.Count >= MaxInventorySize)
+        if (RightHand == null || _inventory.Count >= MaxInventorySize)
         {
             return false;
         }
@@ -217,12 +217,12 @@ public sealed class Player
     private PlayerStats GetBonusStats()
     {
         var bonusStats = new PlayerStats();
-        if (LeftHand is not null)
+        if (LeftHand != null)
         {
             bonusStats += LeftHand.Bonuses;
         }
 
-        if (RightHand is not null && !ReferenceEquals(RightHand, LeftHand))
+        if (RightHand != null && !ReferenceEquals(RightHand, LeftHand))
         {
             bonusStats += RightHand.Bonuses;
         }
@@ -233,12 +233,12 @@ public sealed class Player
     private List<IItem> GetDistinctHeldItems()
     {
         var heldItems = new List<IItem>();
-        if (LeftHand is not null)
+        if (LeftHand != null)
         {
             heldItems.Add(LeftHand);
         }
 
-        if (RightHand is not null && !ReferenceEquals(RightHand, LeftHand))
+        if (RightHand != null && !ReferenceEquals(RightHand, LeftHand))
         {
             heldItems.Add(RightHand);
         }
@@ -253,7 +253,7 @@ public sealed class Player
 
     private void ReturnLeftHandToInventory()
     {
-        if (LeftHand is null)
+        if (LeftHand == null)
         {
             return;
         }
@@ -271,7 +271,7 @@ public sealed class Player
 
     private void ReturnRightHandToInventory()
     {
-        if (RightHand is null)
+        if (RightHand == null)
         {
             return;
         }

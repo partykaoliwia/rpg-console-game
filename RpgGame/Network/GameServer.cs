@@ -102,7 +102,7 @@ public sealed class GameServer
         try
         {
             var join = await _reader.ReadAsync<JoinGameDto>(reader, cancellationToken);
-            if (join is null)
+            if (join == null)
             {
                 return;
             }
@@ -130,7 +130,7 @@ public sealed class GameServer
                     continue;
                 }
 
-                if (command is null)
+                if (command == null)
                 {
                     return;
                 }
