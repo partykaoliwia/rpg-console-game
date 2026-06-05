@@ -12,7 +12,10 @@ public sealed class CharacterVisitor : ICharacterVisitor
             { "Medusa", new RenderIcon("M", ConsoleColor.Green) },
             { "Champion of Ares", new RenderIcon("A", ConsoleColor.DarkRed) },
             { "Guardian of Alexandria", new RenderIcon("G", ConsoleColor.DarkGreen) },
-            { "Ancient Giant", new RenderIcon("G", ConsoleColor.DarkMagenta) }
+            { "Ancient Giant", new RenderIcon("G", ConsoleColor.DarkMagenta) },
+            { "Arena Satyr", new RenderIcon("s", ConsoleColor.DarkYellow) },
+            { "Archivist Satyr", new RenderIcon("s", ConsoleColor.DarkCyan) },
+            { "Lost Satyr", new RenderIcon("s", ConsoleColor.DarkGreen) }
         };
 
     private readonly int _localPlayerId;
@@ -38,6 +41,11 @@ public sealed class CharacterVisitor : ICharacterVisitor
     public void Visit(Giant giant)
     {
         Icon = CreateEnemyIcon(giant.Name, new RenderIcon("G", ConsoleColor.Red));
+    }
+
+    public void Visit(Satyr satyr)
+    {
+        Icon = CreateEnemyIcon(satyr.Name, new RenderIcon("s", ConsoleColor.DarkYellow));
     }
 
     private static RenderIcon CreateEnemyIcon(string enemyName, RenderIcon defaultIcon)

@@ -59,7 +59,12 @@ public sealed class LabyrinthFactory : IDungeonThemeFactory
             return new Harpy(id, "Harpy", 30, 20, 2, x, y);
         }
 
-        if (distanceFromStart < 40)
+        if (distanceFromStart < 35)
+        {
+            return new Satyr(id, "Lost Satyr", 35, 14, 3, x, y);
+        }
+
+        if (distanceFromStart < 45)
         {
             return new Giant(id, "Giant", 40, 13, 4, x, y);
         }

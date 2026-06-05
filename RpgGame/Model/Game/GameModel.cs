@@ -1,4 +1,5 @@
 using RpgGame.Model.Game.Combat;
+using RpgGame.Model.Game.Behaviors;
 using RpgGame.Model.Game.Builders;
 using RpgGame.Model.Game.Factories;
 using RpgGame.Model.Game.Items;
@@ -9,21 +10,13 @@ namespace RpgGame.Model.Game;
 
 public sealed class GameModel
 {
-    private static readonly (int X, int Y)[] EnemyMoveOptions =
-    {
-        (0, -1),
-        (0, 1),
-        (-1, 0),
-        (1, 0),
-        (0, 0)
-    };
-
     private readonly List<Player> _players = new();
     private readonly List<Enemy> _enemies = new();
     private readonly Dictionary<int, CombatEncounter> _encountersByPlayerId = new();
     private readonly SoundPublisher _soundPublisher = new();
     private readonly SpeciesPublisher _harpySpecies = new("Harpy");
     private readonly SpeciesPublisher _giantSpecies = new("Giant");
+    private readonly SpeciesPublisher _satyrSpecies = new("Satyr");
     private readonly Random _enemyMovementRandom = new();
     private int _nextEncounterSequence;
 
@@ -310,6 +303,7 @@ public sealed class GameModel
                 return;
             }
 
+            enemy.UpdateAfterAttack(EventLog);
             NotifySound(player.X, player.Y, soundRange);
 
             var receivedDamage = player.TakeDamage(Math.Max(0, enemy.Strength - combatStats.Defense));
@@ -517,14 +511,21 @@ public sealed class GameModel
             return false;
         }
 
-        var delta = EnemyMoveOptions[_enemyMovementRandom.Next(EnemyMoveOptions.Length)];
-        if (delta.X == 0 && delta.Y == 0)
+        var context = new EnemyBehaviorContext(Board, _players, _enemies, _enemyMovementRandom);
+        var decision = enemy.DecideBehavior(context);
+        if (decision.ShouldAttack)
+        {
+            var targetPlayer = FindPlayer(decision.AttackPlayerId.Value);
+            return targetPlayer != null && targetPlayer.IsAlive && RegisterEncounter(targetPlayer, enemy);
+        }
+
+        if (!decision.ShouldMove)
         {
             return false;
         }
 
-        var newX = enemy.X + delta.X;
-        var newY = enemy.Y + delta.Y;
+        var newX = enemy.X + decision.DeltaX;
+        var newY = enemy.Y + decision.DeltaY;
         var player = FindLivingPlayerAt(newX, newY);
         if (player != null)
         {
@@ -667,7 +668,7 @@ public sealed class GameModel
 
     private void RegisterEnemy(Enemy enemy)
     {
-        var visitor = new EnemyObserverRegistrationVisitor(_harpySpecies, _giantSpecies, _soundPublisher);
+        var visitor = new EnemyObserverRegistrationVisitor(_harpySpecies, _giantSpecies, _satyrSpecies, _soundPublisher);
         enemy.Accept(visitor);
     }
 
@@ -675,15 +676,18 @@ public sealed class GameModel
     {
         private readonly SpeciesPublisher _harpies;
         private readonly SpeciesPublisher _giants;
+        private readonly SpeciesPublisher _satyrs;
         private readonly SoundPublisher _sound;
 
         public EnemyObserverRegistrationVisitor(
             SpeciesPublisher harpies,
             SpeciesPublisher giants,
+            SpeciesPublisher satyrs,
             SoundPublisher sound)
         {
             _harpies = harpies;
             _giants = giants;
+            _satyrs = satyrs;
             _sound = sound;
         }
 
@@ -699,6 +703,11 @@ public sealed class GameModel
         public void Visit(Giant giant)
         {
             giant.JoinObservers(_giants, _sound);
+        }
+
+        public void Visit(Satyr satyr)
+        {
+            satyr.JoinObservers(_satyrs, _sound);
         }
     }
 }

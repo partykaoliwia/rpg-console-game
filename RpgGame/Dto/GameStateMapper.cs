@@ -51,7 +51,8 @@ public sealed class GameStateMapper
         _enemyFactories = new Dictionary<EnemyKind, Func<EnemyDto, Enemy>>
         {
             { EnemyKind.Harpy, dto => RestoreEnemy(new Harpy(dto.Id, dto.X, dto.Y), dto) },
-            { EnemyKind.Giant, dto => RestoreEnemy(new Giant(dto.Id, dto.X, dto.Y), dto) }
+            { EnemyKind.Giant, dto => RestoreEnemy(new Giant(dto.Id, dto.X, dto.Y), dto) },
+            { EnemyKind.Satyr, dto => RestoreEnemy(new Satyr(dto.Id, dto.X, dto.Y), dto) }
         };
     }
 
@@ -303,6 +304,11 @@ public sealed class GameStateMapper
         public void Visit(Giant giant)
         {
             Kind = EnemyKind.Giant;
+        }
+
+        public void Visit(Satyr satyr)
+        {
+            Kind = EnemyKind.Satyr;
         }
     }
 

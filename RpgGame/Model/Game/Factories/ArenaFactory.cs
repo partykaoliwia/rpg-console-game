@@ -50,7 +50,12 @@ public sealed class ArenaFactory : IDungeonThemeFactory
             return new Harpy(id, "Arena Harpy", 30, 12, 2, x, y);
         }
 
-        if (distanceFromStart < 40)
+        if (distanceFromStart < 35)
+        {
+            return new Satyr(id, "Arena Satyr", 35, 16, 3, x, y);
+        }
+
+        if (distanceFromStart < 45)
         {
             return new Giant(id, "Arena Giant", 45, 18, 5, x, y);
         }

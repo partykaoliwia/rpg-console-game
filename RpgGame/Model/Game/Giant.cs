@@ -1,4 +1,5 @@
 using RpgGame.Model.Global;
+using RpgGame.Model.Game.Behaviors;
 
 namespace RpgGame.Model.Game;
 
@@ -13,6 +14,7 @@ public sealed class Giant : Enemy
         : base(id, name, health, strength, armor, x, y)
     {
         MoveEveryMs = 1500;
+        ConfigureBehaviorProfile(EnemyBehaviors.CowardlyProfile());
     }
 
     public override void Accept(ICharacterVisitor visitor)
@@ -22,6 +24,7 @@ public sealed class Giant : Enemy
 
     public override void UpdateOnSound(int sourceX, int sourceY, int distance, GameEventLog eventLog)
     {
+        RememberSound(sourceX, sourceY);
         eventLog.Add($"{Name} at ({X}, {Y}) heard noise from ({sourceX}, {sourceY}). Distance: {distance}.");
     }
 

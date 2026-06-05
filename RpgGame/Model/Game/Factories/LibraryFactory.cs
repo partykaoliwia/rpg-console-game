@@ -50,7 +50,12 @@ public sealed class LibraryFactory : IDungeonThemeFactory
             return new Harpy(id, "Archive Harpy", 30, 15, 2, x, y);
         }
 
-        if (distanceFromStart < 40)
+        if (distanceFromStart < 35)
+        {
+            return new Satyr(id, "Archivist Satyr", 35, 12, 3, x, y);
+        }
+
+        if (distanceFromStart < 45)
         {
             return new Giant(id, "Silent Giant", 40, 20, 4, x, y);
         }
