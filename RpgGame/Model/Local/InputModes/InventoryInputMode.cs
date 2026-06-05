@@ -1,0 +1,20 @@
+namespace RpgGame.Model.Local.InputModes;
+
+public sealed class InventoryInputMode : IInputMode
+{
+    public bool ShowsInstructions => false;
+    public bool ShowsInventory => true;
+    public bool ShowsLoot => false;
+    public bool ShowsLogHistory => false;
+    public bool ShowsGameOver => false;
+
+    public void Handle(ConsoleKey key, IInputModeHandler handler)
+    {
+        handler.HandleInventoryKey(key);
+    }
+
+    public void Render(IInputModeRenderer renderer)
+    {
+        renderer.RenderInventoryMode();
+    }
+}

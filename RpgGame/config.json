@@ -1,4 +1,9 @@
 {
-    "PlayerName": "Heros",
-    "LogDirectory":  "GameLogs"
+  "PlayerName": "Tezeusz",
+  "ClientPlayerName": "Hero",
+  "DungeonTheme": "Random",
+  "DefaultPort": 5555,
+  "DefaultHost": "127.0.0.1",
+  "KeybindsPath": "keybinds.txt",
+  "LogDirectory": "GameLogs"
 }

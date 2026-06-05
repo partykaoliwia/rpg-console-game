@@ -2,28 +2,20 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+
+
   <ItemGroup>
-    <Content Include="bin\debug\net9.0\config.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="bin\Debug\net9.0\keybinds.txt" />
+    <Content Include="keybinds.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
-	
-	<ItemGroup>
-		<PackageReference Include="Pastel" Version="7.0.0" />
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <None Update="config.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="keybinds.txt">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
+
 </Project>
