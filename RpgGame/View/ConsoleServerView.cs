@@ -7,6 +7,7 @@ namespace RpgGame.View;
 
 public sealed class ConsoleServerView
 {
+    private const string AnsiReset = "\u001b[0m";
     private const int ScreenWidth = 135;
     private const int ScreenHeight = 37;
     private const int MaxPlayers = 9;
@@ -23,6 +24,25 @@ public sealed class ConsoleServerView
     private const int PlayersBoxHeight = 15;
     private const int EventLogBoxY = BoardBoxY + PlayersBoxHeight + 1;
     private const int EventLogBoxHeight = ScreenHeight - EventLogBoxY - 1;
+    private static readonly IReadOnlyDictionary<ConsoleColor, string> AnsiColors = new Dictionary<ConsoleColor, string>
+    {
+        { ConsoleColor.Black, "\u001b[30m" },
+        { ConsoleColor.DarkBlue, "\u001b[34m" },
+        { ConsoleColor.DarkGreen, "\u001b[32m" },
+        { ConsoleColor.DarkCyan, "\u001b[36m" },
+        { ConsoleColor.DarkRed, "\u001b[31m" },
+        { ConsoleColor.DarkMagenta, "\u001b[35m" },
+        { ConsoleColor.DarkYellow, "\u001b[33m" },
+        { ConsoleColor.Gray, "\u001b[37m" },
+        { ConsoleColor.DarkGray, "\u001b[90m" },
+        { ConsoleColor.Blue, "\u001b[94m" },
+        { ConsoleColor.Green, "\u001b[92m" },
+        { ConsoleColor.Cyan, "\u001b[96m" },
+        { ConsoleColor.Red, "\u001b[91m" },
+        { ConsoleColor.Magenta, "\u001b[95m" },
+        { ConsoleColor.Yellow, "\u001b[93m" },
+        { ConsoleColor.White, "\u001b[97m" }
+    };
 
     public void Render(GameModel gameModel, ServerStatusModel statusModel)
     {
@@ -61,7 +81,7 @@ public sealed class ConsoleServerView
 
     private static void DrawHeader(ServerFrame frame)
     {
-        WriteCentered(frame, ScreenWidth / 2, 0, "RPG GAME SERVER", ScreenWidth - 4);
+        WriteCentered(frame, ScreenWidth / 2, 0, "RPG GAME SERVER", ScreenWidth - 4, ConsoleColor.White);
     }
 
     private static void DrawBoardBox(ServerFrame frame, GameModel gameModel)
@@ -104,7 +124,7 @@ public sealed class ConsoleServerView
                     icon = characterVisitor.Icon;
                 }
 
-                frame.WriteText(offsetX + x, offsetY + y, IconSymbol(icon), 1);
+                frame.WriteText(offsetX + x, offsetY + y, IconSymbol(icon), 1, icon.Color);
             }
         }
     }
@@ -114,21 +134,21 @@ public sealed class ConsoleServerView
         DrawBox(frame, RightColumnX, BoardBoxY, RightColumnWidth, PlayersBoxHeight, " PLAYERS ");
         var textX = RightColumnX + 2;
         var textWidth = RightColumnWidth - 4;
-        frame.WriteText(textX, BoardBoxY + 2, "ID  Name               Health  Position", textWidth);
+        frame.WriteText(textX, BoardBoxY + 2, "ID  Name               Health  Position", textWidth, ConsoleColor.DarkGray);
 
         for(int i=0; i<9;i++)
         {
-            frame.WriteText(textX, BoardBoxY + 5 + i,$" {i+1}",textWidth);
+            frame.WriteText(textX, BoardBoxY + 5 + i,$" {i+1}",textWidth, ConsoleColor.DarkGray);
         }
         if (players.Count == 0)
         {
-            frame.WriteText(textX, BoardBoxY + 4, "Waiting for clients...", textWidth);
+            frame.WriteText(textX, BoardBoxY + 4, "Waiting for clients...", textWidth, ConsoleColor.DarkGray);
             return;
         }
 
         for (var index = 0; index < players.Count && index < MaxPlayers; index++)
         {
-            frame.WriteText(textX, BoardBoxY + 5 + index, players[index], textWidth);
+            frame.WriteText(textX, BoardBoxY + 5 + index, players[index], textWidth, ConsoleColor.Cyan);
         }
     }
 
@@ -141,12 +161,17 @@ public sealed class ConsoleServerView
         var textWidth = BoardBoxWidth - 4;
         var y = BottomRowY + 1;
 
-        frame.WriteText(textX, y++, $"Endpoint: 127.0.0.1:{status.Port}", textWidth);
-        frame.WriteText(textX, y++, $"Status: {state}    Clients: {status.ReadyClients}/{status.ConnectedClients}/{MaxPlayers}", textWidth);
-        frame.WriteText(textX, y++, $"Broadcasts: {status.BroadcastCount}", textWidth);
-        frame.WriteText(textX, y++, $"State messages: {status.StateMessageCount}", textWidth);
-        frame.WriteText(textX, y++, $"Uptime: {uptime:hh\\:mm\\:ss}", textWidth);
-        frame.WriteText(textX, y, "[Q/Esc] Stop server", textWidth);
+        frame.WriteText(textX, y++, $"Endpoint: 127.0.0.1:{status.Port}", textWidth, ConsoleColor.Gray);
+        frame.WriteText(
+            textX,
+            y++,
+            $"Status: {state}    Clients: {status.ReadyClients}/{status.ConnectedClients}/{MaxPlayers}",
+            textWidth,
+            status.IsRunning ? ConsoleColor.Green : ConsoleColor.Red);
+        frame.WriteText(textX, y++, $"Broadcasts: {status.BroadcastCount}", textWidth, ConsoleColor.Gray);
+        frame.WriteText(textX, y++, $"State messages: {status.StateMessageCount}", textWidth, ConsoleColor.Gray);
+        frame.WriteText(textX, y++, $"Uptime: {uptime:hh\\:mm\\:ss}", textWidth, ConsoleColor.Gray);
+        frame.WriteText(textX, y, "[Q/Esc] Stop server", textWidth, ConsoleColor.DarkGray);
     }
 
     private static void DrawEventsBox(ServerFrame frame, IReadOnlyList<string> events)
@@ -154,18 +179,18 @@ public sealed class ConsoleServerView
         DrawBox(frame, RightColumnX, EventLogBoxY, RightColumnWidth, EventLogBoxHeight, " EVENT LOG ");
         var textX = RightColumnX + 2;
         var textWidth = RightColumnWidth - 4;
-        var bottomY = BottomRowY + BottomBoxHeight - 1;
+        var bottomY = EventLogBoxY + EventLogBoxHeight - 1;
 
         if (events.Count == 0)
         {
-            frame.WriteText(textX, BottomRowY + 1, "No events yet.", textWidth);
+            frame.WriteText(textX, EventLogBoxY + 1, "No events yet.", textWidth, ConsoleColor.DarkGray);
             return;
         }
 
         var y = EventLogBoxY + 1;
         foreach (var entry in events)
         {
-            y = WriteWrapped(frame, textX, y, textWidth, bottomY - y, entry);
+            y = WriteWrapped(frame, textX, y, textWidth, bottomY - y, entry, CreateEventColor(entry));
             if (y >= bottomY)
             {
                 return;
@@ -175,8 +200,14 @@ public sealed class ConsoleServerView
 
     private static void DrawResizeMessage(ServerFrame frame)
     {
-        WriteCentered(frame, Math.Max(0, frame.Width / 2), Math.Max(0, frame.Height / 2 - 1), "Console window is too small.", frame.Width);
-        WriteCentered(frame, Math.Max(0, frame.Width / 2), Math.Max(0, frame.Height / 2), "Maximise it.", frame.Width);
+        WriteCentered(
+            frame,
+            Math.Max(0, frame.Width / 2),
+            Math.Max(0, frame.Height / 2 - 1),
+            "Console window is too small.",
+            frame.Width,
+            ConsoleColor.DarkYellow);
+        WriteCentered(frame, Math.Max(0, frame.Width / 2), Math.Max(0, frame.Height / 2), "Maximise it.", frame.Width, ConsoleColor.Gray);
     }
 
     private static void DrawBox(ServerFrame frame, int x, int y, int width, int height, string title)
@@ -187,25 +218,32 @@ public sealed class ConsoleServerView
         }
 
         var horizontal = new string('─', width - 2);
-        frame.WriteText(x, y, $"┌{horizontal}┐", width);
+        frame.WriteText(x, y, $"┌{horizontal}┐", width, ConsoleColor.DarkGray);
         for (var row = 1; row < height - 1; row++)
         {
-            frame.WriteText(x, y + row, "│", 1);
-            frame.WriteText(x + width - 1, y + row, "│", 1);
+            frame.WriteText(x, y + row, "│", 1, ConsoleColor.DarkGray);
+            frame.WriteText(x + width - 1, y + row, "│", 1, ConsoleColor.DarkGray);
         }
 
-        frame.WriteText(x, y + height - 1, $"└{horizontal}┘", width);
+        frame.WriteText(x, y + height - 1, $"└{horizontal}┘", width, ConsoleColor.DarkGray);
         var visibleTitle = Trim(title, width - 2);
         var titleX = x + (width - visibleTitle.Length) / 2;
-        frame.WriteText(titleX, y, visibleTitle, visibleTitle.Length);
+        frame.WriteText(titleX, y, visibleTitle, visibleTitle.Length, ConsoleColor.Gray);
     }
 
-    private static int WriteWrapped(ServerFrame frame, int x, int y, int width, int maxLines, string text)
+    private static int WriteWrapped(
+        ServerFrame frame,
+        int x,
+        int y,
+        int width,
+        int maxLines,
+        string text,
+        ConsoleColor color)
     {
         var currentY = y;
         foreach (var line in Wrap(text, width).Take(maxLines))
         {
-            frame.WriteText(x, currentY++, line, width);
+            frame.WriteText(x, currentY++, line, width, color);
         }
 
         return currentY;
@@ -240,11 +278,17 @@ public sealed class ConsoleServerView
         }
     }
 
-    private static void WriteCentered(ServerFrame frame, int centerX, int y, string text, int maxWidth)
+    private static void WriteCentered(
+        ServerFrame frame,
+        int centerX,
+        int y,
+        string text,
+        int maxWidth,
+        ConsoleColor color)
     {
         var visibleText = Trim(text, maxWidth);
         var x = Math.Max(0, centerX - visibleText.Length / 2);
-        frame.WriteText(x, y, visibleText, visibleText.Length);
+        frame.WriteText(x, y, visibleText, visibleText.Length, color);
     }
 
     private static void FlushFrame(ServerFrame frame)
@@ -254,12 +298,21 @@ public sealed class ConsoleServerView
             return;
         }
 
-        var output = new StringBuilder(frame.Width * frame.Height + frame.Height);
+        var output = new StringBuilder(frame.Width * frame.Height + frame.Height * 8);
+        var currentColor = ServerCell.Empty.Color;
+        output.Append(AnsiColor(currentColor));
         for (var y = 0; y < frame.Height; y++)
         {
             for (var x = 0; x < frame.Width; x++)
             {
-                output.Append(frame.Cells[y * frame.Width + x]);
+                var cell = frame.Cells[y * frame.Width + x];
+                if (cell.Color != currentColor)
+                {
+                    currentColor = cell.Color;
+                    output.Append(AnsiColor(currentColor));
+                }
+
+                output.Append(cell.Symbol);
             }
 
             if (y < frame.Height - 1)
@@ -268,6 +321,7 @@ public sealed class ConsoleServerView
             }
         }
 
+        output.Append(AnsiReset);
         try
         {
             Console.SetCursorPosition(0, 0);
@@ -325,6 +379,40 @@ public sealed class ConsoleServerView
         return text.Length <= maxLength ? text : text[..maxLength];
     }
 
+    private static ConsoleColor CreateEventColor(string entry)
+    {
+        if (entry.Contains("counterattacked", StringComparison.OrdinalIgnoreCase))
+        {
+            return ConsoleColor.DarkRed;
+        }
+
+        if (entry.Contains("attacked", StringComparison.OrdinalIgnoreCase) ||
+            entry.Contains("used", StringComparison.OrdinalIgnoreCase))
+        {
+            return ConsoleColor.Yellow;
+        }
+
+        if (entry.Contains("died", StringComparison.OrdinalIgnoreCase) ||
+            entry.Contains("defeated", StringComparison.OrdinalIgnoreCase))
+        {
+            return ConsoleColor.Red;
+        }
+
+        if (entry.Contains("noise", StringComparison.OrdinalIgnoreCase) ||
+            entry.Contains("heard", StringComparison.OrdinalIgnoreCase))
+        {
+            return ConsoleColor.Cyan;
+        }
+
+        if (entry.Contains("joined", StringComparison.OrdinalIgnoreCase) ||
+            entry.Contains("left", StringComparison.OrdinalIgnoreCase))
+        {
+            return ConsoleColor.Green;
+        }
+
+        return ConsoleColor.Gray;
+    }
+
     private static Dictionary<BoardPoint, Enemy> CreateEnemyPositionIndex(GameModel gameModel)
     {
         var index = new Dictionary<BoardPoint, Enemy>();
@@ -365,7 +453,17 @@ public sealed class ConsoleServerView
         return string.IsNullOrEmpty(icon.Symbol) ? " " : icon.Symbol[..1];
     }
 
+    private static string AnsiColor(ConsoleColor color)
+    {
+        return AnsiColors.TryGetValue(color, out var code) ? code : AnsiColors[ConsoleColor.Gray];
+    }
+
     private readonly record struct BoardPoint(int X, int Y);
+
+    private readonly record struct ServerCell(char Symbol, ConsoleColor Color)
+    {
+        public static ServerCell Empty { get; } = new(' ', ConsoleColor.Gray);
+    }
 
     private sealed class ServerFrame
     {
@@ -373,15 +471,15 @@ public sealed class ConsoleServerView
         {
             Width = Math.Max(0, width);
             Height = Math.Max(0, height);
-            Cells = new char[Math.Max(0, width * height)];
-            Array.Fill(Cells, ' ');
+            Cells = new ServerCell[Math.Max(0, width * height)];
+            Array.Fill(Cells, ServerCell.Empty);
         }
 
         public int Width { get; }
         public int Height { get; }
-        public char[] Cells { get; }
+        public ServerCell[] Cells { get; }
 
-        public void WriteText(int x, int y, string text, int maxWidth)
+        public void WriteText(int x, int y, string text, int maxWidth, ConsoleColor color = ConsoleColor.Gray)
         {
             if (y < 0 || y >= Height || x >= Width || maxWidth <= 0)
             {
@@ -399,7 +497,7 @@ public sealed class ConsoleServerView
             var visibleText = Trim(text, availableWidth);
             for (var offset = 0; offset < visibleText.Length; offset++)
             {
-                Cells[y * Width + startX + offset] = visibleText[offset];
+                Cells[y * Width + startX + offset] = new ServerCell(visibleText[offset], color);
             }
         }
     }
