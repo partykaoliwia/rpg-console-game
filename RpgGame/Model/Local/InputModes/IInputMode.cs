@@ -4,6 +4,7 @@ public interface IInputMode
 {
     bool ShowsInstructions { get; }
     bool ShowsInventory { get; }
+    bool ShowsSlots { get; }
     bool ShowsLoot { get; }
     bool ShowsLogHistory { get; }
     bool ShowsGameOver { get; }

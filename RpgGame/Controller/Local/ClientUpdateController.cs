@@ -51,6 +51,18 @@ public sealed class ClientUpdateController
             }
 
             _localModel.ClampInventoryCursor(itemCount);
+            if (mode.ShowsSlots)
+            {
+                var slotCount = GetCurrentSlotCount();
+                if (slotCount < 0)
+                {
+                    _localModel.CloseMenu();
+                    return;
+                }
+
+                _localModel.ClampSlotCursor(slotCount);
+            }
+
             return;
         }
 
@@ -138,6 +150,16 @@ public sealed class ClientUpdateController
         lock (_localGameModel.SyncRoot)
         {
             return _localGameModel.FindPlayer(_localModel.LocalPlayerId)?.Inventory.Count ?? 0;
+        }
+    }
+
+    private int GetCurrentSlotCount()
+    {
+        lock (_localGameModel.SyncRoot)
+        {
+            var player = _localGameModel.FindPlayer(_localModel.LocalPlayerId);
+            var item = SlotBrowserNavigator.GetCurrentItem(player, _localModel);
+            return item == null ? -1 : item.Slots.Count;
         }
     }
 

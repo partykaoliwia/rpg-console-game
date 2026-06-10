@@ -21,6 +21,8 @@ public sealed class KeyBindingProfile
     public ConsoleKey EquipRight { get; init; } = ConsoleKey.R;
     public ConsoleKey UnequipLeft { get; init; } = ConsoleKey.D1;
     public ConsoleKey UnequipRight { get; init; } = ConsoleKey.D2;
+    public ConsoleKey OpenSlots { get; init; } = ConsoleKey.Enter;
+    public ConsoleKey LeaveSlots { get; init; } = ConsoleKey.Backspace;
     public ConsoleKey OpenLogHistory { get; init; } = ConsoleKey.H;
     public ConsoleKey InventoryOpenLogHistory { get; init; } = ConsoleKey.H;
     public ConsoleKey LootOpenLogHistory { get; init; } = ConsoleKey.H;

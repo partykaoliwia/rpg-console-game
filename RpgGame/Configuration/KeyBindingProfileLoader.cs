@@ -79,6 +79,8 @@ public sealed class KeyBindingProfileLoader
             EquipRight = GetKey("Inventory", defaults.EquipRight, "EquipRight"),
             UnequipLeft = GetKey("Inventory", defaults.UnequipLeft, "UnequipLeft"),
             UnequipRight = GetKey("Inventory", defaults.UnequipRight, "UnequipRight"),
+            OpenSlots = GetKey(new[] { "Inventory", "Slots" }, defaults.OpenSlots, "OpenSlots", "OpenSlot"),
+            LeaveSlots = GetKey("Slots", defaults.LeaveSlots, "LeaveSlots", "Back"),
             OpenLogHistory = GetKey("Playing", defaults.OpenLogHistory, "OpenLogHistory", "LogHistory"),
             InventoryOpenLogHistory = GetKey("Inventory", defaults.InventoryOpenLogHistory, "OpenLogHistory", "LogHistory"),
             LootOpenLogHistory = GetKey(new[] { "Loot", "Looting" }, defaults.LootOpenLogHistory, "OpenLogHistory", "LogHistory"),

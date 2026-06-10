@@ -18,6 +18,16 @@ EquipRight=R
 UnequipLeft=D1
 UnequipRight=D2
 DropItem=D
+OpenSlots=Enter
+CloseMenu=Escape
+OpenLogHistory=H
+ReloadKeyBindings=F5
+
+[Slots]
+MoveUp=W
+MoveDown=S
+OpenSlot=Enter
+LeaveSlots=Backspace
 CloseMenu=Escape
 OpenLogHistory=H
 ReloadKeyBindings=F5

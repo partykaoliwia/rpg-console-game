@@ -4,6 +4,7 @@ public sealed class CombatInputMode : IInputMode
 {
     public bool ShowsInstructions => false;
     public bool ShowsInventory => false;
+    public bool ShowsSlots => false;
     public bool ShowsLoot => false;
     public bool ShowsLogHistory => false;
     public bool ShowsGameOver => false;

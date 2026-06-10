@@ -5,6 +5,7 @@ public interface IInputModeRenderer
     void RenderInstructionMode();
     void RenderPlayingMode();
     void RenderInventoryMode();
+    void RenderSlotMode();
     void RenderLootMode();
     void RenderCombatMode();
     void RenderWeaponMode();

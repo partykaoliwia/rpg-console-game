@@ -4,6 +4,7 @@ public sealed class LogHistoryInputMode : IInputMode
 {
     public bool ShowsInstructions => false;
     public bool ShowsInventory => false;
+    public bool ShowsSlots => false;
     public bool ShowsLoot => false;
     public bool ShowsLogHistory => true;
     public bool ShowsGameOver => false;

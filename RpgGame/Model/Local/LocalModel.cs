@@ -9,6 +9,7 @@ public sealed class LocalModel
     private static readonly TimeSpan FreshLocalMessageAge = TimeSpan.FromSeconds(2);
     private readonly Stack<IInputMode> _inputModes = new();
     private readonly List<LocalMessage> _localMessages = new();
+    private readonly List<int> _slotPath = new();
     private int? _attackSelectionBaseDepth;
 
     public LocalModel(int localPlayerId, KeyBindingProfile keyBindings)
@@ -30,6 +31,9 @@ public sealed class LocalModel
     public int LastHandledEncounterSequence { get; private set; }
     public int InventoryCursor { get; set; }
     public int LootCursor { get; set; }
+    public int SlotRootInventoryIndex { get; private set; }
+    public int SlotCursor { get; private set; }
+    public IReadOnlyList<int> SlotPath => _slotPath;
 
     public void AddLocalMessage(string message)
     {
@@ -86,7 +90,16 @@ public sealed class LocalModel
     public void OpenInventory()
     {
         InventoryCursor = 0;
+        ResetSlotBrowser();
         PushInputMode(new InventoryInputMode());
+    }
+
+    public void OpenSlotsForInventoryItem(int inventoryIndex)
+    {
+        SlotRootInventoryIndex = inventoryIndex;
+        SlotCursor = 0;
+        _slotPath.Clear();
+        PushInputMode(new SlotInputMode());
     }
 
     public void OpenLoot()
@@ -105,6 +118,7 @@ public sealed class LocalModel
         PendingAttackTargetId = null;
         IsChoosingAttackWeapon = false;
         _attackSelectionBaseDepth = null;
+        ResetSlotBrowser();
         PushInputMode(new GameOverInputMode());
     }
 
@@ -190,6 +204,46 @@ public sealed class LocalModel
         LootCursor = MoveCursor(LootCursor, delta, itemCount);
     }
 
+    public void MoveSlotCursor(int delta, int slotCount)
+    {
+        if (slotCount <= 0)
+        {
+            SlotCursor = 0;
+            return;
+        }
+
+        SlotCursor = MoveCursor(SlotCursor, delta, slotCount);
+    }
+
+    public void ClampSlotCursor(int slotCount)
+    {
+        if (slotCount <= 0)
+        {
+            SlotCursor = 0;
+            return;
+        }
+
+        SlotCursor = Math.Clamp(SlotCursor, 0, slotCount - 1);
+    }
+
+    public void EnterSlotLevel(int slotIndex)
+    {
+        _slotPath.Add(slotIndex);
+        SlotCursor = 0;
+    }
+
+    public bool LeaveSlotLevel()
+    {
+        if (_slotPath.Count <= 0)
+        {
+            return false;
+        }
+
+        _slotPath.RemoveAt(_slotPath.Count - 1);
+        SlotCursor = 0;
+        return true;
+    }
+
     public void ClampLootCursor(int itemCount)
     {
         if (itemCount <= 0)
@@ -212,6 +266,11 @@ public sealed class LocalModel
         {
             _inputModes.Pop();
         }
+
+        if (!_inputModes.Peek().ShowsSlots)
+        {
+            ResetSlotBrowser();
+        }
     }
 
     private void PopToDepth(int depth)
@@ -230,6 +289,17 @@ public sealed class LocalModel
         }
 
         _inputModes.Push(inputMode);
+        if (!inputMode.ShowsSlots)
+        {
+            ResetSlotBrowser();
+        }
+    }
+
+    private void ResetSlotBrowser()
+    {
+        SlotRootInventoryIndex = 0;
+        SlotCursor = 0;
+        _slotPath.Clear();
     }
 
     private static int MoveCursor(int cursor, int delta, int itemCount)

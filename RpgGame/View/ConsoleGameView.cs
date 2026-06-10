@@ -62,6 +62,8 @@ public sealed class ConsoleGameView : IGameView
         { ConsoleKey.NumPad8, "8" },
         { ConsoleKey.NumPad9, "9" },
         { ConsoleKey.Escape, "Esc" },
+        { ConsoleKey.Enter, "Enter" },
+        { ConsoleKey.Backspace, "Backspace" },
         { ConsoleKey.Spacebar, "Space" }
     };
 
@@ -180,7 +182,11 @@ public sealed class ConsoleGameView : IGameView
 
     private static void DrawLeftColumn(ConsoleFrame frame, GameModel gameModel, LocalModel localModel, Player? player)
     {
-        if (localModel.CurrentInputMode.ShowsInventory && player != null)
+        if (localModel.CurrentInputMode.ShowsSlots && player != null)
+        {
+            DrawSlotControlsBox(frame, localModel);
+        }
+        else if (localModel.CurrentInputMode.ShowsInventory && player != null)
         {
             DrawInventoryControlsBox(frame, localModel);
         }
@@ -195,7 +201,14 @@ public sealed class ConsoleGameView : IGameView
 
         if (player != null)
         {
-            DrawGroundItemsBox(frame, gameModel.Board.GetTile(player.X, player.Y), localModel);
+            if (localModel.CurrentInputMode.ShowsSlots)
+            {
+                DrawSlotBrowserBox(frame, player, localModel, LeftX, 11, LeftWidth, 12);
+            }
+            else
+            {
+                DrawGroundItemsBox(frame, gameModel.Board.GetTile(player.X, player.Y), localModel);
+            }
         }
 
         DrawRecentLogBox(frame, gameModel, localModel);
@@ -254,6 +267,23 @@ public sealed class ConsoleGameView : IGameView
             ConsoleColor.Gray,
             LeftWidth - 4);
         frame.WriteText(LeftX + 2, y++, $"[{KeyName(keys.DropItem)}] Drop", ConsoleColor.Gray, LeftWidth - 4);
+        frame.WriteText(LeftX + 2, y++, $"[{KeyName(keys.OpenSlots)}] Slots", ConsoleColor.Gray, LeftWidth - 4);
+        frame.WriteText(LeftX + 2, y++, $"[{KeyName(keys.OpenInventory)}] Return", ConsoleColor.Gray, LeftWidth - 4);
+    }
+
+    private static void DrawSlotControlsBox(ConsoleFrame frame, LocalModel localModel)
+    {
+        var keys = localModel.KeyBindings;
+        DrawBox(frame, LeftX, 1, LeftWidth, 10, " SLOT CONTROLS ");
+        var y = 3;
+        frame.WriteText(
+            LeftX + 2,
+            y++,
+            $"[{KeyName(keys.MoveUp)}/{KeyName(keys.MoveDown)}] Up/Down",
+            ConsoleColor.Gray,
+            LeftWidth - 4);
+        frame.WriteText(LeftX + 2, y++, $"[{KeyName(keys.OpenSlots)}] Open nested slots", ConsoleColor.Gray, LeftWidth - 4);
+        frame.WriteText(LeftX + 2, y++, $"[{KeyName(keys.LeaveSlots)}] Level up", ConsoleColor.Gray, LeftWidth - 4);
         frame.WriteText(LeftX + 2, y++, $"[{KeyName(keys.OpenInventory)}] Return", ConsoleColor.Gray, LeftWidth - 4);
     }
 
@@ -398,6 +428,76 @@ public sealed class ConsoleGameView : IGameView
         DrawCombatPlayerBox(frame, player);
         DrawCombatHandsBox(frame, player);
         DrawCombatControlsBox(frame, localModel);
+    }
+
+    private static void DrawSlotBrowserBox(
+        ConsoleFrame frame,
+        Player player,
+        LocalModel localModel,
+        int boxX,
+        int boxY,
+        int boxWidth,
+        int boxHeight)
+    {
+        DrawBox(frame, boxX, boxY, boxWidth, boxHeight, " ITEM SLOTS ");
+
+        var rootItem = SlotBrowserNavigator.GetRootItem(player, localModel);
+        var currentItem = SlotBrowserNavigator.GetCurrentItem(rootItem, localModel.SlotPath);
+        var textX = boxX + 2;
+        var textWidth = boxWidth - 4;
+        if (rootItem == null || currentItem == null)
+        {
+            frame.WriteText(textX, boxY + 2, "Selected item is no longer available.", ConsoleColor.DarkYellow, textWidth);
+            return;
+        }
+
+        var y = boxY + 2;
+        frame.WriteText(textX, y++, Trim(CreateSlotPathText(rootItem, localModel.SlotPath, textWidth), textWidth), ConsoleColor.DarkYellow, textWidth);
+        frame.WriteText(textX, y++, Trim(CreateBonusText(currentItem.Bonuses), textWidth), ConsoleColor.DarkGray, textWidth);
+        y++;
+
+        if (currentItem.Slots.Count == 0)
+        {
+            frame.WriteText(textX, y, "No slots on this level.", ConsoleColor.DarkGray, textWidth);
+            return;
+        }
+
+        var maxRows = Math.Max(1, boxY + boxHeight - 1 - y);
+        var firstRow = Math.Clamp(
+            localModel.SlotCursor - maxRows + 1,
+            0,
+            Math.Max(0, currentItem.Slots.Count - maxRows));
+        var lastRow = Math.Min(currentItem.Slots.Count, firstRow + maxRows);
+
+        for (var slotIndex = firstRow; slotIndex < lastRow; slotIndex++)
+        {
+            var slot = currentItem.Slots[slotIndex];
+            var slotItem = slot.Item;
+            var selected = slotIndex == localModel.SlotCursor;
+            var prefix = selected ? "> " : "  ";
+            var slotName = slotItem == null ? "(empty)" : slotItem.Name;
+            var nestedMarker = slotItem != null && slotItem.Slots.Count > 0 ? " >" : string.Empty;
+            var color = selected
+                ? ConsoleColor.Yellow
+                : slotItem == null ? ConsoleColor.DarkGray : ConsoleColor.Gray;
+
+            frame.WriteText(
+                textX,
+                y++,
+                Trim($"{prefix}[{slotIndex}] {slotName}{nestedMarker}", textWidth),
+                color,
+                textWidth);
+        }
+
+        if (firstRow > 0)
+        {
+            frame.WriteText(boxX + boxWidth - 6, boxY + 1, "...", ConsoleColor.DarkGray, 3);
+        }
+
+        if (lastRow < currentItem.Slots.Count)
+        {
+            frame.WriteText(boxX + boxWidth - 6, boxY + boxHeight - 2, "...", ConsoleColor.DarkGray, 3);
+        }
     }
 
     private static void DrawCombatTargetBox(ConsoleFrame frame, Enemy target)
@@ -792,6 +892,66 @@ public sealed class ConsoleGameView : IGameView
         return item == null ? "-" : item.Name;
     }
 
+    private static string CreateSlotPathText(IItem rootItem, IReadOnlyList<int> slotPath, int maxWidth)
+    {
+        var names = new List<string> { CreateSlotPathPart(rootItem.Name, 1) };
+        var currentItem = rootItem;
+        var depth = 1;
+        foreach (var slotIndex in slotPath)
+        {
+            if (slotIndex < 0 || slotIndex >= currentItem.Slots.Count)
+            {
+                break;
+            }
+
+            var slotItem = currentItem.Slots[slotIndex].Item;
+            if (slotItem == null)
+            {
+                break;
+            }
+
+            depth++;
+            names.Add(CreateSlotPathPart(slotItem.Name, depth));
+            currentItem = slotItem;
+        }
+
+        var fullPath = string.Join(" > ", names);
+        if (fullPath.Length <= maxWidth || names.Count <= 1)
+        {
+            return Trim(fullPath, maxWidth);
+        }
+
+        return Trim($"... > {names[^1]}", maxWidth);
+    }
+
+    private static string CreateSlotPathPart(string itemName, int depth)
+    {
+        return $"{itemName} ({depth})";
+    }
+
+    private static string CreateBonusText(PlayerStats bonuses)
+    {
+        var parts = new List<string>();
+        AddBonusPart(parts, "STR", bonuses.Strength);
+        AddBonusPart(parts, "HP", bonuses.Health);
+        AddBonusPart(parts, "LUCK", bonuses.Luck);
+        AddBonusPart(parts, "FURY", bonuses.Aggression);
+        AddBonusPart(parts, "WIS", bonuses.Wisdom);
+        AddBonusPart(parts, "DEX", bonuses.Dexterity);
+        return parts.Count == 0 ? "Bonuses: none" : $"Bonuses: {string.Join(", ", parts)}";
+    }
+
+    private static void AddBonusPart(List<string> parts, string label, int value)
+    {
+        if (value == 0)
+        {
+            return;
+        }
+
+        var sign = value > 0 ? "+" : string.Empty;
+        parts.Add($"{label} {sign}{value}");
+    }
+
     private static int WalletAmount(Player player, string currencyName)
     {
         return player.Wallet.TryGetValue(currencyName, out var amount) ? amount : 0;
@@ -836,6 +996,11 @@ public sealed class ConsoleGameView : IGameView
         }
 
         public void RenderInventoryMode()
+        {
+            DrawPlayingView(_frame, _gameModel, _localModel);
+        }
+
+        public void RenderSlotMode()
         {
             DrawPlayingView(_frame, _gameModel, _localModel);
         }

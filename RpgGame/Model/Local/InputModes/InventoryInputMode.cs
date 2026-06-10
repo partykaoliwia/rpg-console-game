@@ -4,6 +4,7 @@ public sealed class InventoryInputMode : IInputMode
 {
     public bool ShowsInstructions => false;
     public bool ShowsInventory => true;
+    public bool ShowsSlots => false;
     public bool ShowsLoot => false;
     public bool ShowsLogHistory => false;
     public bool ShowsGameOver => false;

@@ -515,7 +515,13 @@ public sealed class GameModel
         var decision = enemy.DecideBehavior(context);
         if (decision.ShouldAttack)
         {
-            var targetPlayer = FindPlayer(decision.AttackPlayerId.Value);
+            var attackPlayerId = decision.AttackPlayerId;
+            if (!attackPlayerId.HasValue)
+            {
+                return false;
+            }
+
+            var targetPlayer = FindPlayer(attackPlayerId.Value);
             return targetPlayer != null && targetPlayer.IsAlive && RegisterEncounter(targetPlayer, enemy);
         }
 

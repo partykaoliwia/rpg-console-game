@@ -139,6 +139,12 @@ public sealed class ClientInputController : IInputModeHandler
             return;
         }
 
+        if (key == _localModel.KeyBindings.OpenSlots)
+        {
+            TryOpenSlotsForSelectedInventoryItem();
+            return;
+        }
+
         var itemCount = GetInventoryItemCount();
         if (key == _localModel.KeyBindings.MoveUp)
         {
@@ -159,6 +165,56 @@ public sealed class ClientInputController : IInputModeHandler
             return;
         }
 
+    }
+
+    public void HandleSlotKey(ConsoleKey key)
+    {
+        if (TryReloadKeyBindings(key))
+        {
+            return;
+        }
+
+        if (TryOpenLogHistory(key, _localModel.KeyBindings.InventoryOpenLogHistory))
+        {
+            return;
+        }
+
+        if (key == _localModel.KeyBindings.CloseMenu || key == _localModel.KeyBindings.OpenInventory)
+        {
+            _localModel.CloseMenu();
+            return;
+        }
+
+        if (key == _localModel.KeyBindings.LeaveSlots)
+        {
+            if (!_localModel.LeaveSlotLevel())
+            {
+                _localModel.CloseMenu();
+            }
+
+            return;
+        }
+
+        var slotCount = GetCurrentSlotCount();
+        if (key == _localModel.KeyBindings.MoveUp)
+        {
+            _localModel.MoveSlotCursor(-1, slotCount);
+            return;
+        }
+
+        if (key == _localModel.KeyBindings.MoveDown)
+        {
+            _localModel.MoveSlotCursor(1, slotCount);
+            return;
+        }
+
+        if (key == _localModel.KeyBindings.OpenSlots)
+        {
+            TryEnterSelectedSlot();
+            return;
+        }
+
+        RecordUnhandledKey(key);
     }
 
     public void HandleLootKey(ConsoleKey key)
@@ -477,6 +533,67 @@ public sealed class ClientInputController : IInputModeHandler
         lock (_localGameModel.SyncRoot)
         {
             return _localGameModel.FindPlayer(_localModel.LocalPlayerId)?.Inventory.Count ?? 0;
+        }
+    }
+
+    private void TryOpenSlotsForSelectedInventoryItem()
+    {
+        lock (_localGameModel.SyncRoot)
+        {
+            var player = _localGameModel.FindPlayer(_localModel.LocalPlayerId);
+            var item = player?.FindInventoryItem(_localModel.InventoryCursor);
+            if (item == null)
+            {
+                _localModel.AddLocalMessage("Select an item before opening slots.");
+                return;
+            }
+
+            if (item.Slots.Count <= 0)
+            {
+                _localModel.AddLocalMessage($"{item.Name} has no slots.");
+                return;
+            }
+
+            _localModel.OpenSlotsForInventoryItem(_localModel.InventoryCursor);
+        }
+    }
+
+    private void TryEnterSelectedSlot()
+    {
+        lock (_localGameModel.SyncRoot)
+        {
+            var player = _localGameModel.FindPlayer(_localModel.LocalPlayerId);
+            var item = SlotBrowserNavigator.GetCurrentItem(player, _localModel);
+            if (item == null || item.Slots.Count <= 0)
+            {
+                _localModel.AddLocalMessage("There are no slots to enter here.");
+                return;
+            }
+
+            _localModel.ClampSlotCursor(item.Slots.Count);
+            var slotItem = item.Slots[_localModel.SlotCursor].Item;
+            if (slotItem == null)
+            {
+                _localModel.AddLocalMessage("This slot is empty.");
+                return;
+            }
+
+            if (slotItem.Slots.Count <= 0)
+            {
+                _localModel.AddLocalMessage($"{slotItem.Name} has no nested slots.");
+                return;
+            }
+
+            _localModel.EnterSlotLevel(_localModel.SlotCursor);
+        }
+    }
+
+    private int GetCurrentSlotCount()
+    {
+        lock (_localGameModel.SyncRoot)
+        {
+            var player = _localGameModel.FindPlayer(_localModel.LocalPlayerId);
+            return SlotBrowserNavigator.GetCurrentItem(player, _localModel)?.Slots.Count ?? 0;
         }
     }
 
