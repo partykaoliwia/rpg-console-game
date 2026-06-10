@@ -49,7 +49,17 @@ public sealed class LabyrinthFactory : IDungeonThemeFactory
 
     public IItem CreateRandomWeapon(int index)
     {
+        if (index == 0)
+        {
+            return SlottedItemRecipes.CreateShowcaseSword(6 + _random.Next(0, 8));
+        }
+
         return Decorate(CreateBaseWeapon(index, 6 + _random.Next(0, 8)));
+    }
+
+    public IItem CreateSlotHandle(int index)
+    {
+        return SlottedItemRecipes.CreateHandle(index);
     }
 
     public Enemy CreateEnemy(int id, int x, int y, int distanceFromStart)

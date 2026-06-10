@@ -40,7 +40,17 @@ public sealed class ArenaFactory : IDungeonThemeFactory
 
     public IItem CreateRandomWeapon(int index)
     {
+        if (index == 0)
+        {
+            return SlottedItemRecipes.CreateShowcaseSword(5 + _random.Next(0, 7));
+        }
+
         return Decorate(new Kopis(5 + _random.Next(0, 7)));
+    }
+
+    public IItem CreateSlotHandle(int index)
+    {
+        return SlottedItemRecipes.CreateHandle(index);
     }
 
     public Enemy CreateEnemy(int id, int x, int y, int distanceFromStart)

@@ -90,7 +90,18 @@ public sealed class MapBuilder : IDungeonBuilder
 
     public void AddItems(int count)
     {
-        PlaceOnRandomWalkableTiles(count, (_, tile) => tile.AddItem(_factory.CreateRandomJunk()));
+        var placed = 0;
+        while (placed < count && placed < 2)
+        {
+            var handleIndex = placed;
+            PlaceOnRandomWalkableTiles(1, (_, tile) => tile.AddItem(_factory.CreateSlotHandle(handleIndex)));
+            placed++;
+        }
+
+        if (placed < count)
+        {
+            PlaceOnRandomWalkableTiles(count - placed, (_, tile) => tile.AddItem(_factory.CreateRandomJunk()));
+        }
     }
 
     public void AddWeapons(int count)

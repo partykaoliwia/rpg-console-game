@@ -16,6 +16,9 @@ public abstract class ItemDecorator : IItem
     public virtual string Name => _decorated.Name;
     public virtual PlayerStats Bonuses => _decorated.Bonuses;
     public virtual int SoundRange => _decorated.SoundRange;
+    public virtual IReadOnlyList<ItemSlot> Slots => _decorated.Slots;
+    public virtual bool CanBePlacedInWeaponSlot => _decorated.CanBePlacedInWeaponSlot;
+    public virtual bool CanBePlacedInHandleSlot => _decorated.CanBePlacedInHandleSlot;
 
     public virtual bool PickUp(Player player)
     {
@@ -30,6 +33,11 @@ public abstract class ItemDecorator : IItem
     public virtual bool EquipToRightHand(Player player, IItem? instanceToEquip = null)
     {
         return _decorated.EquipToRightHand(player, instanceToEquip ?? this);
+    }
+
+    public virtual bool TryPlaceInSlot(int slotIndex, IItem item)
+    {
+        return _decorated.TryPlaceInSlot(slotIndex, item);
     }
 
     public virtual void Unequip(Player player)

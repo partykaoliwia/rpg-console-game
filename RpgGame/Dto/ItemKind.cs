@@ -13,5 +13,11 @@ public enum ItemKind
     AriadnesThread = 9,
     CyclopsEye = 10,
     IcarusFeather = 11,
-    ShatteredShield = 12
+    ShatteredShield = 12,
+    SocketedSword = 13,
+    BronzeHandle = 14,
+    LaurelHandle = 15,
+    StrengthStone = 16,
+    LuckStone = 17,
+    WisdomStone = 18
 }

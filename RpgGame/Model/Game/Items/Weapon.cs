@@ -13,6 +13,9 @@ public abstract class Weapon : IItem
     public abstract string Name { get; }
     public virtual PlayerStats Bonuses => new();
     public virtual int SoundRange => 6;
+    public virtual IReadOnlyList<ItemSlot> Slots => Array.Empty<ItemSlot>();
+    public virtual bool CanBePlacedInWeaponSlot => false;
+    public virtual bool CanBePlacedInHandleSlot => false;
 
     public abstract int GetFullDamage(Player player);
 
@@ -29,6 +32,11 @@ public abstract class Weapon : IItem
     public virtual bool EquipToRightHand(Player player, IItem? instanceToEquip = null)
     {
         return player.EquipToRightHand(instanceToEquip ?? this);
+    }
+
+    public virtual bool TryPlaceInSlot(int slotIndex, IItem item)
+    {
+        return false;
     }
 
     public virtual void Unequip(Player player)

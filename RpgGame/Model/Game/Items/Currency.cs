@@ -13,6 +13,9 @@ public abstract class Currency : IItem
     public abstract string Name { get; }
     public PlayerStats Bonuses => new();
     public int SoundRange => 4;
+    public IReadOnlyList<ItemSlot> Slots => Array.Empty<ItemSlot>();
+    public bool CanBePlacedInWeaponSlot => false;
+    public bool CanBePlacedInHandleSlot => false;
 
     public bool PickUp(Player player)
     {
@@ -26,6 +29,11 @@ public abstract class Currency : IItem
     }
 
     public bool EquipToRightHand(Player player, IItem? instanceToEquip = null)
+    {
+        return false;
+    }
+
+    public bool TryPlaceInSlot(int slotIndex, IItem item)
     {
         return false;
     }

@@ -40,7 +40,17 @@ public sealed class LibraryFactory : IDungeonThemeFactory
 
     public IItem CreateRandomWeapon(int index)
     {
+        if (index == 0)
+        {
+            return SlottedItemRecipes.CreateShowcaseSword(4 + _random.Next(0, 9));
+        }
+
         return Decorate(new StymphalianQuill(4 + _random.Next(0, 9)));
+    }
+
+    public IItem CreateSlotHandle(int index)
+    {
+        return SlottedItemRecipes.CreateHandle(index);
     }
 
     public Enemy CreateEnemy(int id, int x, int y, int distanceFromStart)

@@ -41,6 +41,11 @@ public sealed class ItemVisitor : IItemVisitor
         Icon = new RenderIcon("/", ConsoleColor.Green);
     }
 
+    public void Visit(SocketedSword socketedSword)
+    {
+        Icon = new RenderIcon("S", ConsoleColor.Green);
+    }
+
     public void Visit(OldBook oldBook)
     {
         Icon = new RenderIcon("#", ConsoleColor.DarkYellow);
@@ -64,6 +69,31 @@ public sealed class ItemVisitor : IItemVisitor
     public void Visit(ShatteredShield shatteredShield)
     {
         Icon = new RenderIcon("0", ConsoleColor.DarkGray);
+    }
+
+    public void Visit(BronzeHandle bronzeHandle)
+    {
+        Icon = new RenderIcon("H", ConsoleColor.DarkYellow);
+    }
+
+    public void Visit(LaurelHandle laurelHandle)
+    {
+        Icon = new RenderIcon("H", ConsoleColor.DarkGreen);
+    }
+
+    public void Visit(StrengthStone strengthStone)
+    {
+        Icon = new RenderIcon("*", ConsoleColor.Red);
+    }
+
+    public void Visit(LuckStone luckStone)
+    {
+        Icon = new RenderIcon("*", ConsoleColor.Yellow);
+    }
+
+    public void Visit(WisdomStone wisdomStone)
+    {
+        Icon = new RenderIcon("*", ConsoleColor.Cyan);
     }
 
     public void Visit(SpartanModifier modifier)

@@ -9,11 +9,17 @@ public interface IItemVisitor
     void Visit(Labrys labrys);
     void Visit(StymphalianQuill stymphalianQuill);
     void Visit(Dory dory);
+    void Visit(SocketedSword socketedSword);
     void Visit(OldBook oldBook);
     void Visit(AriadnesThread ariadnesThread);
     void Visit(CyclopsEye cyclopsEye);
     void Visit(IcarusFeather icarusFeather);
     void Visit(ShatteredShield shatteredShield);
+    void Visit(BronzeHandle bronzeHandle);
+    void Visit(LaurelHandle laurelHandle);
+    void Visit(StrengthStone strengthStone);
+    void Visit(LuckStone luckStone);
+    void Visit(WisdomStone wisdomStone);
     void Visit(SpartanModifier modifier);
     void Visit(AthenianModifier modifier);
     void Visit(HephaesteanModifier modifier);

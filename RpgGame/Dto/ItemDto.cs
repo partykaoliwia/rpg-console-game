@@ -7,4 +7,5 @@ public sealed class ItemDto
     public int Value { get; set; }
     public int Damage { get; set; }
     public List<ItemModifierKind> Modifiers { get; set; } = new();
+    public List<ItemDto?> Slots { get; set; } = new();
 }

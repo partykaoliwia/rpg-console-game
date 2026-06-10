@@ -13,6 +13,7 @@ public interface IDungeonThemeFactory
     IItem CreateRandomJunk();
     Currency CreateRandomCurrency();
     IItem CreateRandomWeapon(int index);
+    IItem CreateSlotHandle(int index);
     Enemy CreateEnemy(int id, int x, int y, int distanceFromStart);
     Enemy CreateBoss(int id, int x, int y);
 }

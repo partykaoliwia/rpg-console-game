@@ -28,10 +28,16 @@ public sealed class GameStateMapper
             { ItemKind.Labrys, dto => new Labrys(dto.Damage) },
             { ItemKind.StymphalianQuill, dto => new StymphalianQuill(dto.Damage) },
             { ItemKind.Dory, dto => new Dory(dto.Damage) },
+            { ItemKind.SocketedSword, dto => new SocketedSword(dto.Damage) },
             { ItemKind.AriadnesThread, _ => new AriadnesThread() },
             { ItemKind.CyclopsEye, _ => new CyclopsEye() },
             { ItemKind.IcarusFeather, _ => new IcarusFeather() },
-            { ItemKind.ShatteredShield, _ => new ShatteredShield() }
+            { ItemKind.ShatteredShield, _ => new ShatteredShield() },
+            { ItemKind.BronzeHandle, _ => new BronzeHandle() },
+            { ItemKind.LaurelHandle, _ => new LaurelHandle() },
+            { ItemKind.StrengthStone, _ => new StrengthStone() },
+            { ItemKind.LuckStone, _ => new LuckStone() },
+            { ItemKind.WisdomStone, _ => new WisdomStone() }
         };
 
         _modifierFactories = new Dictionary<ItemModifierKind, Func<IItem, IItem>>
@@ -260,6 +266,21 @@ public sealed class GameStateMapper
         }
 
         var item = factory(dto);
+        for (var slotIndex = 0; slotIndex < dto.Slots.Count; slotIndex++)
+        {
+            var slotDto = dto.Slots[slotIndex];
+            if (slotDto == null)
+            {
+                continue;
+            }
+
+            var slotItem = CreateItem(slotDto);
+            if (!item.TryPlaceInSlot(slotIndex, slotItem))
+            {
+                throw new InvalidOperationException($"Unsupported slot item for {dto.Kind} at slot {slotIndex}.");
+            }
+        }
+
         foreach (var modifier in dto.Modifiers)
         {
             if (!_modifierFactories.TryGetValue(modifier, out var modifierFactory))
@@ -361,6 +382,11 @@ public sealed class GameStateMapper
             CreateWeaponDto(dory, ItemKind.Dory);
         }
 
+        public void Visit(SocketedSword socketedSword)
+        {
+            CreateWeaponDto(socketedSword, ItemKind.SocketedSword);
+        }
+
         public void Visit(OldBook oldBook)
         {
             CreateJunkDto(oldBook, ItemKind.OldBook);
@@ -384,6 +410,31 @@ public sealed class GameStateMapper
         public void Visit(ShatteredShield shatteredShield)
         {
             CreateJunkDto(shatteredShield, ItemKind.ShatteredShield);
+        }
+
+        public void Visit(BronzeHandle bronzeHandle)
+        {
+            CreateHandleDto(bronzeHandle, ItemKind.BronzeHandle);
+        }
+
+        public void Visit(LaurelHandle laurelHandle)
+        {
+            CreateHandleDto(laurelHandle, ItemKind.LaurelHandle);
+        }
+
+        public void Visit(StrengthStone strengthStone)
+        {
+            CreatePassiveDto(strengthStone, ItemKind.StrengthStone);
+        }
+
+        public void Visit(LuckStone luckStone)
+        {
+            CreatePassiveDto(luckStone, ItemKind.LuckStone);
+        }
+
+        public void Visit(WisdomStone wisdomStone)
+        {
+            CreatePassiveDto(wisdomStone, ItemKind.WisdomStone);
         }
 
         public void Visit(SpartanModifier modifier)
@@ -451,6 +502,7 @@ public sealed class GameStateMapper
                 Name = weapon.Name,
                 Damage = weapon.Damage
             };
+            AddSlotDtos(weapon);
         }
 
         private void CreateJunkDto(JunkItem item, ItemKind kind)
@@ -460,6 +512,42 @@ public sealed class GameStateMapper
                 Kind = kind,
                 Name = item.Name
             };
+            AddSlotDtos(item);
+        }
+
+        private void CreateHandleDto(WeaponHandle handle, ItemKind kind)
+        {
+            Dto = new ItemDto
+            {
+                Kind = kind,
+                Name = handle.Name
+            };
+            AddSlotDtos(handle);
+        }
+
+        private void CreatePassiveDto(PassiveItem item, ItemKind kind)
+        {
+            Dto = new ItemDto
+            {
+                Kind = kind,
+                Name = item.Name
+            };
+        }
+
+        private void AddSlotDtos(IItem item)
+        {
+            foreach (var slot in item.Slots)
+            {
+                if (slot.Item == null)
+                {
+                    Dto.Slots.Add(null);
+                    continue;
+                }
+
+                var visitor = new ItemDtoVisitor();
+                slot.Item.Accept(visitor);
+                Dto.Slots.Add(visitor.Dto);
+            }
         }
     }
 }
